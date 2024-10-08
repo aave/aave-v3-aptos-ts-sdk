@@ -1,0 +1,1 @@
+export { testnetConfig } from "./testnet";
