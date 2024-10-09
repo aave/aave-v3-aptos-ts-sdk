@@ -40,7 +40,7 @@
     "contributors": [
         "The Avara Team"
     ],
-    "license": "(MIT AND Apache-2.0)",
+    "license": "(Copyright All Rights Reserved)",
     "homepage": "https://github.com/aave/aave-v3-aptos-ts-sdk",
     "repository": {
         "type": "git",

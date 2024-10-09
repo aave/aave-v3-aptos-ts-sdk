@@ -62,7 +62,7 @@ npm run test
 
 ## License
 
-By contributing to `aave-v3-aptos-ts-sdk`, you agree that your contributions will be licensed under the MIT License.
+By contributing to `aave-v3-aptos-ts-sdk`, you agree that your contributions will be licensed under this License.
 
 ## Documentation
 

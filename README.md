@@ -47,7 +47,7 @@ We welcome contributions from the community!
 If you would like to contribute to `aave-v3-aptos-ts-sdk`, please read the [CONTRIBUTING file](CONTRIBUTING.md).
 
 ## License
-`aave-v3-aptos-ts-sdk` is released under the [MIT License](LICENSE).
+`aave-v3-aptos-ts-sdk` is released under the [License](LICENSE).
 
 ## Powered By
-`aave-v3-aptos-ts-sdk` is developed with love by Avara
+`aave-v3-aptos-ts-sdk` is developed with love by Aave Labs
