@@ -30,6 +30,7 @@ export interface AptosProviderConfig {
 }
 
 export interface AptosAccountConfig {
+  network: string;
   private_key: string;
   public_key: string;
   account: string;
@@ -135,6 +136,31 @@ export class AptosProvider {
     const parsedYaml = YAML.parse(aptosConfigData);
     for (const profile of Object.keys(parsedYaml.profiles)) {
       const profileConfig = parsedYaml.profiles[profile] as AptosAccountConfig;
+
+      // extract network
+      switch (profileConfig.network.toLowerCase()) {
+        case "testnet": {
+          aptosProvider.setNetwork(Network.TESTNET);
+          break;
+        }
+        case "devnet": {
+          aptosProvider.setNetwork(Network.DEVNET);
+          break;
+        }
+        case "mainnet": {
+          aptosProvider.setNetwork(Network.MAINNET);
+          break;
+        }
+        case "local": {
+          aptosProvider.setNetwork(Network.LOCAL);
+          break;
+        }
+        default:
+          throw new Error(
+            `Unknown network ${profileConfig.network ? profileConfig.network : "undefined"}`,
+          );
+      }
+
       const aptosPrivateKey = new Ed25519PrivateKey(profileConfig.private_key);
       aptosProvider.addProfileAccount(profile, aptosPrivateKey);
       const profileAccount = Account.fromPrivateKey({
