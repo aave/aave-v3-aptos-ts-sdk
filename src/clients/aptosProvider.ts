@@ -200,28 +200,28 @@ export class AptosProvider {
     return this.profileAddressMap.get(profileName);
   }
 
-  public getOracleProfileAccount(): AccountAddress {
-    return this.getProfileAddressByName(AAVE_PROFILES.AAVE_MOCK_ORACLE);
+  public getOracleProfileAccount(): Ed25519Account {
+    return this.getProfileAccountByName(AAVE_PROFILES.AAVE_MOCK_ORACLE);
   }
 
-  public getPoolProfileAccount(): AccountAddress {
-    return this.getProfileAddressByName(AAVE_PROFILES.AAVE_POOL);
+  public getPoolProfileAccount(): Ed25519Account {
+    return this.getProfileAccountByName(AAVE_PROFILES.AAVE_POOL);
   }
 
-  public getATokensProfileAccount(): AccountAddress {
-    return this.getProfileAddressByName(AAVE_PROFILES.A_TOKENS);
+  public getATokensProfileAccount(): Ed25519Account {
+    return this.getProfileAccountByName(AAVE_PROFILES.A_TOKENS);
   }
 
-  public getUnderlyingTokensProfileAccount(): AccountAddress {
-    return this.getProfileAddressByName(AAVE_PROFILES.UNDERLYING_TOKENS);
+  public getUnderlyingTokensProfileAccount(): Ed25519Account {
+    return this.getProfileAccountByName(AAVE_PROFILES.UNDERLYING_TOKENS);
   }
 
-  public getVariableTokensProfileAccount(): AccountAddress {
-    return this.getProfileAddressByName(AAVE_PROFILES.VARIABLE_TOKENS);
+  public getVariableTokensProfileAccount(): Ed25519Account {
+    return this.getProfileAccountByName(AAVE_PROFILES.VARIABLE_TOKENS);
   }
 
-  public getAclProfileAccount(): AccountAddress {
-    return this.getProfileAddressByName(AAVE_PROFILES.AAVE_ACL);
+  public getAclProfileAccount(): Ed25519Account {
+    return this.getProfileAccountByName(AAVE_PROFILES.AAVE_ACL);
   }
 
   /** Gets the selected network. */
