@@ -1,5 +1,5 @@
 import { MoveFunctionId } from "@aptos-labs/ts-sdk";
-import { AptosProvider } from "../clients/aptosProvider";
+import { AAVE_PROFILES, AptosProvider } from "../clients/aptosProvider";
 
 export class TokensContract {
   // Resource Func Addr
@@ -90,8 +90,9 @@ export class TokensContract {
 
   constructor(provider: AptosProvider) {
     // Underlying Token
-    const AaveTokensManager =
-      provider.getProfileAccountByName("AAVE_POOL_ADDRESS");
+    const AaveTokensManager = provider.getProfileAccountByName(
+      AAVE_PROFILES.AAVE_POOL,
+    );
     const AaveTokensManagerAccountAddress = AaveTokensManager.toString();
     // Resource Func Addr
     // Underlying Token

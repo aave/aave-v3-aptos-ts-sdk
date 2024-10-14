@@ -1,14 +1,14 @@
-import { ATokensClient } from "../src/clients/aTokensClient";
-import { UnderlyingTokensClient } from "../src/clients/underlyingTokensClient";
-import { UiPoolDataProviderClient } from "../src/clients/uiPoolDataProvider";
-import { PoolClient } from "../src/clients/poolClient";
-import { AptosProvider } from "../src/clients/aptosProvider";
-import { testnetConfig } from "../src/configs/testnet";
-import { VariableTokensClient } from "../src/clients/variableTokensClient";
+import { ATokensClient } from "../../src/clients/aTokensClient";
+import { UnderlyingTokensClient } from "../../src/clients/underlyingTokensClient";
+import { UiPoolDataProviderClient } from "../../src/clients/uiPoolDataProvider";
+import { PoolClient } from "../../src/clients/poolClient";
+import { AptosProvider } from "../../src/clients/aptosProvider";
+import { testnetConfig } from "../../src/configs/testnet";
+import { VariableTokensClient } from "../../src/clients/variableTokensClient";
 
 (async () => {
   // global aptos provider
-  const aptosProvider = new AptosProvider(testnetConfig);
+  const aptosProvider = AptosProvider.fromConfig(testnetConfig);
 
   // all atokens-related operations client
   const aTokensClient = new ATokensClient(aptosProvider);

@@ -1,5 +1,5 @@
 import { MoveFunctionId } from "@aptos-labs/ts-sdk";
-import { AptosProvider } from "../clients/aptosProvider";
+import { AAVE_PROFILES, AptosProvider } from "../clients/aptosProvider";
 
 export class AclManagerContract {
   // Resource Func Addr
@@ -70,7 +70,7 @@ export class AclManagerContract {
   setRoleAdmin: MoveFunctionId;
 
   constructor(provider: AptosProvider) {
-    const AclManager = provider.getProfileAccountByName("AAVE_ACL_ADDRESS");
+    const AclManager = provider.getProfileAccountByName(AAVE_PROFILES.AAVE_ACL);
     const AclManagerAccountAddress = AclManager.toString();
     this.hasRoleFuncAddr = `${AclManagerAccountAddress}::acl_manage::has_role`;
     this.grantRoleFuncAddr = `${AclManagerAccountAddress}::acl_manage::grant_role`;

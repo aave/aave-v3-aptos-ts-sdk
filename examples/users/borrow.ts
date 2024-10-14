@@ -1,18 +1,15 @@
-/* eslint-disable no-console */
-/* eslint-disable no-await-in-loop */
 import { Account, Ed25519Account, Ed25519PrivateKey } from "@aptos-labs/ts-sdk";
-import { PoolClient } from "../src/clients/poolClient";
-import { AptosProvider, CoreClient } from "../src/clients";
-import { testnetConfig } from "../src/configs/testnet";
+import { PoolClient } from "../../src/clients/poolClient";
+import { AptosProvider, CoreClient } from "../../src/clients";
+import { testnetConfig } from "../../src/configs/testnet";
 
-const USER_APTOS_ACCOUNT_PRIVATE_KEY =
-  "0xf5e502058d6995bccf625107f12f138cc4ff3f57b1487a256a6dec23f338f831";
-const CURRENCY_TO_WITHDRAW = "DAI";
-const AMOUNT_TO_WITHDRAW = "100";
+const USER_APTOS_ACCOUNT_PRIVATE_KEY = "0x0";
+const CURRENCY_TO_BORROW = "DAI";
+const AMOUNT_TO_BORROW = "100";
 
 (async () => {
   // global aptos provider
-  const aptosProvider = new AptosProvider(testnetConfig);
+  const aptosProvider = AptosProvider.fromConfig(testnetConfig);
   // all pool-related operations client
   const poolClient = new PoolClient(aptosProvider);
   // user account
@@ -26,18 +23,20 @@ const AMOUNT_TO_WITHDRAW = "100";
   try {
     const allReserveUnderlyingTokens = await poolClient.getAllReservesTokens();
     const underlyingToken = allReserveUnderlyingTokens.find(
-      (token) => token.symbol === CURRENCY_TO_WITHDRAW,
+      (token) => token.symbol === CURRENCY_TO_BORROW,
     );
     if (!underlyingToken) {
       throw new Error(`${underlyingToken} token was not found`);
     }
-    const withdrawAmount = BigInt(AMOUNT_TO_WITHDRAW);
-    console.log("Underlying token: ", underlyingToken.tokenAddress.toString());
-    console.log("Value to withdraw: ", withdrawAmount.toString());
+    const borrowAmount = BigInt(AMOUNT_TO_BORROW);
+    console.log("Underlying token: ", underlyingToken?.tokenAddress.toString());
+    console.log("Value to borrow: ", borrowAmount.toString());
 
-    const txHash = await coreClient.withdraw(
+    const txHash = await coreClient.borrow(
       underlyingToken.tokenAddress,
-      withdrawAmount,
+      borrowAmount,
+      2,
+      0,
       userAccount.accountAddress,
     );
 

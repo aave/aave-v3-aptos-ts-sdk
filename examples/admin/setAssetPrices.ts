@@ -1,10 +1,8 @@
-/* eslint-disable no-console */
-/* eslint-disable no-await-in-loop */
 import dotenv from "dotenv";
 import { Account, Ed25519PrivateKey } from "@aptos-labs/ts-sdk";
-import { OracleClient, PoolClient } from "../src/clients";
-import { AptosProvider } from "../src/clients/aptosProvider";
-import { testnetConfig } from "../src/configs/testnet";
+import { OracleClient, PoolClient } from "../../src/clients";
+import { AptosProvider } from "../../src/clients/aptosProvider";
+import { testnetConfig } from "../../src/configs/testnet";
 
 dotenv.config();
 
@@ -17,7 +15,7 @@ const priceMapper = {
 
 (async () => {
   // global aptos provider
-  const aptosProvider = new AptosProvider(testnetConfig);
+  const aptosProvider = AptosProvider.fromConfig(testnetConfig);
 
   if (!process.env.AAVE_MOCK_ORACLE_PRIVATE_KEY) {
     throw new Error(`AAVE_MOCK_ORACLE_PRIVATE_KEY env was not found`);

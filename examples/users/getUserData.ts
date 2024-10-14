@@ -1,15 +1,15 @@
 import { AccountAddress } from "@aptos-labs/ts-sdk";
-import { UnderlyingTokensClient } from "../src/clients/underlyingTokensClient";
-import { UiPoolDataProviderClient } from "../src/clients/uiPoolDataProvider";
-import { PoolClient } from "../src/clients/poolClient";
-import { AptosProvider } from "../src/clients/aptosProvider";
-import { testnetConfig } from "../src/configs/testnet";
+import { UnderlyingTokensClient } from "../../src/clients/underlyingTokensClient";
+import { UiPoolDataProviderClient } from "../../src/clients/uiPoolDataProvider";
+import { PoolClient } from "../../src/clients/poolClient";
+import { AptosProvider } from "../../src/clients/aptosProvider";
+import { testnetConfig } from "../../src/configs/testnet";
 
 const USER_APTOS_ACCOUNT = "0x0";
 
 (async () => {
   // global aptos provider
-  const aptosProvider = new AptosProvider(testnetConfig);
+  const aptosProvider = AptosProvider.fromConfig(testnetConfig);
 
   const uiPoolDataProviderClient = new UiPoolDataProviderClient(aptosProvider);
   const poolClient = new PoolClient(aptosProvider);

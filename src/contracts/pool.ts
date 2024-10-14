@@ -1,5 +1,5 @@
 import { MoveFunctionId } from "@aptos-labs/ts-sdk";
-import { AptosProvider } from "../clients/aptosProvider";
+import { AAVE_PROFILES, AptosProvider } from "../clients/aptosProvider";
 
 export class PoolContract {
   // Resource Func Addr
@@ -247,7 +247,9 @@ export class PoolContract {
   SetPoolDataProviderFuncAddr: MoveFunctionId;
 
   constructor(provider: AptosProvider) {
-    const PoolManager = provider.getProfileAccountByName("AAVE_POOL_ADDRESS");
+    const PoolManager = provider.getProfileAccountByName(
+      AAVE_PROFILES.AAVE_POOL,
+    );
     const PoolManagerAccountAddress = PoolManager.toString();
 
     /**

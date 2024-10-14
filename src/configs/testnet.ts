@@ -18,8 +18,6 @@ export const testnetConfig: AptosProviderConfig = {
       "ba20379c8378027707c370bd213e886a3c9bfdccb7258586e330974a09011c1e",
     AAVE_POOL:
       "f62585050b094c363d654a124614cf7975ab582d6849e683ccff6c46e2041ab8",
-    AAVE_ROLE_SUPER_ADMIN:
-      "1827bb03b3ced7aebe5a4f446ee9db427edb90638086c46a95663f512ef1d16f",
   },
   oracle: {
     URL: "https://hermes-beta.pyth.network",

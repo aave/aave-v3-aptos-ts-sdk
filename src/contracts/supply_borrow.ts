@@ -1,5 +1,5 @@
 import { MoveFunctionId } from "@aptos-labs/ts-sdk";
-import { AptosProvider } from "../clients/aptosProvider";
+import { AAVE_PROFILES, AptosProvider } from "../clients/aptosProvider";
 
 export class SupplyBorrowContract {
   // Resource Func Addr
@@ -32,8 +32,9 @@ export class SupplyBorrowContract {
   GetUserAccountDataFuncAddr: MoveFunctionId;
 
   constructor(provider: AptosProvider) {
-    const SupplyBorrowManager =
-      provider.getProfileAccountByName("AAVE_POOL_ADDRESS");
+    const SupplyBorrowManager = provider.getProfileAccountByName(
+      AAVE_PROFILES.AAVE_POOL,
+    );
     const SupplyBorrowManagerAccountAddress = SupplyBorrowManager.toString();
     this.SupplyFuncAddr = `${SupplyBorrowManagerAccountAddress}::supply_logic::supply`;
     this.WithdrawFuncAddr = `${SupplyBorrowManagerAccountAddress}::supply_logic::withdraw`;

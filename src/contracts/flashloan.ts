@@ -1,5 +1,5 @@
 import { MoveFunctionId } from "@aptos-labs/ts-sdk";
-import { AptosProvider } from "../clients/aptosProvider";
+import { AAVE_PROFILES, AptosProvider } from "../clients/aptosProvider";
 
 export class FlashLoanContract {
   // Resource Func Addr
@@ -12,8 +12,9 @@ export class FlashLoanContract {
   PayFlashLoanSimpleFuncAddr: MoveFunctionId;
 
   constructor(provider: AptosProvider) {
-    const FlashLoanManager =
-      provider.getProfileAccountByName("AAVE_POOL_ADDRESS");
+    const FlashLoanManager = provider.getProfileAccountByName(
+      AAVE_PROFILES.AAVE_POOL,
+    );
     const FlashLoanManagerAccountAddress = FlashLoanManager.toString();
     this.FlashLoanFuncAddr = `${FlashLoanManagerAccountAddress}::flash_loan_logic::flashloan`;
     this.FlashLoanSimpleFuncAddr = `${FlashLoanManagerAccountAddress}::flash_loan_logic::flash_loan_simple`;

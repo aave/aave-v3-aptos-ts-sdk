@@ -1,9 +1,9 @@
 import { Account, Ed25519Account, Ed25519PrivateKey } from "@aptos-labs/ts-sdk";
 import { MaxUint256 } from "ethers";
 import { BigNumber } from "bignumber.js";
-import { PoolClient } from "../src/clients/poolClient";
-import { AptosProvider, CoreClient } from "../src/clients";
-import { testnetConfig } from "../src/configs/testnet";
+import { PoolClient } from "../../src/clients/poolClient";
+import { AptosProvider, CoreClient } from "../../src/clients";
+import { testnetConfig } from "../../src/configs/testnet";
 
 const USER_APTOS_ACCOUNT_PRIVATE_KEY = "0x0";
 const CURRENCY_TO_REPAY = "DAI";
@@ -12,7 +12,7 @@ const USE_A_TOKENS = true;
 
 (async () => {
   // global aptos provider
-  const aptosProvider = new AptosProvider(testnetConfig);
+  const aptosProvider = AptosProvider.fromConfig(testnetConfig);
   // all pool-related operations client
   const poolClient = new PoolClient(aptosProvider);
   // user account

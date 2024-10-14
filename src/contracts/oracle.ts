@@ -1,5 +1,5 @@
 import { MoveFunctionId } from "@aptos-labs/ts-sdk";
-import { AptosProvider } from "../clients/aptosProvider";
+import { AAVE_PROFILES, AptosProvider } from "../clients/aptosProvider";
 
 export class OracleContract {
   // Resource Func Addr
@@ -17,7 +17,7 @@ export class OracleContract {
 
   constructor(provider: AptosProvider) {
     const OracleManager = provider.getProfileAccountByName(
-      "AAVE_MOCK_ORACLE_ADDRESS",
+      AAVE_PROFILES.AAVE_MOCK_ORACLE,
     );
     const OracleManagerAccountAddress = OracleManager.toString();
     this.GetAssetPriceFuncAddr = `${OracleManagerAccountAddress}::oracle::get_asset_price`;

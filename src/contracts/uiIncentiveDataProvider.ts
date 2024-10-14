@@ -1,5 +1,5 @@
 import { MoveFunctionId } from "@aptos-labs/ts-sdk";
-import { AptosProvider } from "../clients/aptosProvider";
+import { AAVE_PROFILES, AptosProvider } from "../clients/aptosProvider";
 
 export class UiIncentiveDataProviderContract {
   // Resource Func Addr
@@ -21,8 +21,9 @@ export class UiIncentiveDataProviderContract {
   getUserReservesIncentivesData: MoveFunctionId;
 
   constructor(provider: AptosProvider) {
-    const PeripheryManager =
-      provider.getProfileAccountByName("AAVE_POOL_ADDRESS");
+    const PeripheryManager = provider.getProfileAccountByName(
+      AAVE_PROFILES.AAVE_POOL,
+    );
     const PeripheryManagerAccountAddress = PeripheryManager.toString();
 
     this.uiIncentiveDataProviderV3DataAddress = `${PeripheryManagerAccountAddress}::ui_incentive_data_provider_v3::ui_incentive_data_provider_v3_data_address`;

@@ -3,7 +3,12 @@ import {
   AptosConfig,
   Aptos,
   AccountAddress,
+  Ed25519PrivateKey,
+  Account,
 } from "@aptos-labs/ts-sdk";
+import { PathLike } from "fs";
+import fs from "fs";
+import YAML from "yaml";
 
 export interface AptosProviderConfig {
   network: Network;
@@ -15,7 +20,6 @@ export interface AptosProviderConfig {
     AAVE_CONFIG: string;
     AAVE_MOCK_ORACLE: string;
     AAVE_POOL: string;
-    AAVE_ROLE_SUPER_ADMIN: string;
   };
   oracle: {
     URL: string;
@@ -25,53 +29,124 @@ export interface AptosProviderConfig {
   };
 }
 
+export interface AptosAccountConfig {
+  private_key: string;
+  public_key: string;
+  account: string;
+  rest_url: string;
+  faucet_url: string;
+}
+
+export enum AAVE_PROFILES {
+  A_TOKENS = "a_tokens",
+  UNDERLYING_TOKENS = "underlying_tokens",
+  VARIABLE_TOKENS = "variable_tokens",
+  AAVE_ACL = "aave_acl",
+  AAVE_CONFIG = "aave_config",
+  AAVE_MOCK_ORACLE = "aave_mock_oracle",
+  AAVE_ORACLE = "aave_oracle",
+  AAVE_POOL = "aave_pool",
+  AAVE_LARGE_PACKAGES = "aave_large_packages",
+  AAVE_MATH = "aave_math",
+}
+
 export class AptosProvider {
-  private readonly network: Network;
+  private network: Network;
 
-  private readonly oracleUrl: string;
+  private oracleUrl: string;
 
-  private accountProfilesMap: Map<string, AccountAddress> = new Map();
+  private profileAddressMap: Map<string, AccountAddress> = new Map();
+  private profileAccountMap: Map<string, Ed25519PrivateKey> = new Map();
 
   private aptos: Aptos;
 
-  constructor(config: AptosProviderConfig) {
-    this.network = config.network;
-    this.oracleUrl = config.oracle.URL;
-    this.accountProfilesMap.set(
-      "A_TOKENS_ADDRESS",
+  private constructor() {}
+
+  public setNetwork(network: Network) {
+    this.network = network;
+  }
+
+  public setOracleUrl(oracleUrl: string) {
+    this.oracleUrl = oracleUrl;
+  }
+
+  public addProfileAddress(profileName: string, address: AccountAddress) {
+    this.profileAddressMap.set(profileName, address);
+  }
+
+  public addProfileAccount(profileName: string, account: Ed25519PrivateKey) {
+    this.profileAccountMap.set(profileName, account);
+  }
+
+  public setAptos(aptosConfig: AptosConfig) {
+    this.aptos = new Aptos(aptosConfig);
+  }
+
+  public static fromConfig(config: AptosProviderConfig): AptosProvider {
+    let aptosProvider = new AptosProvider();
+    aptosProvider.setNetwork(config.network);
+    aptosProvider.setOracleUrl(config.oracle.URL);
+    aptosProvider.addProfileAddress(
+      AAVE_PROFILES.A_TOKENS,
       AccountAddress.fromString(config.addresses.A_TOKENS),
     );
-    this.accountProfilesMap.set(
-      "UNDERLYING_TOKENS_ADDRESS",
+    aptosProvider.addProfileAddress(
+      AAVE_PROFILES.UNDERLYING_TOKENS,
       AccountAddress.fromString(config.addresses.UNDERLYING_TOKENS),
     );
-    this.accountProfilesMap.set(
-      "VARIABLE_TOKENS_ADDRESS",
+    aptosProvider.addProfileAddress(
+      AAVE_PROFILES.VARIABLE_TOKENS,
       AccountAddress.fromString(config.addresses.VARIABLE_TOKENS),
     );
-    this.accountProfilesMap.set(
-      "AAVE_ACL_ADDRESS",
+    aptosProvider.addProfileAddress(
+      AAVE_PROFILES.AAVE_ACL,
       AccountAddress.fromString(config.addresses.AAVE_ACL),
     );
-    this.accountProfilesMap.set(
-      "AAVE_CONFIG_ADDRESS",
+    aptosProvider.addProfileAddress(
+      AAVE_PROFILES.AAVE_CONFIG,
       AccountAddress.fromString(config.addresses.AAVE_CONFIG),
     );
-    this.accountProfilesMap.set(
-      "AAVE_MOCK_ORACLE_ADDRESS",
+    aptosProvider.addProfileAddress(
+      AAVE_PROFILES.AAVE_MOCK_ORACLE,
       AccountAddress.fromString(config.addresses.AAVE_MOCK_ORACLE),
     );
-    this.accountProfilesMap.set(
-      "AAVE_POOL_ADDRESS",
+    aptosProvider.addProfileAddress(
+      AAVE_PROFILES.AAVE_POOL,
       AccountAddress.fromString(config.addresses.AAVE_POOL),
     );
-    this.accountProfilesMap.set(
-      "AAVE_ROLE_SUPER_ADMIN_ADDRESS",
-      AccountAddress.fromString(config.addresses.AAVE_ROLE_SUPER_ADMIN),
-    );
+    const aptosConfig = new AptosConfig({
+      network: aptosProvider.getNetwork(),
+    });
+    aptosProvider.setAptos(aptosConfig);
+    return aptosProvider;
+  }
 
-    const aptosConfig = new AptosConfig({ network: this.network });
-    this.aptos = new Aptos(aptosConfig);
+  public static fromAptosConfigFile(aptosConfigFile: PathLike): AptosProvider {
+    // read profile set
+    if (!fs.existsSync(aptosConfigFile as PathLike)) {
+      throw new Error(
+        `Aptos config file under path ${aptosConfigFile} does not exist`,
+      );
+    }
+    const aptosConfigData = fs.readFileSync(aptosConfigFile, "utf8");
+
+    let aptosProvider = new AptosProvider();
+
+    const parsedYaml = YAML.parse(aptosConfigData);
+    for (const profile of Object.keys(parsedYaml.profiles)) {
+      const profileConfig = parsedYaml.profiles[profile] as AptosAccountConfig;
+      const aptosPrivateKey = new Ed25519PrivateKey(profileConfig.private_key);
+      aptosProvider.addProfileAccount(profile, aptosPrivateKey);
+      const profileAccount = Account.fromPrivateKey({
+        privateKey: aptosPrivateKey,
+      });
+      aptosProvider.addProfileAddress(profile, profileAccount.accountAddress);
+    }
+    const aptosConfig = new AptosConfig({
+      network: aptosProvider.getNetwork(),
+    });
+    aptosProvider.setAptos(aptosConfig);
+    return aptosProvider;
   }
 
   /** Returns the aptos instance. */
@@ -81,7 +156,7 @@ export class AptosProvider {
 
   /** Returns the account profile by name if found. */
   public getProfileAccountByName(profileName: string): AccountAddress {
-    return this.accountProfilesMap.get(profileName);
+    return this.profileAddressMap.get(profileName);
   }
 
   /** Gets the selected network. */

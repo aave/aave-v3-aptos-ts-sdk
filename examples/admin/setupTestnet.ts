@@ -1,9 +1,8 @@
-/* eslint-disable no-await-in-loop */
 import dotenv from "dotenv";
 import { Account, AccountAddress, Ed25519PrivateKey } from "@aptos-labs/ts-sdk";
-import { AptosProvider } from "../src/clients/aptosProvider";
-import { testnetConfig } from "../src/configs/testnet";
-import { PoolClient, UnderlyingTokensClient } from "../src/clients";
+import { AptosProvider } from "../../src/clients/aptosProvider";
+import { testnetConfig } from "../../src/configs/testnet";
+import { PoolClient, UnderlyingTokensClient } from "../../src/clients";
 
 dotenv.config();
 
@@ -130,7 +129,7 @@ const poolSigner = Account.fromPrivateKey({
 });
 
 (async () => {
-  const aptosProvider = new AptosProvider(testnetConfig);
+  const aptosProvider = AptosProvider.fromConfig(testnetConfig);
 
   const poolClient = new PoolClient(aptosProvider, poolSigner);
   const underlyingTokenClient = new UnderlyingTokensClient(
