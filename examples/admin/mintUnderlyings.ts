@@ -32,9 +32,9 @@ const fundAmount = BigInt(1000);
     for (const reserveUnderlyingToken of allReserveUnderlyingTokens) {
       for (const addressToFund of ADDRESSES_TO_FUND) {
         const txReceipt = await underlyingTokensClient.mint(
-          addressToFund.toString(),
+          addressToFund,
           fundAmount,
-          reserveUnderlyingToken.tokenAddress.toString(),
+          reserveUnderlyingToken.tokenAddress,
         );
         console.log(`User addresses ${addressToFund.toString()} funded with ${fundAmount.toString()} ${
           reserveUnderlyingToken.symbol

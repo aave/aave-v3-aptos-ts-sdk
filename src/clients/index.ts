@@ -5,6 +5,7 @@ export {
   AptosAccountConfig,
   AAVE_PROFILES,
 } from "./aptosProvider";
+export { AptosContractWrapperBaseClass } from "./baseClass";
 export { ATokensClient } from "./aTokensClient";
 export { CoreClient } from "./coreClient";
 export { PoolClient } from "./poolClient";
