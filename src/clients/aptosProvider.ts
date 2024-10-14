@@ -180,8 +180,13 @@ export class AptosProvider {
     return this.aptos;
   }
 
-  /** Returns the account profile by name if found. */
-  public getProfileAccountByName(profileName: string): AccountAddress {
+  /** Returns the profile account by name if found. */
+  public getProfileAccountByName(profileName: string): Ed25519PrivateKey {
+    return this.profileAccountMap.get(profileName);
+  }
+
+  /** Returns the profile address by name if found. */
+  public getProfileAddressByName(profileName: string): AccountAddress {
     return this.profileAddressMap.get(profileName);
   }
 

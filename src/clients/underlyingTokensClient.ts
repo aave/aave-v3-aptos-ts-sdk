@@ -33,9 +33,9 @@ export class UnderlyingTokensClient extends AptosContractWrapperBaseClass {
   }
 
   public async mint(
-    to: string,
+    to: AccountAddress,
     amount: bigint,
-    metadataAddress: string,
+    metadataAddress: AccountAddress,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
       this.tokensContract.UnderlyingMintFuncAddr,
