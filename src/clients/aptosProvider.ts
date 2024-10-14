@@ -5,6 +5,7 @@ import {
   AccountAddress,
   Ed25519PrivateKey,
   Account,
+  Ed25519Account,
 } from "@aptos-labs/ts-sdk";
 import { PathLike } from "fs";
 import fs from "fs";
@@ -180,9 +181,18 @@ export class AptosProvider {
     return this.aptos;
   }
 
-  /** Returns the profile account by name if found. */
-  public getProfileAccountByName(profileName: string): Ed25519PrivateKey {
+  /** Returns the profile private key by name if found. */
+  public getProfileAccountPrivateKeyByName(
+    profileName: string,
+  ): Ed25519PrivateKey {
     return this.profileAccountMap.get(profileName);
+  }
+
+  /** Returns the profile private key by name if found. */
+  public getProfileAccountByName(profileName: string): Ed25519Account {
+    return Account.fromPrivateKey({
+      privateKey: this.getProfileAccountPrivateKeyByName(profileName),
+    });
   }
 
   /** Returns the profile address by name if found. */
