@@ -756,7 +756,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     return resp;
   }
 
-  public async getReserveEmodeCategory(
+  public async getReserveConfigurationData(
     asset: AccountAddress,
   ): Promise<ReserveEmodeCategory> {
     const [
@@ -770,7 +770,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
       isActive,
       isFrozen,
     ] = await this.callViewMethod(
-      this.poolContract.GetReserveEModeCategoryFuncAddr,
+      this.poolContract.GetReserveConfigurationDataFuncAddr,
       [asset],
     );
     return {
@@ -784,6 +784,14 @@ export class PoolClient extends AptosContractWrapperBaseClass {
       isActive: isActive as boolean,
       isFrozen: isFrozen as boolean,
     };
+  }
+
+  public async getReserveEmodeCategory(asset: AccountAddress): Promise<number> {
+    const [emodeCategory] = await this.callViewMethod(
+      this.poolContract.GetReserveEModeCategoryFuncAddr,
+      [asset],
+    );
+    return emodeCategory as number;
   }
 
   public async getReserveCaps(asset: AccountAddress): Promise<{
