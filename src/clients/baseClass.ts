@@ -109,6 +109,12 @@ export class AptosContractWrapperBaseClass {
     this.signer = senderAccount;
   }
 
+  /** Sets the signer. */
+  public withSigner(senderAccount: Ed25519Account) {
+    this.signer = senderAccount;
+    return this;
+  }
+
   /** Returns the signer. */
   public getSigner(): Ed25519Account {
     return this.signer;
