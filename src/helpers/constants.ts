@@ -2,6 +2,8 @@
 // MATH
 // ----------------
 
+import { AccountAddress } from "@aptos-labs/ts-sdk";
+
 export const PERCENTAGE_FACTOR = "10000";
 export const HALF_PERCENTAGE = (BigInt(PERCENTAGE_FACTOR) / 2n).toString();
 export const WAD = (BigInt(10) ** 18n).toString();
@@ -17,7 +19,7 @@ export const MAX_BORROW_CAP = "68719476735";
 export const MAX_SUPPLY_CAP = "68719476735";
 export const MAX_UNBACKED_MINT_CAP = "68719476735";
 export const ONE_YEAR = "31536000";
-export const ZERO_ADDRESS = "0x0";
+export const ZERO_ADDRESS = AccountAddress.ZERO;
 export const ONE_ADDRESS = "0x1";
 // ----------------
 // PROTOCOL GLOBAL PARAMS

@@ -9,17 +9,17 @@ dotenv.config();
 const eModes = [
   {
     categoryId: 1,
-    ltv: 9000,
-    liquidationThreshold: 9300,
-    liquidationBonus: 10200,
+    ltv: BigInt(9000),
+    liquidationThreshold: BigInt(9300),
+    liquidationBonus: BigInt(10200),
     oracle: AccountAddress.ZERO,
     label: "ETH correlated",
   },
   {
     categoryId: 2,
-    ltv: 9500,
-    liquidationThreshold: 9700,
-    liquidationBonus: 10100,
+    ltv: BigInt(9500),
+    liquidationThreshold: BigInt(9700),
+    liquidationBonus: BigInt(10100),
     oracle: AccountAddress.ZERO,
     label: "Stablecoins",
   },

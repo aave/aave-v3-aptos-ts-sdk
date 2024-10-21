@@ -348,9 +348,9 @@ export class PoolClient extends AptosContractWrapperBaseClass {
 
   public async setEmodeCategory(
     categoryId: number,
-    ltv: number,
-    liquidationThreshold: number,
-    liquidationBonus: number,
+    ltv: bigint,
+    liquidationThreshold: bigint,
+    liquidationBonus: bigint,
     oracle: AccountAddress,
     label: string,
   ): Promise<CommittedTransactionResponse> {
@@ -572,8 +572,8 @@ export class PoolClient extends AptosContractWrapperBaseClass {
 
   public async configureEmodeCategory(
     ltv: number,
-    liquidationThreshold: number,
-    liquidationBonus: number,
+    liquidationThreshold: bigint,
+    liquidationBonus: bigint,
     priceSource: AccountAddress,
     label: string,
   ): Promise<CommittedTransactionResponse> {
