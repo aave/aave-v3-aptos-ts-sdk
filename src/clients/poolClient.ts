@@ -515,6 +515,15 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     );
   }
 
+  public async updateFloashloanPremiumTotal(
+    newFlashloanPremiumTotal: bigint,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.poolContract.PoolConfiguratorUpdateFlashloanPremiumTotalFuncAddr,
+      [newFlashloanPremiumTotal.toString()],
+    );
+  }
+
   public async configureReserves(
     asset: Array<AccountAddress>,
     base_ltv: Array<bigint>,
