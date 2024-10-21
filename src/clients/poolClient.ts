@@ -74,7 +74,7 @@ export type ReserveData2 = {
   reserveLastUpdateTimestamp: bigint;
 };
 
-export type ReserveEmodeCategory = {
+export type ReserveConfigurationData = {
   decimals: bigint;
   ltv: bigint;
   liquidationThreshold: bigint;
@@ -758,7 +758,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
 
   public async getReserveConfigurationData(
     asset: AccountAddress,
-  ): Promise<ReserveEmodeCategory> {
+  ): Promise<ReserveConfigurationData> {
     const [
       decimals,
       ltv,
@@ -915,6 +915,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
 
   public async getUserReserveData(
     asset: AccountAddress,
+    user: AccountAddress,
   ): Promise<UserReserveData> {
     const [
       currentATokenBalance,
@@ -924,7 +925,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
       usageAsCollateralEnabled,
     ] = await this.callViewMethod(
       this.poolContract.GetUserReserveDataFuncAddr,
-      [asset],
+      [asset, user],
     );
     return {
       currentATokenBalance: BigInt(currentATokenBalance.toString()),
