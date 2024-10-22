@@ -84,7 +84,7 @@ export class UiPoolDataProviderClient extends AptosContractWrapperBaseClass {
   uiPoolDataProviderContract: UiPoolDataProviderContract;
 
   constructor(provider: AptosProvider, signer?: Ed25519Account) {
-    super(provider, signer);
+    super(provider, signer || provider.getPoolProfileAccount());
     this.uiPoolDataProviderContract = new UiPoolDataProviderContract(provider);
   }
 

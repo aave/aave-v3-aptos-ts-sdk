@@ -33,33 +33,33 @@ export type ReserveData = {
   /// stores the reserve configuration
   configuration: { data: number };
   /// the liquidity index. Expressed in ray
-  liquidity_index: number;
+  liquidityIndex: number;
   /// the current supply rate. Expressed in ray
-  current_liquidity_rate: number;
+  currentLiquidityRate: number;
   /// variable borrow index. Expressed in ray
-  variable_borrow_index: number;
+  variableBorrowIndex: number;
   /// the current variable borrow rate. Expressed in ray
-  current_variable_borrow_rate: number;
+  currentVariableBorrowRate: number;
   /// the current stable borrow rate. Expressed in ray
-  current_stable_borrow_rate: number;
+  currentStableBorrowRate: number;
   /// timestamp of last update (u40 -> u64)
-  last_update_timestamp: number;
+  lastUpdateTimestamp: number;
   /// the id of the reserve. Represents the position in the list of the active reserves
   id: number;
   /// aToken address
-  a_token_address: string;
+  aTokenAddress: string;
   /// stableDebtToken address
-  stable_debt_token_address: string;
+  stableDebtTokenAddress: string;
   /// variableDebtToken address
-  variable_debt_token_address: string;
+  variableDebtTokenAddress: string;
   /// address of the interest rate strategy
-  interest_rate_strategy_address: string;
+  interestRateStrategyAddress: string;
   /// the current treasury balance, scaled
-  accrued_to_treasury: number;
+  accruedToTreasury: number;
   /// the outstanding unbacked aTokens minted through the bridging feature
   unbacked: number;
   /// the outstanding debt borrowed against this asset in isolation mode
-  isolation_mode_total_debt: number;
+  isolationModeTotalDebt: number;
 };
 
 export type ReserveData2 = {
@@ -90,7 +90,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   poolContract: PoolContract;
 
   constructor(provider: AptosProvider, signer?: Ed25519Account) {
-    super(provider, signer);
+    super(provider, signer || provider.getPoolProfileAccount());
     this.poolContract = new PoolContract(provider);
   }
 

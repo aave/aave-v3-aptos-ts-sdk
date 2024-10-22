@@ -14,7 +14,7 @@ export class VariableTokensClient extends AptosContractWrapperBaseClass {
   tokensContract: TokensContract;
 
   constructor(provider: AptosProvider, signer?: Ed25519Account) {
-    super(provider, signer);
+    super(provider, signer || provider.getPoolProfileAccount());
     this.tokensContract = new TokensContract(provider);
   }
 

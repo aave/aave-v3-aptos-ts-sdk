@@ -11,7 +11,7 @@ export class AclClient extends AptosContractWrapperBaseClass {
   AclManagerContract: AclManagerContract;
 
   constructor(provider: AptosProvider, signer?: Ed25519Account) {
-    super(provider, signer);
+    super(provider, signer || provider.getAclProfileAccount());
     this.AclManagerContract = new AclManagerContract(provider);
   }
 

@@ -12,7 +12,7 @@ export class PoolAddressesProviderClient extends AptosContractWrapperBaseClass {
   poolContract: PoolContract;
 
   constructor(provider: AptosProvider, signer?: Ed25519Account) {
-    super(provider, signer);
+    super(provider, signer || provider.getPoolProfileAccount());
     this.poolContract = new PoolContract(provider);
   }
 

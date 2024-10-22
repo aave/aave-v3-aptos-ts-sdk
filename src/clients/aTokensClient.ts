@@ -14,7 +14,7 @@ export class ATokensClient extends AptosContractWrapperBaseClass {
   tokensContract: TokensContract;
 
   constructor(provider: AptosProvider, signer?: Ed25519Account) {
-    super(provider, signer);
+    super(provider, signer || provider.getATokensProfileAccount());
     this.tokensContract = new TokensContract(provider);
   }
 

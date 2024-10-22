@@ -13,7 +13,7 @@ export class CoreClient extends AptosContractWrapperBaseClass {
   supplyBorrowContract: SupplyBorrowContract;
 
   constructor(provider: AptosProvider, signer?: Ed25519Account) {
-    super(provider, signer);
+    super(provider, signer || provider.getPoolProfileAccount());
     this.supplyBorrowContract = new SupplyBorrowContract(provider);
   }
 

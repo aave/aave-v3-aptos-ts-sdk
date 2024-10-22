@@ -96,12 +96,14 @@ async function view(
 
 export class AptosContractWrapperBaseClass {
   protected signer: Ed25519Account;
+  protected moduleSigner: Ed25519Account;
 
   protected readonly aptosProvider: AptosProvider;
 
-  constructor(aptosProvider: AptosProvider, signer?: Ed25519Account) {
+  constructor(aptosProvider: AptosProvider, signer: Ed25519Account) {
     this.aptosProvider = aptosProvider;
     this.signer = signer;
+    this.moduleSigner = signer;
   }
 
   /** Sets the signer. */
@@ -112,6 +114,12 @@ export class AptosContractWrapperBaseClass {
   /** Sets the signer. */
   public withSigner(senderAccount: Ed25519Account) {
     this.signer = senderAccount;
+    return this;
+  }
+
+  /** Sets the module signer. */
+  public withModuleSigner() {
+    this.signer = this.moduleSigner;
     return this;
   }
 

@@ -12,7 +12,7 @@ export class OracleClient extends AptosContractWrapperBaseClass {
   oracleContract: OracleContract;
 
   constructor(provider: AptosProvider, signer?: Ed25519Account) {
-    super(provider, signer);
+    super(provider, signer || provider.getOracleProfileAccount());
     this.oracleContract = new OracleContract(provider);
   }
 
