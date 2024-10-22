@@ -1,6 +1,6 @@
 {
     "name": "@aave/aave-v3-aptos-ts-sdk",
-    "version": "0.0.13",
+    "version": "0.0.14",
     "description": "Aave's typescript sdk for Aptos",
     "main": "dist/cmd/index.js",
     "module": "dist/esm/index.js",
@@ -64,7 +64,7 @@
         "bundle.min.js"
     ],
     "dependencies": {
-        "@aptos-labs/ts-sdk": "^1.29.1",
+        "@aptos-labs/ts-sdk": "^1.30.0",
         "bignumber.js": "^9.1.2",
         "buffer": "^6.0.3",
         "crypto-js": "^4.2.0",
@@ -80,8 +80,8 @@
         "@types/bn.js": "^5.1.6",
         "@types/jest": "^29.5.13",
         "@types/node": "^22.7.7",
-        "@typescript-eslint/eslint-plugin": "^8.10.0",
-        "@typescript-eslint/parser": "^8.10.0",
+        "@typescript-eslint/eslint-plugin": "^8.11.0",
+        "@typescript-eslint/parser": "^8.11.0",
         "chalk": "^5.3.0",
         "eslint": "^9.13.0",
         "eslint-config-airbnb-base": "^15.0.0",
@@ -108,7 +108,7 @@
         "ts-node": "^10.9.2",
         "typedoc": "^0.26.10",
         "typescript": "^5.6.3",
-        "typescript-eslint": "^8.10.0",
+        "typescript-eslint": "^8.11.0",
         "webpack": "^5.95.0",
         "webpack-cli": "^5.1.4"
     },
