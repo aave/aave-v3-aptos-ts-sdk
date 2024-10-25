@@ -35,31 +35,27 @@ export type ReserveData = {
   /// the liquidity index. Expressed in ray
   liquidityIndex: number;
   /// the current supply rate. Expressed in ray
-  currentLiquidityRate: number;
+  currentLiquidityRate: bigint;
   /// variable borrow index. Expressed in ray
-  variableBorrowIndex: number;
+  variableBorrowIndex: bigint;
   /// the current variable borrow rate. Expressed in ray
-  currentVariableBorrowRate: number;
-  /// the current stable borrow rate. Expressed in ray
-  currentStableBorrowRate: number;
+  currentVariableBorrowRate: bigint;
   /// timestamp of last update (u40 -> u64)
   lastUpdateTimestamp: number;
   /// the id of the reserve. Represents the position in the list of the active reserves
   id: number;
   /// aToken address
-  aTokenAddress: string;
+  aTokenAddress: AccountAddress;
   /// stableDebtToken address
-  stableDebtTokenAddress: string;
+  stableDebtTokenAddress: AccountAddress;
   /// variableDebtToken address
-  variableDebtTokenAddress: string;
-  /// address of the interest rate strategy
-  interestRateStrategyAddress: string;
+  variableDebtTokenAddress: AccountAddress;
   /// the current treasury balance, scaled
-  accruedToTreasury: number;
+  accruedToTreasury: bigint;
   /// the outstanding unbacked aTokens minted through the bridging feature
-  unbacked: number;
+  unbacked: bigint;
   /// the outstanding debt borrowed against this asset in isolation mode
-  isolationModeTotalDebt: number;
+  isolationModeTotalDebt: bigint;
 };
 
 export type ReserveData2 = {
@@ -160,24 +156,65 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     return resp as ReserveConfigurationMap;
   }
 
-  public async getReserveData(
-    asset: AccountAddress,
-  ): Promise<{ reserveData: ReserveData; count: number }> {
-    const [resp] = await this.callViewMethod(
+  public async getReserveData(asset: AccountAddress): Promise<ReserveData> {
+    const resp = await this.callViewMethod(
       this.poolContract.PoolGetReserveDataFuncAddr,
       [asset],
     );
-    return { reserveData: resp[0] as ReserveData, count: resp[1] as number };
+
+    const respRaw = resp.at(0) as any;
+    const reserveData = {
+      configuration: respRaw.configuration as { data: number },
+      liquidityIndex: respRaw.liquidity_index as number,
+      currentLiquidityRate: BigInt(respRaw.current_liquidity_rate.toString()),
+      variableBorrowIndex: BigInt(respRaw.variable_borrow_index.toString()),
+      currentVariableBorrowRate: BigInt(
+        respRaw.current_variable_borrow_rate.toString(),
+      ),
+      lastUpdateTimestamp: respRaw.last_update_timestamp as number,
+      id: respRaw.id as number,
+      variableDebtTokenAddress: AccountAddress.fromString(
+        respRaw.variable_debt_token_address as string,
+      ),
+      accruedToTreasury: BigInt(respRaw.accrued_to_treasury.toString()),
+      unbacked: BigInt(respRaw.unbacked.toString()),
+      isolationModeTotalDebt: BigInt(
+        respRaw.isolation_mode_total_debt.toString(),
+      ),
+    } as ReserveData;
+
+    return reserveData;
   }
 
   public async getReserveDataAndReservesCount(
     asset: AccountAddress,
-  ): Promise<ReserveData> {
-    const [resp] = await this.callViewMethod(
+  ): Promise<{ reserveData: ReserveData; count: number }> {
+    const resp = await this.callViewMethod(
       this.poolContract.GetReserveDataAndReservesCountFuncAddr,
       [asset],
     );
-    return resp as ReserveData;
+    const respRaw = resp.at(0) as any;
+    const reserveData = {
+      configuration: respRaw.configuration as { data: number },
+      liquidityIndex: respRaw.liquidity_index as number,
+      currentLiquidityRate: BigInt(respRaw.current_liquidity_rate.toString()),
+      variableBorrowIndex: BigInt(respRaw.variable_borrow_index.toString()),
+      currentVariableBorrowRate: BigInt(
+        respRaw.current_variable_borrow_rate.toString(),
+      ),
+      lastUpdateTimestamp: respRaw.last_update_timestamp as number,
+      id: respRaw.id as number,
+      variableDebtTokenAddress: AccountAddress.fromString(
+        respRaw.variable_debt_token_address as string,
+      ),
+      accruedToTreasury: BigInt(respRaw.accrued_to_treasury.toString()),
+      unbacked: BigInt(respRaw.unbacked.toString()),
+      isolationModeTotalDebt: BigInt(
+        respRaw.isolation_mode_total_debt.toString(),
+      ),
+    } as ReserveData;
+
+    return { reserveData, count: resp[1] as number };
   }
 
   public async getReservesCount(): Promise<bigint> {
@@ -863,11 +900,11 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     return debtCeiling;
   }
 
-  public async getDebtCeilingDecimals(asset: AccountAddress): Promise<bigint> {
+  public async getDebtCeilingDecimals(): Promise<bigint> {
     const [debtCeiling] = (
       await this.callViewMethod(
         this.poolContract.GetDebtCeilingDecimalsFuncAddr,
-        [asset],
+        [],
       )
     ).map(mapToBigInt);
     return debtCeiling;

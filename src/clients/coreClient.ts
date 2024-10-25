@@ -102,8 +102,8 @@ export class CoreClient extends AptosContractWrapperBaseClass {
     from: AccountAddress,
     to: AccountAddress,
     amount: bigint,
-    balance_from_before: bigint,
-    balance_to_before: bigint,
+    balanceFromBefore: bigint,
+    balanceToBefore: bigint,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
       this.supplyBorrowContract.FinalizeTransferFuncAddr,
@@ -112,8 +112,8 @@ export class CoreClient extends AptosContractWrapperBaseClass {
         from,
         to,
         amount.toString(),
-        balance_from_before.toString(),
-        balance_to_before.toString(),
+        balanceFromBefore.toString(),
+        balanceToBefore.toString(),
       ],
     );
   }
