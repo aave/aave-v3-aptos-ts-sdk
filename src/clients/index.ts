@@ -8,7 +8,16 @@ export {
 export { AptosContractWrapperBaseClass } from "./baseClass";
 export { ATokensClient } from "./aTokensClient";
 export { CoreClient } from "./coreClient";
-export { PoolClient } from "./poolClient";
+export {
+  PoolClient,
+  ReserveConfigurationData,
+  ReserveConfigurationMap,
+  ReserveData,
+  ReserveData2,
+  TokenData,
+  UserConfigurationMap,
+  UserReserveData,
+} from "./poolClient";
 export { OracleClient } from "./oracleClient";
 export { UnderlyingTokensClient } from "./underlyingTokensClient";
 export { BridgeClient } from "./bridgeClient";
@@ -29,6 +38,6 @@ export {
   ReservesData,
   BaseCurrencyData,
   AggregatedReserveData,
-  UserReserveData,
+  UserReserveData as UiDataProviderUserReserveData,
   UserReservesData,
 } from "./uiPoolDataProvider";
