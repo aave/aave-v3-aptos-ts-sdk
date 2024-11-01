@@ -191,7 +191,6 @@ export class AptosContractWrapperBaseClass {
 
   /// gets all events for a tx hash
   public async getTxEvents(
-    aptos: Aptos,
     txHash: HexInput,
   ): Promise<Array<{ data: unknown }>> {
     const txResponse = await this.aptosProvider
@@ -207,5 +206,33 @@ export class AptosContractWrapperBaseClass {
     return events.map((event) => ({
       data: JSON.parse(event.data),
     }));
+  }
+
+  /// gets all events from a given account
+  public async getEventsFromAccount(
+    account: AccountAddress,
+    limit: number,
+  ): Promise<
+    Array<{
+      account_address: string;
+      creation_number: any;
+      data: any;
+      event_index: any;
+      sequence_number: any;
+      transaction_block_height: any;
+      transaction_version: any;
+      type: string;
+      indexed_type: string;
+    }>
+  > {
+    const whereCondition = {
+      account_address: { _eq: account.toString() },
+    };
+
+    const filteredEvents = await this.aptosProvider.getAptos().getEvents({
+      options: { where: whereCondition, limit },
+    });
+
+    return filteredEvents;
   }
 }

@@ -7,8 +7,6 @@ import {
   Account,
   Ed25519Account,
 } from "@aptos-labs/ts-sdk";
-import { PathLike } from "fs";
-import fs from "fs";
 import YAML from "yaml";
 
 export interface AptosProviderConfig {
@@ -123,18 +121,9 @@ export class AptosProvider {
     return aptosProvider;
   }
 
-  public static fromAptosConfigFile(aptosConfigFile: PathLike): AptosProvider {
-    // read profile set
-    if (!fs.existsSync(aptosConfigFile as PathLike)) {
-      throw new Error(
-        `Aptos config file under path ${aptosConfigFile} does not exist`,
-      );
-    }
-    const aptosConfigData = fs.readFileSync(aptosConfigFile, "utf8");
-
+  public static fromAptosYaml(aptosYaml: string): AptosProvider {
     let aptosProvider = new AptosProvider();
-
-    const parsedYaml = YAML.parse(aptosConfigData);
+    const parsedYaml = YAML.parse(aptosYaml);
     for (const profile of Object.keys(parsedYaml.profiles)) {
       const profileConfig = parsedYaml.profiles[profile] as AptosAccountConfig;
 
