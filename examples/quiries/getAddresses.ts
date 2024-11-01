@@ -1,10 +1,10 @@
 import { AptosProvider } from "../../src/clients";
 import { PoolAddressesProviderClient } from "../../src/clients/poolAddressesProviderClient";
-import { testnetConfig } from "../../src/configs/testnet";
+import { DEFAULT_TESTNET_CONFIG } from "../../src/configs/testnet";
 
 (async () => {
   // global aptos provider
-  const aptosProvider = AptosProvider.fromConfig(testnetConfig);
+  const aptosProvider = AptosProvider.fromConfig(DEFAULT_TESTNET_CONFIG);
 
   // pool addresses provider
   const poolAddressesProviderClient = new PoolAddressesProviderClient(

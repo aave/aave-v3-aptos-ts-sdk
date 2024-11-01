@@ -1,7 +1,8 @@
 import { Network } from "@aptos-labs/ts-sdk";
 import { AptosProviderConfig } from "../clients/aptosProvider";
+import { ZERO_ADDRESS } from "../helpers";
 
-export const testnetConfig: AptosProviderConfig = {
+export const DEFAULT_TESTNET_CONFIG: AptosProviderConfig = {
   network: Network.TESTNET,
   addresses: {
     A_TOKENS:
@@ -28,4 +29,46 @@ export const testnetConfig: AptosProviderConfig = {
     WORMHOLE:
       "0x5bc11445584a763c1fa7ed39081f1b920954da14e04b32440cba863d03e19625",
   },
+};
+
+export const EMPTY_TESTNET_CONFIG = (): AptosProviderConfig => {
+  return {
+    network: Network.TESTNET,
+    addresses: {
+      A_TOKENS: ZERO_ADDRESS.toString(),
+      UNDERLYING_TOKENS: ZERO_ADDRESS.toString(),
+      VARIABLE_TOKENS: ZERO_ADDRESS.toString(),
+      AAVE_ACL: ZERO_ADDRESS.toString(),
+      AAVE_CONFIG: ZERO_ADDRESS.toString(),
+      AAVE_MOCK_ORACLE: ZERO_ADDRESS.toString(),
+      AAVE_POOL: ZERO_ADDRESS.toString(),
+    },
+    oracle: {
+      URL: "https://hermes-beta.pyth.network",
+      CONTRACT_ACCOUNT: ZERO_ADDRESS.toString(),
+      DEPLOYER_ACCOUNT: ZERO_ADDRESS.toString(),
+      WORMHOLE: ZERO_ADDRESS.toString(),
+    },
+  } as AptosProviderConfig;
+};
+
+export const EMPTY_LOCAL_CONFIG = (): AptosProviderConfig => {
+  return {
+    network: Network.LOCAL,
+    addresses: {
+      A_TOKENS: ZERO_ADDRESS.toString(),
+      UNDERLYING_TOKENS: ZERO_ADDRESS.toString(),
+      VARIABLE_TOKENS: ZERO_ADDRESS.toString(),
+      AAVE_ACL: ZERO_ADDRESS.toString(),
+      AAVE_CONFIG: ZERO_ADDRESS.toString(),
+      AAVE_MOCK_ORACLE: ZERO_ADDRESS.toString(),
+      AAVE_POOL: ZERO_ADDRESS.toString(),
+    },
+    oracle: {
+      URL: "https://hermes-beta.pyth.network",
+      CONTRACT_ACCOUNT: ZERO_ADDRESS.toString(),
+      DEPLOYER_ACCOUNT: ZERO_ADDRESS.toString(),
+      WORMHOLE: ZERO_ADDRESS.toString(),
+    },
+  } as AptosProviderConfig;
 };

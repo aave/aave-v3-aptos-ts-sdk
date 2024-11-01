@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import { Account, AccountAddress, Ed25519PrivateKey } from "@aptos-labs/ts-sdk";
 import { AptosProvider } from "../../src/clients/aptosProvider";
-import { testnetConfig } from "../../src/configs/testnet";
+import { DEFAULT_TESTNET_CONFIG } from "../../src/configs/testnet";
 import { PoolClient, UnderlyingTokensClient } from "../../src/clients";
 
 dotenv.config();
@@ -129,7 +129,7 @@ const poolSigner = Account.fromPrivateKey({
 });
 
 (async () => {
-  const aptosProvider = AptosProvider.fromConfig(testnetConfig);
+  const aptosProvider = AptosProvider.fromConfig(DEFAULT_TESTNET_CONFIG);
 
   const poolClient = new PoolClient(aptosProvider, poolSigner);
   const underlyingTokenClient = new UnderlyingTokensClient(
