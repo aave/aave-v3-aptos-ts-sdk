@@ -32,7 +32,7 @@ export class SupplyBorrowContract {
   GetUserAccountDataFuncAddr: MoveFunctionId;
 
   constructor(provider: AptosProvider) {
-    const SupplyBorrowManager = provider.getProfileAccountByName(
+    const SupplyBorrowManager = provider.getProfileAddressByName(
       AAVE_PROFILES.AAVE_POOL,
     );
     const SupplyBorrowManagerAccountAddress = SupplyBorrowManager.toString();

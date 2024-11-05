@@ -68,6 +68,7 @@ export type UserReserveData = {
   scaledATokenBalance: bigint;
   usageAsCollateralEnabledOnUser: boolean;
   scaledVariableDebt: bigint;
+  decimals: number;
 };
 
 export type ReservesData = {
@@ -211,6 +212,7 @@ export class UiPoolDataProviderClient extends AptosContractWrapperBaseClass {
           usageAsCollateralEnabledOnUser:
             item.usage_as_collateral_enabled_on_user as boolean,
           scaledVariableDebt: BigInt(item.scaled_variable_debt),
+          decimals: Number(item.decimals.toString()),
         }) as UserReserveData,
     );
 

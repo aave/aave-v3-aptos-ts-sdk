@@ -247,7 +247,7 @@ export class PoolContract {
   SetPoolDataProviderFuncAddr: MoveFunctionId;
 
   constructor(provider: AptosProvider) {
-    const PoolManager = provider.getProfileAccountByName(
+    const PoolManager = provider.getProfileAddressByName(
       AAVE_PROFILES.AAVE_POOL,
     );
     const PoolManagerAccountAddress = PoolManager.toString();

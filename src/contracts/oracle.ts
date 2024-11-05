@@ -16,7 +16,7 @@ export class OracleContract {
   GetGracePeriodFuncAddr: MoveFunctionId;
 
   constructor(provider: AptosProvider) {
-    const OracleManager = provider.getProfileAccountByName(
+    const OracleManager = provider.getProfileAddressByName(
       AAVE_PROFILES.AAVE_MOCK_ORACLE,
     );
     const OracleManagerAccountAddress = OracleManager.toString();
