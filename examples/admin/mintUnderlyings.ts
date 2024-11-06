@@ -2,7 +2,7 @@ import { Account, AccountAddress, Ed25519PrivateKey } from "@aptos-labs/ts-sdk";
 import { UnderlyingTokensClient } from "../../src/clients/underlyingTokensClient";
 import { PoolClient } from "../../src/clients/poolClient";
 import { AptosProvider } from "../../src/clients";
-import { testnetConfig } from "../../src/configs/testnet";
+import { DEFAULT_TESTNET_CONFIG } from "../../src/configs/testnet";
 
 const UNDERLYING_MANAGER_PRIVATE_KEY = "0x0";
 const ADDRESSES_TO_FUND = ["0x0"].map((addr) =>
@@ -12,7 +12,7 @@ const fundAmount = BigInt(1000);
 
 (async () => {
   // global aptos provider
-  const aptosProvider = AptosProvider.fromConfig(testnetConfig);
+  const aptosProvider = AptosProvider.fromConfig(DEFAULT_TESTNET_CONFIG);
   // all underlying-tokens-related operations client
   const underlyingTokensClient = new UnderlyingTokensClient(aptosProvider);
   // all pool-related operations client

@@ -48,6 +48,13 @@ export enum AAVE_PROFILES {
   AAVE_POOL = "aave_pool",
   AAVE_LARGE_PACKAGES = "aave_large_packages",
   AAVE_MATH = "aave_math",
+  DEFAULT_FUNDER = "default",
+  TEST_ACCOUNT_0 = "test_account_0",
+  TEST_ACCOUNT_1 = "test_account_1",
+  TEST_ACCOUNT_2 = "test_account_2",
+  TEST_ACCOUNT_3 = "test_account_3",
+  TEST_ACCOUNT_4 = "test_account_4",
+  TEST_ACCOUNT_5 = "test_account_5",
 }
 
 export class AptosProvider {
@@ -114,6 +121,206 @@ export class AptosProvider {
       AAVE_PROFILES.AAVE_POOL,
       AccountAddress.fromString(config.addresses.AAVE_POOL),
     );
+    const aptosConfig = new AptosConfig({
+      network: aptosProvider.getNetwork(),
+    });
+    aptosProvider.setAptos(aptosConfig);
+    return aptosProvider;
+  }
+
+  public static fromEnvs(): AptosProvider {
+    const aptosProvider = new AptosProvider();
+    // read vars from .env file
+    if (!process.env.APTOS_NETWORK) {
+      throw new Error("Missing APTOS_NETWORK in .env file");
+    }
+    switch (process.env.APTOS_NETWORK.toLowerCase()) {
+      case "testnet": {
+        aptosProvider.setNetwork(Network.TESTNET);
+        break;
+      }
+      case "devnet": {
+        aptosProvider.setNetwork(Network.DEVNET);
+        break;
+      }
+      case "mainnet": {
+        aptosProvider.setNetwork(Network.MAINNET);
+        break;
+      }
+      case "local": {
+        aptosProvider.setNetwork(Network.LOCAL);
+        break;
+      }
+      default:
+        throw new Error(
+          `Unknown network ${process.env.APTOS_NETWORK ? process.env.APTOS_NETWORK : "undefined"}`,
+        );
+    }
+
+    aptosProvider.setOracleUrl("");
+
+    // read envs
+    if (!process.env.A_TOKENS_PRIVATE_KEY) {
+      throw new Error("Env variable A_TOKENS_PRIVATE_KEY does not exist");
+    }
+    addProfilePkey(
+      aptosProvider,
+      AAVE_PROFILES.A_TOKENS,
+      process.env.A_TOKENS_PRIVATE_KEY,
+    );
+
+    if (!process.env.UNDERLYING_TOKENS_PRIVATE_KEY) {
+      throw new Error(
+        "Env variable UNDERLYING_TOKENS_PRIVATE_KEY does not exist",
+      );
+    }
+    addProfilePkey(
+      aptosProvider,
+      AAVE_PROFILES.UNDERLYING_TOKENS,
+      process.env.UNDERLYING_TOKENS_PRIVATE_KEY,
+    );
+
+    if (!process.env.VARIABLE_TOKENS_PRIVATE_KEY) {
+      throw new Error(
+        "Env variable VARIABLE_TOKENS_PRIVATE_KEY does not exist",
+      );
+    }
+    addProfilePkey(
+      aptosProvider,
+      AAVE_PROFILES.VARIABLE_TOKENS,
+      process.env.VARIABLE_TOKENS_PRIVATE_KEY,
+    );
+
+    if (!process.env.AAVE_ACL_PRIVATE_KEY) {
+      throw new Error("Env variable AAVE_ACL_PRIVATE_KEY does not exist");
+    }
+    addProfilePkey(
+      aptosProvider,
+      AAVE_PROFILES.AAVE_ACL,
+      process.env.AAVE_ACL_PRIVATE_KEY,
+    );
+
+    if (!process.env.AAVE_CONFIG_PRIVATE_KEY) {
+      throw new Error("Env variable AAVE_CONFIG_PRIVATE_KEY does not exist");
+    }
+    addProfilePkey(
+      aptosProvider,
+      AAVE_PROFILES.AAVE_CONFIG,
+      process.env.AAVE_CONFIG_PRIVATE_KEY,
+    );
+
+    if (!process.env.AAVE_MOCK_ORACLE_PRIVATE_KEY) {
+      throw new Error(
+        "Env variable AAVE_MOCK_ORACLE_PRIVATE_KEY does not exist",
+      );
+    }
+    addProfilePkey(
+      aptosProvider,
+      AAVE_PROFILES.AAVE_MOCK_ORACLE,
+      process.env.AAVE_MOCK_ORACLE_PRIVATE_KEY,
+    );
+
+    if (!process.env.AAVE_ORACLE_PRIVATE_KEY) {
+      throw new Error("Env variable AAVE_ORACLE_PRIVATE_KEY does not exist");
+    }
+    addProfilePkey(
+      aptosProvider,
+      AAVE_PROFILES.AAVE_ORACLE,
+      process.env.AAVE_ORACLE_PRIVATE_KEY,
+    );
+
+    if (!process.env.AAVE_POOL_PRIVATE_KEY) {
+      throw new Error("Env variable AAVE_POOL_PRIVATE_KEY does not exist");
+    }
+    addProfilePkey(
+      aptosProvider,
+      AAVE_PROFILES.AAVE_POOL,
+      process.env.AAVE_POOL_PRIVATE_KEY,
+    );
+
+    if (!process.env.AAVE_LARGE_PACKAGES_PRIVATE_KEY) {
+      throw new Error(
+        "Env variable AAVE_LARGE_PACKAGES_PRIVATE_KEY does not exist",
+      );
+    }
+    addProfilePkey(
+      aptosProvider,
+      AAVE_PROFILES.AAVE_LARGE_PACKAGES,
+      process.env.AAVE_LARGE_PACKAGES_PRIVATE_KEY,
+    );
+
+    if (!process.env.AAVE_MATH_PRIVATE_KEY) {
+      throw new Error("Env variable AAVE_MATH_PRIVATE_KEY does not exist");
+    }
+    addProfilePkey(
+      aptosProvider,
+      AAVE_PROFILES.AAVE_MATH,
+      process.env.AAVE_MATH_PRIVATE_KEY,
+    );
+
+    if (!process.env.DEFAULT_FUNDER_PRIVATE_KEY) {
+      throw new Error("Env variable DEFAULT_FUNDER_PRIVATE_KEY does not exist");
+    }
+    addProfilePkey(
+      aptosProvider,
+      AAVE_PROFILES.DEFAULT_FUNDER,
+      process.env.DEFAULT_FUNDER_PRIVATE_KEY,
+    );
+
+    if (!process.env.TEST_ACCOUNT_0_PRIVATE_KEY) {
+      throw new Error("Env variable TEST_ACCOUNT_0_PRIVATE_KEY does not exist");
+    }
+    addProfilePkey(
+      aptosProvider,
+      AAVE_PROFILES.TEST_ACCOUNT_0,
+      process.env.TEST_ACCOUNT_0_PRIVATE_KEY,
+    );
+
+    if (!process.env.TEST_ACCOUNT_1_PRIVATE_KEY) {
+      throw new Error("Env variable TEST_ACCOUNT_1_PRIVATE_KEY does not exist");
+    }
+    addProfilePkey(
+      aptosProvider,
+      AAVE_PROFILES.TEST_ACCOUNT_1,
+      process.env.TEST_ACCOUNT_1_PRIVATE_KEY,
+    );
+
+    if (!process.env.TEST_ACCOUNT_2_PRIVATE_KEY) {
+      throw new Error("Env variable TEST_ACCOUNT_2_PRIVATE_KEY does not exist");
+    }
+    addProfilePkey(
+      aptosProvider,
+      AAVE_PROFILES.TEST_ACCOUNT_2,
+      process.env.TEST_ACCOUNT_2_PRIVATE_KEY,
+    );
+
+    if (!process.env.TEST_ACCOUNT_3_PRIVATE_KEY) {
+      throw new Error("Env variable TEST_ACCOUNT_3_PRIVATE_KEY does not exist");
+    }
+    addProfilePkey(
+      aptosProvider,
+      AAVE_PROFILES.TEST_ACCOUNT_3,
+      process.env.TEST_ACCOUNT_3_PRIVATE_KEY,
+    );
+
+    if (!process.env.TEST_ACCOUNT_4_PRIVATE_KEY) {
+      throw new Error("Env variable TEST_ACCOUNT_4_PRIVATE_KEY does not exist");
+    }
+    addProfilePkey(
+      aptosProvider,
+      AAVE_PROFILES.TEST_ACCOUNT_4,
+      process.env.TEST_ACCOUNT_4_PRIVATE_KEY,
+    );
+
+    if (!process.env.TEST_ACCOUNT_5_PRIVATE_KEY) {
+      throw new Error("Env variable TEST_ACCOUNT_5_PRIVATE_KEY does not exist");
+    }
+    addProfilePkey(
+      aptosProvider,
+      AAVE_PROFILES.TEST_ACCOUNT_5,
+      process.env.TEST_ACCOUNT_5_PRIVATE_KEY,
+    );
+
     const aptosConfig = new AptosConfig({
       network: aptosProvider.getNetwork(),
     });
@@ -223,3 +430,16 @@ export class AptosProvider {
     return this.oracleUrl;
   }
 }
+
+const addProfilePkey = (
+  aptosProvider: AptosProvider,
+  profile: string,
+  privateKey: string,
+) => {
+  const aptosPrivateKey = new Ed25519PrivateKey(privateKey);
+  aptosProvider.addProfileAccount(profile, aptosPrivateKey);
+  const profileAccount = Account.fromPrivateKey({
+    privateKey: aptosPrivateKey,
+  });
+  aptosProvider.addProfileAddress(profile, profileAccount.accountAddress);
+};
