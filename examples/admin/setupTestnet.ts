@@ -1,285 +1,327 @@
-import dotenv from "dotenv";
-import { Account, AccountAddress, Ed25519PrivateKey } from "@aptos-labs/ts-sdk";
-import { AptosProvider } from "../../src/clients/aptosProvider";
+import { AccountAddress } from "@aptos-labs/ts-sdk";
 import { DEFAULT_TESTNET_CONFIG } from "../../src/configs/testnet";
-import { PoolClient, UnderlyingTokensClient } from "../../src/clients";
+import { AptosConfigurator, ReserveConfig } from "../../src/helpers";
+import dotenv from "dotenv";
 
 dotenv.config();
 
 const eModes = [
   {
     categoryId: 1,
-    ltv: BigInt(9000),
-    liquidationThreshold: BigInt(9300),
-    liquidationBonus: BigInt(10200),
+    ltv: 9000,
+    liquidationThreshold: 9300,
+    liquidationBonus: 10200,
     oracle: AccountAddress.ZERO,
     label: "ETH correlated",
   },
   {
     categoryId: 2,
-    ltv: BigInt(9500),
-    liquidationThreshold: BigInt(9700),
-    liquidationBonus: BigInt(10100),
+    ltv: 9500,
+    liquidationThreshold: 9700,
+    liquidationBonus: 10100,
     oracle: AccountAddress.ZERO,
     label: "Stablecoins",
   },
 ];
 
-interface ReserveConfig {
-  maxSupply: bigint;
-  name: string;
-  symbol: string;
-  decimals: number;
-  iconUri: string;
-  projectUri: string;
-  treasury: AccountAddress;
-  aTokenName: string;
-  aTokenSymbol: string;
-  variableDebtTokenName: string;
-  variableDebtTokenSymbol: string;
-  optimalUsageRatio: bigint;
-  baseVariableBorrowRate: bigint;
-  variableRateSlope1: bigint;
-  variableRateSlope2: bigint;
-  ltv: bigint;
-  liquidationThreshold: bigint;
-  liquidationBonus: bigint;
-  reserveFactor: bigint;
-  borrowCap: bigint;
-  supplyCap: bigint;
-  borrowingEnabled: boolean;
-  flashloanEnabled: boolean;
-  eModeCategoryId: number;
-}
-
-interface ReserveConfigWithDeployedAsset extends ReserveConfig {
-  underlyingAsset: AccountAddress;
-}
-
 const reserves: ReserveConfig[] = [
   {
-    maxSupply: 25610806455078778_000_000n,
+    name: "Wrapped Ether",
+    symbol: "WETH",
+    decimals: 18,
+    ltv: 8050n,
+    liquidationThreshold: 8300n,
+    liquidationBonus: 10500n,
+    reserveFactor: 1500n,
+    borrowingEnabled: true,
+    active: true,
+    freezed: false,
+    priceInMarketReferenceCurrency: 310944430000n,
+    variableRateSlope1: 27000000000000000000000000n,
+    variableRateSlope2: 800000000000000000000000000n,
+    baseVariableBorrowRate: 0n,
+    optimalUsageRatio: 900000000000000000000000000n,
+    paused: false,
+    debtCeiling: 0n,
+    borrowCap: 1800000n,
+    supplyCap: 2000000n,
+    borrowableInIsolation: false,
+    flashloanEnabled: true,
+    iconUri: "",
+    projectUri: "",
+    treasury: AccountAddress.ZERO,
+    aTokenName: "Aave Aptos WETH",
+    aTokenSymbol: "aWETH",
+    variableDebtTokenName: "Aave Aptos WETH Variable Debt",
+    variableDebtTokenSymbol: "vWETH",
+    eModeCategoryId: 1,
+    maxSupply: 0n,
+  },
+  {
+    name: "Wrapped liquid staked Ether 2.0",
+    symbol: "wstETH",
+    decimals: 18,
+    ltv: 7850n,
+    liquidationThreshold: 8100n,
+    liquidationBonus: 10600n,
+    reserveFactor: 500n,
+    borrowingEnabled: true,
+    active: true,
+    freezed: false,
+    priceInMarketReferenceCurrency: 368570378907n,
+    variableRateSlope1: 20000000000000000000000000n,
+    variableRateSlope2: 800000000000000000000000000n,
+    baseVariableBorrowRate: 0n,
+    optimalUsageRatio: 450000000000000000000000000n,
+    paused: false,
+    debtCeiling: 0n,
+    borrowCap: 48000n,
+    supplyCap: 1250000n,
+    borrowableInIsolation: false,
+    flashloanEnabled: true,
+    iconUri: "",
+    projectUri: "",
+    treasury: AccountAddress.ZERO,
+    aTokenName: "Aave Aptos wstETH",
+    aTokenSymbol: "awstETH",
+    variableDebtTokenName: "Aave Aptos wstETH Variable Debt",
+    variableDebtTokenSymbol: "vwstETH",
+    eModeCategoryId: 1,
+    maxSupply: 0n,
+  },
+  {
+    name: "Wrapped BTC",
+    symbol: "WBTC",
+    decimals: 8,
+    ltv: 7300n,
+    liquidationThreshold: 7800n,
+    liquidationBonus: 10500n,
+    reserveFactor: 2000n,
+    borrowingEnabled: true,
+    active: true,
+    freezed: false,
+    priceInMarketReferenceCurrency: 9206272656429n,
+    variableRateSlope1: 40000000000000000000000000n,
+    variableRateSlope2: 3000000000000000000000000000n,
+    baseVariableBorrowRate: 0n,
+    optimalUsageRatio: 450000000000000000000000000n,
+    paused: false,
+    debtCeiling: 0n,
+    borrowCap: 28000n,
+    supplyCap: 43000n,
+    borrowableInIsolation: false,
+    flashloanEnabled: true,
+    iconUri: "",
+    projectUri: "",
+    treasury: AccountAddress.ZERO,
+    aTokenName: "Aave Aptos WBTC",
+    aTokenSymbol: "aWBTC",
+    variableDebtTokenName: "Aave Aptos WBTC Variable Debt",
+    variableDebtTokenSymbol: "vWBTC",
+    eModeCategoryId: 0,
+    maxSupply: 0n,
+  },
+  {
     name: "USD Coin",
     symbol: "USDC",
     decimals: 6,
-    iconUri: "https://assets.coingecko.com/coins/images/6319/standard/usdc.png",
-    projectUri: "https://app.aave.com/",
-    treasury: AccountAddress.ZERO,
-    aTokenName: "Aave USDC",
-    aTokenSymbol: "aUSDC",
-    variableDebtTokenName: "Aave Variable Debt USDC",
-    variableDebtTokenSymbol: "vUSDC",
-    optimalUsageRatio: 920000000000000000000000000n,
-    baseVariableBorrowRate: 0n,
-    variableRateSlope1: 65000000000000000000000000n,
-    variableRateSlope2: 600000000000000000000000000n,
     ltv: 7500n,
     liquidationThreshold: 7800n,
     liquidationBonus: 10450n,
     reserveFactor: 1000n,
+    borrowingEnabled: true,
+    active: true,
+    freezed: false,
+    priceInMarketReferenceCurrency: 99994013n,
+    variableRateSlope1: 55000000000000000000000000n,
+    variableRateSlope2: 600000000000000000000000000n,
+    baseVariableBorrowRate: 0n,
+    optimalUsageRatio: 920000000000000000000000000n,
+    paused: false,
+    debtCeiling: 0n,
     borrowCap: 2100000000n,
     supplyCap: 2250000000n,
-    borrowingEnabled: true,
+    borrowableInIsolation: true,
     flashloanEnabled: true,
+    iconUri: "",
+    projectUri: "",
+    treasury: AccountAddress.ZERO,
+    aTokenName: "Aave Aptos USDC",
+    aTokenSymbol: "aUSDC",
+    variableDebtTokenName: "Aave Aptos USDC Variable Debt",
+    variableDebtTokenSymbol: "vUSDC",
     eModeCategoryId: 2,
+    maxSupply: 0n,
   },
   {
-    maxSupply: 52986637760874451_000_000n,
-    name: "Tether USD",
-    symbol: "USDT",
-    decimals: 6,
-    iconUri:
-      "https://assets.coingecko.com/coins/images/325/standard/Tether.png",
-    projectUri: "https://app.aave.com/",
-    treasury: AccountAddress.ZERO,
-    aTokenName: "Aave USDT",
-    aTokenSymbol: "aUSDT",
-    variableDebtTokenName: "Aave Variable Debt USDT",
-    variableDebtTokenSymbol: "vUSDT",
-    optimalUsageRatio: 920000000000000000000000000n,
-    baseVariableBorrowRate: 0n,
-    variableRateSlope1: 65000000000000000000000000n,
-    variableRateSlope2: 750000000000000000000000000n,
-    ltv: 7500n,
-    liquidationThreshold: 7800n,
-    liquidationBonus: 10450n,
-    reserveFactor: 1000n,
-    borrowCap: 2250000000n,
-    supplyCap: 2500000000n,
+    name: "Dai Stablecoin",
+    symbol: "DAI",
+    decimals: 18,
+    ltv: 6300n,
+    liquidationThreshold: 7700n,
+    liquidationBonus: 10500n,
+    reserveFactor: 2500n,
     borrowingEnabled: true,
+    active: true,
+    freezed: false,
+    priceInMarketReferenceCurrency: 99987700n,
+    variableRateSlope1: 55000000000000000000000000n,
+    variableRateSlope2: 750000000000000000000000000n,
+    baseVariableBorrowRate: 0n,
+    optimalUsageRatio: 920000000000000000000000000n,
+    paused: false,
+    debtCeiling: 0n,
+    borrowCap: 271000000n,
+    supplyCap: 338000000n,
+    borrowableInIsolation: true,
     flashloanEnabled: true,
-    eModeCategoryId: 2,
+    iconUri: "",
+    projectUri: "",
+    treasury: AccountAddress.ZERO,
+    aTokenName: "Aave Aptos DAI",
+    aTokenSymbol: "aDAI",
+    variableDebtTokenName: "Aave Aptos DAI Variable Debt",
+    variableDebtTokenSymbol: "vDAI",
+    eModeCategoryId: 0,
+    maxSupply: 0n,
+  },
+  {
+    name: "ChainLink Token",
+    symbol: "LINK",
+    decimals: 18,
+    ltv: 6600n,
+    liquidationThreshold: 7100n,
+    liquidationBonus: 10700n,
+    reserveFactor: 2000n,
+    borrowingEnabled: true,
+    active: true,
+    freezed: false,
+    priceInMarketReferenceCurrency: 1452694000n,
+    variableRateSlope1: 70000000000000000000000000n,
+    variableRateSlope2: 3000000000000000000000000000n,
+    baseVariableBorrowRate: 0n,
+    optimalUsageRatio: 450000000000000000000000000n,
+    paused: false,
+    debtCeiling: 0n,
+    borrowCap: 13000000n,
+    supplyCap: 15000000n,
+    borrowableInIsolation: false,
+    flashloanEnabled: true,
+    iconUri: "",
+    projectUri: "",
+    treasury: AccountAddress.ZERO,
+    aTokenName: "Aave Aptos LINK",
+    aTokenSymbol: "aLINK",
+    variableDebtTokenName: "Aave Aptos LINK Variable Debt",
+    variableDebtTokenSymbol: "vLINK",
+    eModeCategoryId: 0,
+    maxSupply: 0n,
+  },
+  {
+    name: "Aave Token",
+    symbol: "AAVE",
+    decimals: 18,
+    ltv: 6600n,
+    liquidationThreshold: 7300n,
+    liquidationBonus: 10750n,
+    reserveFactor: 0n,
+    borrowingEnabled: false,
+    active: true,
+    freezed: false,
+    priceInMarketReferenceCurrency: 16041345840n,
+    variableRateSlope1: 70000000000000000000000000n,
+    variableRateSlope2: 3000000000000000000000000000n,
+    baseVariableBorrowRate: 0n,
+    optimalUsageRatio: 450000000000000000000000000n,
+    paused: false,
+    debtCeiling: 0n,
+    borrowCap: 0n,
+    supplyCap: 1850000n,
+    borrowableInIsolation: false,
+    flashloanEnabled: false,
+    iconUri: "",
+    projectUri: "",
+    treasury: AccountAddress.ZERO,
+    aTokenName: "Aave Aptos AAVE",
+    aTokenSymbol: "aAAVE",
+    variableDebtTokenName: "Aave Aptos AAVE Variable Debt",
+    variableDebtTokenSymbol: "vAAVE",
+    eModeCategoryId: 0,
+    maxSupply: 0n,
+  },
+  {
+    name: "LUSD Stablecoin",
+    symbol: "LUSD",
+    decimals: 18,
+    ltv: 0n,
+    liquidationThreshold: 7700n,
+    liquidationBonus: 10450n,
+    reserveFactor: 2000n,
+    borrowingEnabled: true,
+    active: true,
+    freezed: false,
+    priceInMarketReferenceCurrency: 99625300n,
+    variableRateSlope1: 55000000000000000000000000n,
+    variableRateSlope2: 870000000000000000000000000n,
+    baseVariableBorrowRate: 0n,
+    optimalUsageRatio: 800000000000000000000000000n,
+    paused: false,
+    debtCeiling: 0n,
+    borrowCap: 8000000n,
+    supplyCap: 18000000n,
+    borrowableInIsolation: true,
+    flashloanEnabled: true,
+    iconUri: "",
+    projectUri: "",
+    treasury: AccountAddress.ZERO,
+    aTokenName: "Aave Aptos LUSD",
+    aTokenSymbol: "aLUSD",
+    variableDebtTokenName: "Aave Aptos LUSD Variable Debt",
+    variableDebtTokenSymbol: "vLUSD",
+    eModeCategoryId: 0,
+    maxSupply: 0n,
+  },
+  {
+    name: "Curve DAO Token",
+    symbol: "CRV",
+    decimals: 18,
+    ltv: 3500n,
+    liquidationThreshold: 4100n,
+    liquidationBonus: 10830n,
+    reserveFactor: 3500n,
+    borrowingEnabled: true,
+    active: true,
+    freezed: false,
+    priceInMarketReferenceCurrency: 40351714n,
+    variableRateSlope1: 140000000000000000000000000n,
+    variableRateSlope2: 3000000000000000000000000000n,
+    baseVariableBorrowRate: 30000000000000000000000000n,
+    optimalUsageRatio: 700000000000000000000000000n,
+    paused: false,
+    debtCeiling: 100000000n,
+    borrowCap: 7000000n,
+    supplyCap: 17250000n,
+    borrowableInIsolation: false,
+    flashloanEnabled: true,
+    iconUri: "",
+    projectUri: "",
+    treasury: AccountAddress.ZERO,
+    aTokenName: "Aave Aptos CRV",
+    aTokenSymbol: "aCRV",
+    variableDebtTokenName: "Aave Aptos CRV Variable Debt",
+    variableDebtTokenSymbol: "vCRV",
+    eModeCategoryId: 0,
+    maxSupply: 0n,
   },
 ];
 
-if (!process.env.UNDERLYING_TOKENS_PRIVATE_KEY) {
-  throw new Error(`UNDERLYING_TOKENS_PRIVATE_KEY env was not found`);
-}
-
-const underlyingTokensSigner = Account.fromPrivateKey({
-  privateKey: new Ed25519PrivateKey(process.env.UNDERLYING_TOKENS_PRIVATE_KEY),
-});
-
-if (!process.env.AAVE_POOL_PRIVATE_KEY) {
-  throw new Error(`AAVE_POOL_PRIVATE_KEY env was not found`);
-}
-
-const poolSigner = Account.fromPrivateKey({
-  privateKey: new Ed25519PrivateKey(process.env.AAVE_POOL_PRIVATE_KEY),
-});
-
 (async () => {
-  const aptosProvider = AptosProvider.fromConfig(DEFAULT_TESTNET_CONFIG);
-
-  const poolClient = new PoolClient(aptosProvider, poolSigner);
-  const underlyingTokenClient = new UnderlyingTokensClient(
-    aptosProvider,
-    underlyingTokensSigner,
+  const aptosConfigurator = new AptosConfigurator(
+    DEFAULT_TESTNET_CONFIG,
+    process.env.POOL_PRIVATE_KEY || "",
+    process.env.MOCK_ORACLE_PRIVATE_KEY || "",
+    process.env.UNDERLYING_TOKENS_PRIVATE_KEY || "",
+    process.env.MNEMONIC || "",
   );
-
-  const reservesWithAsset: Array<ReserveConfigWithDeployedAsset> = [];
-
-  // create tokens that dont exist
-  for (const reserve of reserves) {
-    const tokenAddress = await underlyingTokenClient.getMetadataBySymbol(
-      reserve.symbol,
-    );
-    if (!tokenAddress) {
-      await underlyingTokenClient.createToken(
-        reserve.maxSupply,
-        reserve.name,
-        reserve.symbol,
-        reserve.decimals,
-        reserve.iconUri,
-        reserve.projectUri,
-      );
-      const address = await underlyingTokenClient.getMetadataBySymbol(
-        reserve.symbol,
-      );
-      reservesWithAsset.push({
-        ...reserve,
-        underlyingAsset: address,
-      });
-    } else {
-      // const maxSupply = await underlyingTokenClient.maximum(tokenAddress);
-      const decimals = await underlyingTokenClient.decimals(tokenAddress);
-      const name = await underlyingTokenClient.name(tokenAddress);
-      // console.log(maxSupply);
-      reservesWithAsset.push({
-        ...reserve,
-        // maxSupply,
-        decimals: Number(decimals),
-        name,
-        underlyingAsset: tokenAddress,
-      });
-    }
-  }
-
-  // configure eModes
-
-  for (const eMode of eModes) {
-    await poolClient.setEmodeCategory(
-      eMode.categoryId,
-      eMode.ltv,
-      eMode.liquidationThreshold,
-      eMode.liquidationBonus,
-      eMode.oracle,
-      eMode.label,
-    );
-  }
-
-  // create rate strategies
-
-  for (const reserve of reservesWithAsset) {
-    await poolClient.setReserveInterestRateStrategy(
-      reserve.underlyingAsset,
-      reserve.optimalUsageRatio,
-      reserve.baseVariableBorrowRate,
-      reserve.variableRateSlope1,
-      reserve.variableRateSlope2,
-    );
-  }
-
-  // init reserves that dont exist
-
-  const reservesToInit = {
-    assets: [] as Array<AccountAddress>,
-    decimals: [] as Array<number>,
-    treasury: [] as Array<AccountAddress>,
-    aTokenName: [] as Array<string>,
-    aTokenSymbol: [] as Array<string>,
-    variableDebtTokenName: [] as Array<string>,
-    variableDebtTokenSymbol: [] as Array<string>,
-  };
-
-  const currentReserves = await poolClient.getReservesList();
-
-  reservesWithAsset.forEach((reserve) => {
-    if (!currentReserves.find((elem) => elem.equals(reserve.underlyingAsset))) {
-      reservesToInit.assets.push(reserve.underlyingAsset);
-      reservesToInit.decimals.push(reserve.decimals);
-      reservesToInit.treasury.push(reserve.treasury);
-      reservesToInit.aTokenName.push(reserve.aTokenName);
-      reservesToInit.aTokenSymbol.push(reserve.aTokenSymbol);
-      reservesToInit.variableDebtTokenName.push(reserve.variableDebtTokenName);
-      reservesToInit.variableDebtTokenSymbol.push(
-        reserve.variableDebtTokenSymbol,
-      );
-    }
-  });
-
-  if (reservesToInit.assets.length > 0) {
-    await poolClient.initReserves(
-      reservesToInit.assets,
-      reservesToInit.decimals,
-      reservesToInit.treasury,
-      reservesToInit.aTokenName,
-      reservesToInit.aTokenSymbol,
-      reservesToInit.variableDebtTokenName,
-      reservesToInit.variableDebtTokenSymbol,
-    );
-  }
-
-  const reservesToConfigure = {
-    asset: [] as Array<AccountAddress>,
-    ltv: [] as Array<bigint>,
-    liquidationThreshold: [] as Array<bigint>,
-    liquidationBonus: [] as Array<bigint>,
-    reserveFactor: [] as Array<bigint>,
-    borrowCap: [] as Array<bigint>,
-    supplyCap: [] as Array<bigint>,
-    borrowingEnabled: [] as Array<boolean>,
-    flashloanEnabled: [] as Array<boolean>,
-  };
-
-  for (const reserve of reservesWithAsset) {
-    reservesToConfigure.asset.push(reserve.underlyingAsset);
-    reservesToConfigure.ltv.push(reserve.ltv);
-    reservesToConfigure.liquidationThreshold.push(reserve.liquidationThreshold);
-    reservesToConfigure.liquidationBonus.push(reserve.liquidationBonus);
-    reservesToConfigure.reserveFactor.push(reserve.reserveFactor);
-    reservesToConfigure.borrowCap.push(reserve.borrowCap);
-    reservesToConfigure.supplyCap.push(reserve.supplyCap);
-    reservesToConfigure.borrowingEnabled.push(reserve.borrowingEnabled);
-    reservesToConfigure.flashloanEnabled.push(reserve.flashloanEnabled);
-  }
-
-  await poolClient.configureReserves(
-    reservesToConfigure.asset,
-    reservesToConfigure.ltv,
-    reservesToConfigure.liquidationThreshold,
-    reservesToConfigure.liquidationBonus,
-    reservesToConfigure.reserveFactor,
-    reservesToConfigure.borrowCap,
-    reservesToConfigure.supplyCap,
-    reservesToConfigure.borrowingEnabled,
-    reservesToConfigure.flashloanEnabled,
-  );
-
-  for (const reserve of reservesWithAsset) {
-    await poolClient.setAssetEmodeCategory(
-      reserve.underlyingAsset,
-      reserve.eModeCategoryId,
-    );
-  }
+  await aptosConfigurator.setupProtocol(reserves, eModes);
 })();

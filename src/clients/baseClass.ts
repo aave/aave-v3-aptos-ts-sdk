@@ -79,14 +79,14 @@ async function transaction(
   return aptos.waitForTransaction({ transactionHash: commitTx.hash });
 }
 
-async function view(
+async function view<T extends MoveValue[]>(
   aptos: Aptos,
   func_addr: MoveFunctionId,
   func_args: Array<
     EntryFunctionArgumentTypes | SimpleEntryFunctionArgumentTypes
   >,
 ) {
-  return aptos.view({
+  return aptos.view<T>({
     payload: {
       function: func_addr,
       functionArguments: func_args,
@@ -159,13 +159,13 @@ export class AptosContractWrapperBaseClass {
   }
 
   /** Calls a view method. */
-  public async callViewMethod(
+  public async callViewMethod<T extends MoveValue[]>(
     functionId: MoveFunctionId,
     func_args: Array<
       EntryFunctionArgumentTypes | SimpleEntryFunctionArgumentTypes
     >,
-  ): Promise<MoveValue[]> {
-    return view(this.aptosProvider.getAptos(), functionId, func_args);
+  ): Promise<T> {
+    return view<T>(this.aptosProvider.getAptos(), functionId, func_args);
   }
 
   /// funds a given account
