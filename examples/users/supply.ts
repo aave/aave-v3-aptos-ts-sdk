@@ -1,7 +1,7 @@
 import { Account, Ed25519Account, Ed25519PrivateKey } from "@aptos-labs/ts-sdk";
 import { PoolClient } from "../../src/clients/poolClient";
 import { AptosProvider, CoreClient } from "../../src/clients";
-import { testnetConfig } from "../../src/configs/testnet";
+import { DEFAULT_TESTNET_CONFIG } from "../../src/configs";
 
 const USER_APTOS_ACCOUNT_PRIVATE_KEY = "0x0";
 const CURRENCY_TO_SUPPLY = "DAI";
@@ -9,7 +9,7 @@ const AMOUNT_TO_SUPPLY = "100";
 
 (async () => {
   // global aptos provider
-  const aptosProvider = AptosProvider.fromConfig(testnetConfig);
+  const aptosProvider = AptosProvider.fromConfig(DEFAULT_TESTNET_CONFIG);
   // all pool-related operations client
   const poolClient = new PoolClient(aptosProvider);
   // user account
