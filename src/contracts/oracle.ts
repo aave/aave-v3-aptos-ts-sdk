@@ -3,6 +3,8 @@ import { AAVE_PROFILES, AptosProvider } from "../clients/aptosProvider";
 
 export class OracleContract {
   // Resource Func Addr
+  SetMockFuncAddr: MoveFunctionId;
+
   GetAssetPriceFuncAddr: MoveFunctionId;
 
   SetAssetPriceFuncAddr: MoveFunctionId;
@@ -20,6 +22,7 @@ export class OracleContract {
       AAVE_PROFILES.AAVE_MOCK_ORACLE,
     );
     const OracleManagerAccountAddress = OracleManager.toString();
+    this.SetMockFuncAddr = `${OracleManagerAccountAddress}::oracle::set_mock`;
     this.GetAssetPriceFuncAddr = `${OracleManagerAccountAddress}::oracle::get_asset_price`;
     this.SetAssetPriceFuncAddr = `${OracleManagerAccountAddress}::oracle::set_asset_price`;
     this.IsBorrowAllowedFuncAddr = `${OracleManagerAccountAddress}::oracle_sentinel::is_borrow_allowed`;
