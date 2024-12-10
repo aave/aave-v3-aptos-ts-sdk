@@ -6,19 +6,19 @@ export const DEFAULT_TESTNET_CONFIG: AptosProviderConfig = {
   network: Network.TESTNET,
   addresses: {
     A_TOKENS:
-      "12989a2840ca70260fa5007adcc75faab6f0e5fe44637dc85a2e1829af6a0d9c",
+      "c7c5f41dbf944149d00381a50ba244945f47fe9919d123a9473975139e29a7fe",
     UNDERLYING_TOKENS:
-      "bd47b4f3ec887c0e633b99484e45fed484415ccae49b041d18e7e3d1e7c1fd72",
+      "6d13c417b70d0456e3a9a46f314d6ad9c4c043c1156641986d6f9ecc99d67449",
     VARIABLE_TOKENS:
-      "e7092972fc6d3237e54a10c1942eb0188b14acc68eefa6ecef63901ac639d064",
+      "c0b678966dc45e07f83007fb162a4c06e522602a1ee3c6b702a0d4786f062679",
     AAVE_ACL:
-      "2f5621b191021188afce70b2edcec4423342f4a1c17ea5c393dff031c94529cb",
+      "c7e19f4750b2a1ebdf1de97c1e3ff6d46e42e643c34f9817c427925faddbcff3",
     AAVE_CONFIG:
-      "9143cb9388cdbf6b75e05adbc8d9903c49805dbe3b740d2ea8c503186a50abaa",
+      "4430bda0467d62f7360d6841c37e732a3b834bc8d440f597b8a4d81160626dc1",
     AAVE_MOCK_ORACLE:
-      "4b98459447f8663ce6fb1d2a6497fcb9705446071f7d9b26deb2cead65154dc9",
+      "306c0eab71bd2da0e68f7e0117f8d2ac19aa9c2a329cba37842e425e30d26a1b",
     AAVE_POOL:
-      "3488d79f0c0787d6cd0bb53d2b0a8ed62bf3313e55714067d0312a344d34a885",
+      "c0aa1b7c52a7ee44c5381f14af42383a4c7c72931ff8d41ebf074339d24d2039",
   },
   oracle: {
     URL: "https://hermes-beta.pyth.network",

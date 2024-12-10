@@ -297,46 +297,68 @@ export class AptosConfigurator {
 
   async configReserves(
     reservesConfig: WithAccountAddress<ReserveConfig>[],
-  ): Promise<CommittedTransactionResponse> {
-    const reservesToConfigure = {
-      asset: [] as Array<AccountAddress>,
-      ltv: [] as Array<bigint>,
-      liquidationThreshold: [] as Array<bigint>,
-      liquidationBonus: [] as Array<bigint>,
-      reserveFactor: [] as Array<bigint>,
-      borrowCap: [] as Array<bigint>,
-      supplyCap: [] as Array<bigint>,
-      borrowingEnabled: [] as Array<boolean>,
-      flashloanEnabled: [] as Array<boolean>,
-    };
+  ): Promise<undefined> {
+    // const reservesToConfigure = {
+    //   asset: [] as Array<AccountAddress>,
+    //   ltv: [] as Array<bigint>,
+    //   liquidationThreshold: [] as Array<bigint>,
+    //   liquidationBonus: [] as Array<bigint>,
+    //   reserveFactor: [] as Array<bigint>,
+    //   borrowCap: [] as Array<bigint>,
+    //   supplyCap: [] as Array<bigint>,
+    //   borrowingEnabled: [] as Array<boolean>,
+    //   flashloanEnabled: [] as Array<boolean>,
+    // };
+    // for (const reserve of reservesConfig) {
+    //   reservesToConfigure.asset.push(reserve.address);
+    //   reservesToConfigure.ltv.push(reserve.ltv);
+    //   reservesToConfigure.liquidationThreshold.push(
+    //     reserve.liquidationThreshold,
+    //   );
+    //   reservesToConfigure.liquidationBonus.push(reserve.liquidationBonus);
+    //   reservesToConfigure.reserveFactor.push(reserve.reserveFactor);
+    //   reservesToConfigure.borrowCap.push(reserve.borrowCap);
+    //   reservesToConfigure.supplyCap.push(reserve.supplyCap);
+    //   reservesToConfigure.borrowingEnabled.push(reserve.borrowingEnabled);
+    //   reservesToConfigure.flashloanEnabled.push(reserve.flashloanEnabled);
+    // }
+    // const receipt = await this.poolClient.configureReserves(
+    //   reservesToConfigure.asset,
+    //   reservesToConfigure.ltv,
+    //   reservesToConfigure.liquidationThreshold,
+    //   reservesToConfigure.liquidationBonus,
+    //   reservesToConfigure.reserveFactor,
+    //   reservesToConfigure.borrowCap,
+    //   reservesToConfigure.supplyCap,
+    //   reservesToConfigure.borrowingEnabled,
+    //   reservesToConfigure.flashloanEnabled,
+    // );
+    // console.log(
+    //   `RESERVES ${reservesConfig.map((r) => r.symbol)} were configured, tx ${receipt.hash}`,
+    // );
     for (const reserve of reservesConfig) {
-      reservesToConfigure.asset.push(reserve.address);
-      reservesToConfigure.ltv.push(reserve.ltv);
-      reservesToConfigure.liquidationThreshold.push(
+      await this.poolClient.configureReserveAsCollateral(
+        reserve.address,
+        reserve.ltv,
         reserve.liquidationThreshold,
+        reserve.liquidationBonus,
       );
-      reservesToConfigure.liquidationBonus.push(reserve.liquidationBonus);
-      reservesToConfigure.reserveFactor.push(reserve.reserveFactor);
-      reservesToConfigure.borrowCap.push(reserve.borrowCap);
-      reservesToConfigure.supplyCap.push(reserve.supplyCap);
-      reservesToConfigure.borrowingEnabled.push(reserve.borrowingEnabled);
-      reservesToConfigure.flashloanEnabled.push(reserve.flashloanEnabled);
+      await this.poolClient.setReserveFactor(
+        reserve.address,
+        reserve.reserveFactor,
+      );
+      await this.poolClient.setBorrowCap(reserve.address, reserve.borrowCap);
+      await this.poolClient.setSupplyCap(reserve.address, reserve.supplyCap);
+      await this.poolClient.setReserveBorrowing(
+        reserve.address,
+        reserve.borrowingEnabled,
+      );
+      await this.poolClient.setReserveFlashLoaning(
+        reserve.address,
+        reserve.flashloanEnabled,
+      );
     }
-    const receipt = await this.poolClient.configureReserves(
-      reservesToConfigure.asset,
-      reservesToConfigure.ltv,
-      reservesToConfigure.liquidationThreshold,
-      reservesToConfigure.liquidationBonus,
-      reservesToConfigure.reserveFactor,
-      reservesToConfigure.borrowCap,
-      reservesToConfigure.supplyCap,
-      reservesToConfigure.borrowingEnabled,
-      reservesToConfigure.flashloanEnabled,
-    );
-    console.log(
-      `RESERVES ${reservesConfig.map((r) => r.symbol)} were configured, tx ${receipt.hash}`,
-    );
-    return receipt;
+    return;
   }
 
   async setReservesEModeCategory(
@@ -439,7 +461,6 @@ export class AptosConfigurator {
     if (reservesToInit.assets.length > 0) {
       const receipt = await this.poolClient.initReserves(
         reservesToInit.assets,
-        reservesToInit.decimals,
         reservesToInit.treasury,
         reservesToInit.aTokenName,
         reservesToInit.aTokenSymbol,
