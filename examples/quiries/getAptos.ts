@@ -1,6 +1,6 @@
 import { Account, AccountAddress, Ed25519PrivateKey } from "@aptos-labs/ts-sdk";
 import { AptosProvider } from "../../src/clients";
-import { testnetConfig } from "../../src/configs/testnet";
+import { DEFAULT_TESTNET_CONFIG } from "../../src/configs/testnet";
 
 const aptFunderPrivateKey = "0x0";
 const addressesToFund = ["0x0"].map((addr) => AccountAddress.fromString(addr));
@@ -8,7 +8,7 @@ const fundAmount = BigInt(0.5);
 
 (async () => {
   // global aptos provider
-  const aptosProvider = AptosProvider.fromConfig(testnetConfig);
+  const aptosProvider = AptosProvider.fromConfig(DEFAULT_TESTNET_CONFIG);
 
   try {
     // set the tx sender

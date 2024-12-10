@@ -106,8 +106,6 @@ export class PoolContract {
 
   PoolConfiguratorUpdateFlashloanPremiumTotalFuncAddr: MoveFunctionId;
 
-  PoolConfiguratorReservesFuncAddr: MoveFunctionId;
-
   // View
   PoolConfiguratorGetRevisionFuncAddr: MoveFunctionId;
 
@@ -314,7 +312,6 @@ export class PoolContract {
     this.PoolConfiguratorUpdateBridgeProtocolFeeFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::update_bridge_protocol_fee`;
     this.PoolConfiguratorUpdateFlashloanPremiumToProtocolFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::update_flashloan_premium_to_protocol`;
     this.PoolConfiguratorUpdateFlashloanPremiumTotalFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::update_flashloan_premium_total`;
-    this.PoolConfiguratorReservesFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::configure_reserves`;
 
     /**
      * -------------------------------------------------------------------------

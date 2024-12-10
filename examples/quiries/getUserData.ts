@@ -3,13 +3,13 @@ import { UnderlyingTokensClient } from "../../src/clients/underlyingTokensClient
 import { UiPoolDataProviderClient } from "../../src/clients/uiPoolDataProvider";
 import { PoolClient } from "../../src/clients/poolClient";
 import { AptosProvider } from "../../src/clients/aptosProvider";
-import { testnetConfig } from "../../src/configs/testnet";
+import { DEFAULT_TESTNET_CONFIG } from "../../src/configs/testnet";
 
 const USER_APTOS_ACCOUNT = "0x0";
 
 (async () => {
   // global aptos provider
-  const aptosProvider = AptosProvider.fromConfig(testnetConfig);
+  const aptosProvider = AptosProvider.fromConfig(DEFAULT_TESTNET_CONFIG);
 
   const uiPoolDataProviderClient = new UiPoolDataProviderClient(aptosProvider);
   const poolClient = new PoolClient(aptosProvider);

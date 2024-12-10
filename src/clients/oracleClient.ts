@@ -16,6 +16,12 @@ export class OracleClient extends AptosContractWrapperBaseClass {
     this.oracleContract = new OracleContract(provider);
   }
 
+  public async setMock(mock: boolean): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(this.oracleContract.SetMockFuncAddr, [
+      mock,
+    ]);
+  }
+
   public async setAssetPrice(
     asset: AccountAddress,
     price: bigint,

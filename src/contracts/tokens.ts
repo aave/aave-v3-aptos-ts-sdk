@@ -45,8 +45,6 @@ export class TokensContract {
 
   ATokenDecimalsFuncAddr: MoveFunctionId;
 
-  ATokenBalanceOfFuncAddr: MoveFunctionId;
-
   ATokenScaledBalanceOfFuncAddr: MoveFunctionId;
 
   ATokenRescueTokensFuncAddr: MoveFunctionId;
@@ -110,7 +108,7 @@ export class TokensContract {
 
     // A Token
     this.ATokenCreateTokenFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::create_token`;
-    this.ATokenGetMetadataBySymbolFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::get_metadata_by_symbol`;
+    this.ATokenGetMetadataBySymbolFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::asset_metadata`;
     this.ATokenGetTokenAccountAddressFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::get_token_account_address`;
     this.ATokenGetReserveTreasuryAddressFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::get_reserve_treasury_address`;
     this.ATokenGetUnderlyingAssetAddressFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::get_underlying_asset_address`;
@@ -118,7 +116,6 @@ export class TokensContract {
     this.ATokenNameFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::name`;
     this.ATokenSymbolFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::symbol`;
     this.ATokenDecimalsFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::decimals`;
-    this.ATokenBalanceOfFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::balance_of`;
     this.ATokenScaledBalanceOfFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::scaled_balance_of`;
     this.ATokenRescueTokensFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::rescue_tokens`;
     this.ATokenGetScaledUserBalanceAndSupplyFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::get_scaled_user_balance_and_supply`;
@@ -129,7 +126,7 @@ export class TokensContract {
 
     // Variable Token
     this.VariableCreateTokenFuncAddr = `${AaveTokensManagerAccountAddress}::variable_debt_token_factory::create_token`;
-    this.VariableGetMetadataBySymbolFuncAddr = `${AaveTokensManagerAccountAddress}::variable_debt_token_factory::get_metadata_by_symbol`;
+    this.VariableGetMetadataBySymbolFuncAddr = `${AaveTokensManagerAccountAddress}::variable_debt_token_factory::asset_metadata`;
     this.VariableGetTokenAddressFuncAddr = `${AaveTokensManagerAccountAddress}::variable_debt_token_factory::token_address`;
     this.VariableGetAssetMetadataFuncAddr = `${AaveTokensManagerAccountAddress}::variable_debt_token_factory::asset_metadata`;
     this.VariableGetUnderlyingAddressFuncAddr = `${AaveTokensManagerAccountAddress}::variable_debt_token_factory::get_underlying_asset_address`;

@@ -125,19 +125,6 @@ export class ATokensClient extends AptosContractWrapperBaseClass {
     return AccountAddress.fromString(resp as string);
   }
 
-  public async balanceOf(
-    owner: AccountAddress,
-    metadataAddress: AccountAddress,
-  ): Promise<bigint> {
-    const [resp] = (
-      await this.callViewMethod(this.tokensContract.ATokenBalanceOfFuncAddr, [
-        owner,
-        metadataAddress,
-      ])
-    ).map(mapToBigInt);
-    return resp;
-  }
-
   public async scaledBalanceOf(
     owner: AccountAddress,
     metadataAddress: AccountAddress,

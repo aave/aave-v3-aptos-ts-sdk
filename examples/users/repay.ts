@@ -3,7 +3,7 @@ import { MaxUint256 } from "ethers";
 import { BigNumber } from "bignumber.js";
 import { PoolClient } from "../../src/clients/poolClient";
 import { AptosProvider, CoreClient } from "../../src/clients";
-import { testnetConfig } from "../../src/configs/testnet";
+import { DEFAULT_TESTNET_CONFIG } from "../../src/configs";
 
 const USER_APTOS_ACCOUNT_PRIVATE_KEY = "0x0";
 const CURRENCY_TO_REPAY = "DAI";
@@ -12,7 +12,7 @@ const USE_A_TOKENS = true;
 
 (async () => {
   // global aptos provider
-  const aptosProvider = AptosProvider.fromConfig(testnetConfig);
+  const aptosProvider = AptosProvider.fromConfig(DEFAULT_TESTNET_CONFIG);
   // all pool-related operations client
   const poolClient = new PoolClient(aptosProvider);
   // user account

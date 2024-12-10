@@ -323,7 +323,6 @@ export class PoolClient extends AptosContractWrapperBaseClass {
 
   public async initReserves(
     underlyingAsset: Array<AccountAddress>,
-    underlyingAssetDecimals: Array<number>,
     treasury: Array<AccountAddress>,
     aTokenName: Array<string>,
     aTokenSymbol: Array<string>,
@@ -334,7 +333,6 @@ export class PoolClient extends AptosContractWrapperBaseClass {
       this.poolContract.PoolConfiguratorInitReservesFuncAddr,
       [
         underlyingAsset,
-        underlyingAssetDecimals,
         treasury,
         aTokenName,
         aTokenSymbol,
@@ -558,33 +556,6 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     return this.sendTxAndAwaitResponse(
       this.poolContract.PoolConfiguratorUpdateFlashloanPremiumTotalFuncAddr,
       [newFlashloanPremiumTotal.toString()],
-    );
-  }
-
-  public async configureReserves(
-    asset: Array<AccountAddress>,
-    base_ltv: Array<bigint>,
-    liquidationThreshold: Array<bigint>,
-    liquidationBonus: Array<bigint>,
-    reserveFactor: Array<bigint>,
-    borrowCap: Array<bigint>,
-    supplyCap: Array<bigint>,
-    borrowingEnabled: Array<boolean>,
-    flashloanEnabled: Array<boolean>,
-  ): Promise<CommittedTransactionResponse> {
-    return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfiguratorReservesFuncAddr,
-      [
-        asset,
-        base_ltv.map((item) => item.toString()),
-        liquidationThreshold.map((item) => item.toString()),
-        liquidationBonus.map((item) => item.toString()),
-        reserveFactor.map((item) => item.toString()),
-        borrowCap.map((item) => item.toString()),
-        supplyCap.map((item) => item.toString()),
-        borrowingEnabled,
-        flashloanEnabled,
-      ],
     );
   }
 
