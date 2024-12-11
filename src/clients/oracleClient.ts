@@ -12,8 +12,16 @@ export class OracleClient extends AptosContractWrapperBaseClass {
   oracleContract: OracleContract;
 
   constructor(provider: AptosProvider, signer?: Ed25519Account) {
-    super(provider, signer || provider.getOracleProfileAccount());
+    super(provider, signer);
     this.oracleContract = new OracleContract(provider);
+  }
+
+  public static buildWithDefaultSigner(provider: AptosProvider): OracleClient {
+    const client = new OracleClient(
+      provider,
+      provider.getOracleProfileAccount(),
+    );
+    return client;
   }
 
   public async setMock(mock: boolean): Promise<CommittedTransactionResponse> {

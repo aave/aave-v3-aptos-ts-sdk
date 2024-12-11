@@ -12,8 +12,18 @@ export class PoolAddressesProviderClient extends AptosContractWrapperBaseClass {
   poolContract: PoolContract;
 
   constructor(provider: AptosProvider, signer?: Ed25519Account) {
-    super(provider, signer || provider.getPoolProfileAccount());
+    super(provider, signer);
     this.poolContract = new PoolContract(provider);
+  }
+
+  public static buildWithDefaultSigner(
+    provider: AptosProvider,
+  ): PoolAddressesProviderClient {
+    const client = new PoolAddressesProviderClient(
+      provider,
+      provider.getPoolProfileAccount(),
+    );
+    return client;
   }
 
   public async hasIdMappedAccount(id: string): Promise<boolean> {

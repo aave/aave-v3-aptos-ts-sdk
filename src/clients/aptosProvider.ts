@@ -381,6 +381,11 @@ export class AptosProvider {
   public getProfileAccountPrivateKeyByName(
     profileName: string,
   ): Ed25519PrivateKey {
+    if (!this.profileAccountMap.has(profileName)) {
+      throw new Error(
+        `Account "${profileName}" was not found in the profiles map`,
+      );
+    }
     return this.profileAccountMap.get(profileName);
   }
 
@@ -393,6 +398,11 @@ export class AptosProvider {
 
   /** Returns the profile address by name if found. */
   public getProfileAddressByName(profileName: string): AccountAddress {
+    if (!this.profileAddressMap.has(profileName)) {
+      throw new Error(
+        `Address of account "${profileName}" was not found in the profile addresses map`,
+      );
+    }
     return this.profileAddressMap.get(profileName);
   }
 

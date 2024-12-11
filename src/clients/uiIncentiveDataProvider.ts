@@ -179,10 +179,20 @@ export class UiIncentiveDataProviderClient extends AptosContractWrapperBaseClass
   uiPoolDataProviderContract: UiIncentiveDataProviderContract;
 
   constructor(provider: AptosProvider, signer?: Ed25519Account) {
-    super(provider, signer || provider.getPoolProfileAccount());
+    super(provider, signer);
     this.uiPoolDataProviderContract = new UiIncentiveDataProviderContract(
       provider,
     );
+  }
+
+  public static buildWithDefaultSigner(
+    provider: AptosProvider,
+  ): UiIncentiveDataProviderClient {
+    const client = new UiIncentiveDataProviderClient(
+      provider,
+      provider.getPoolProfileAccount(),
+    );
+    return client;
   }
 
   public async uiPoolDataProviderV3DataAddress(): Promise<AccountAddress> {
