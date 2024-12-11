@@ -8,7 +8,7 @@ export class BridgeContract {
   BackUnbackedFuncAddr: MoveFunctionId;
 
   constructor(provider: AptosProvider) {
-    const BridgeManager = provider.getProfileAccountByName(
+    const BridgeManager = provider.getProfileAddressByName(
       AAVE_PROFILES.AAVE_POOL,
     );
     const BridgeManagerAccountAddress = BridgeManager.toString();

@@ -12,7 +12,7 @@ export class FlashLoanContract {
   PayFlashLoanSimpleFuncAddr: MoveFunctionId;
 
   constructor(provider: AptosProvider) {
-    const FlashLoanManager = provider.getProfileAccountByName(
+    const FlashLoanManager = provider.getProfileAddressByName(
       AAVE_PROFILES.AAVE_POOL,
     );
     const FlashLoanManagerAccountAddress = FlashLoanManager.toString();

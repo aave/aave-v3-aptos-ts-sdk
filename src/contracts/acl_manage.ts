@@ -70,7 +70,7 @@ export class AclManagerContract {
   setRoleAdmin: MoveFunctionId;
 
   constructor(provider: AptosProvider) {
-    const AclManager = provider.getProfileAccountByName(AAVE_PROFILES.AAVE_ACL);
+    const AclManager = provider.getProfileAddressByName(AAVE_PROFILES.AAVE_ACL);
     const AclManagerAccountAddress = AclManager.toString();
     this.hasRoleFuncAddr = `${AclManagerAccountAddress}::acl_manage::has_role`;
     this.grantRoleFuncAddr = `${AclManagerAccountAddress}::acl_manage::grant_role`;

@@ -21,7 +21,7 @@ export class UiIncentiveDataProviderContract {
   getUserReservesIncentivesData: MoveFunctionId;
 
   constructor(provider: AptosProvider) {
-    const PeripheryManager = provider.getProfileAccountByName(
+    const PeripheryManager = provider.getProfileAddressByName(
       AAVE_PROFILES.AAVE_POOL,
     );
     const PeripheryManagerAccountAddress = PeripheryManager.toString();

@@ -88,7 +88,7 @@ export class TokensContract {
 
   constructor(provider: AptosProvider) {
     // Underlying Token
-    const AaveTokensManager = provider.getProfileAccountByName(
+    const AaveTokensManager = provider.getProfileAddressByName(
       AAVE_PROFILES.AAVE_POOL,
     );
     const AaveTokensManagerAccountAddress = AaveTokensManager.toString();
