@@ -17,15 +17,15 @@ export interface AptosProviderConfig {
     VARIABLE_TOKENS: string;
     AAVE_ACL: string;
     AAVE_CONFIG: string;
-    AAVE_MOCK_ORACLE: string;
+    AAVE_ORACLE: string;
     AAVE_POOL: string;
   };
-  oracle: {
-    URL: string;
-    CONTRACT_ACCOUNT: string;
-    DEPLOYER_ACCOUNT: string;
-    WORMHOLE: string;
-  };
+  // oracle: {
+  //   URL: string;
+  //   CONTRACT_ACCOUNT: string;
+  //   DEPLOYER_ACCOUNT: string;
+  //   WORMHOLE: string;
+  // };
 }
 
 export interface AptosAccountConfig {
@@ -43,7 +43,6 @@ export enum AAVE_PROFILES {
   VARIABLE_TOKENS = "variable_tokens",
   AAVE_ACL = "aave_acl",
   AAVE_CONFIG = "aave_config",
-  AAVE_MOCK_ORACLE = "aave_mock_oracle",
   AAVE_ORACLE = "aave_oracle",
   AAVE_POOL = "aave_pool",
   AAVE_LARGE_PACKAGES = "aave_large_packages",
@@ -92,7 +91,7 @@ export class AptosProvider {
   public static fromConfig(config: AptosProviderConfig): AptosProvider {
     let aptosProvider = new AptosProvider();
     aptosProvider.setNetwork(config.network);
-    aptosProvider.setOracleUrl(config.oracle.URL);
+    // aptosProvider.setOracleUrl(config.oracle.URL);
     aptosProvider.addProfileAddress(
       AAVE_PROFILES.A_TOKENS,
       AccountAddress.fromString(config.addresses.A_TOKENS),
@@ -114,8 +113,8 @@ export class AptosProvider {
       AccountAddress.fromString(config.addresses.AAVE_CONFIG),
     );
     aptosProvider.addProfileAddress(
-      AAVE_PROFILES.AAVE_MOCK_ORACLE,
-      AccountAddress.fromString(config.addresses.AAVE_MOCK_ORACLE),
+      AAVE_PROFILES.AAVE_ORACLE,
+      AccountAddress.fromString(config.addresses.AAVE_ORACLE),
     );
     aptosProvider.addProfileAddress(
       AAVE_PROFILES.AAVE_POOL,
@@ -209,16 +208,16 @@ export class AptosProvider {
       process.env.AAVE_CONFIG_PRIVATE_KEY,
     );
 
-    if (!process.env.AAVE_MOCK_ORACLE_PRIVATE_KEY) {
-      throw new Error(
-        "Env variable AAVE_MOCK_ORACLE_PRIVATE_KEY does not exist",
-      );
-    }
-    addProfilePkey(
-      aptosProvider,
-      AAVE_PROFILES.AAVE_MOCK_ORACLE,
-      process.env.AAVE_MOCK_ORACLE_PRIVATE_KEY,
-    );
+    // if (!process.env.AAVE_MOCK_ORACLE_PRIVATE_KEY) {
+    //   throw new Error(
+    //     "Env variable AAVE_MOCK_ORACLE_PRIVATE_KEY does not exist",
+    //   );
+    // }
+    // addProfilePkey(
+    //   aptosProvider,
+    //   AAVE_PROFILES.AAVE_ORACLE,
+    //   process.env.AAVE_ORACLE_PRIVATE_KEY,
+    // );
 
     if (!process.env.AAVE_ORACLE_PRIVATE_KEY) {
       throw new Error("Env variable AAVE_ORACLE_PRIVATE_KEY does not exist");
@@ -407,7 +406,7 @@ export class AptosProvider {
   }
 
   public getOracleProfileAccount(): Ed25519Account {
-    return this.getProfileAccountByName(AAVE_PROFILES.AAVE_MOCK_ORACLE);
+    return this.getProfileAccountByName(AAVE_PROFILES.AAVE_ORACLE);
   }
 
   public getPoolProfileAccount(): Ed25519Account {
