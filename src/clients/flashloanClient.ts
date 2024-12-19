@@ -11,8 +11,18 @@ export class FlashloanClient extends AptosContractWrapperBaseClass {
   flashloanContract: FlashLoanContract;
 
   constructor(provider: AptosProvider, signer?: Ed25519Account) {
-    super(provider, signer || provider.getPoolProfileAccount());
+    super(provider, signer);
     this.flashloanContract = new FlashLoanContract(provider);
+  }
+
+  public static buildWithDefaultSigner(
+    provider: AptosProvider,
+  ): FlashloanClient {
+    const client = new FlashloanClient(
+      provider,
+      provider.getPoolProfileAccount(),
+    );
+    return client;
   }
 
   public async flashloan(
