@@ -5,71 +5,11 @@ export const priceFeeds: Map<string, Uint8Array> = new Map<
   Uint8Array
 >();
 
-// Chainlink price feeds for testnet
+// supported
 priceFeeds.set(
   "APT",
   hexToUint8Array(
     "0x011e22d6bf000332000000000000000000000000000000000000000000000000",
-  ),
-);
-priceFeeds.set(
-  "AVAX",
-  hexToUint8Array(
-    "0x016d7a70e300332000000000000000000000000000000000000000000000000",
-  ),
-);
-priceFeeds.set(
-  "AAVE",
-  hexToUint8Array(
-    "0x016d7a70e300332000000000000000000000000000000000000000000000000",
-  ),
-); // same as AVAX for now
-priceFeeds.set(
-  "BNB",
-  hexToUint8Array(
-    "0x011d45b006000332000000000000000000000000000000000000000000000000",
-  ),
-);
-priceFeeds.set(
-  "BTC",
-  hexToUint8Array(
-    "0x01a0b4d920003320000000000000000000000000000000000000000000000000",
-  ),
-);
-priceFeeds.set(
-  "CELO",
-  hexToUint8Array(
-    "0x0132427bcd000332000000000000000000000000000000000000000000000000",
-  ),
-);
-priceFeeds.set(
-  "DAI",
-  hexToUint8Array(
-    "0x0112be0d78000332000000000000000000000000000000000000000000000000",
-  ),
-);
-priceFeeds.set(
-  "WETH",
-  hexToUint8Array(
-    "0x01d585327c000332000000000000000000000000000000000000000000000000",
-  ),
-);
-priceFeeds.set(
-  "LINK",
-  hexToUint8Array(
-    "0x0101199b3b000332000000000000000000000000000000000000000000000000",
-  ),
-);
-priceFeeds.set(
-  "METIS",
-  hexToUint8Array(
-    "0x01e835288b000332000000000000000000000000000000000000000000000000",
-  ),
-);
-priceFeeds.set(
-  "POL",
-  hexToUint8Array(
-    "0x01e5984da6000332000000000000000000000000000000000000000000000000",
   ),
 );
 priceFeeds.set(
@@ -85,8 +25,34 @@ priceFeeds.set(
   ),
 );
 priceFeeds.set(
-  "WEMIX",
+  "BTC",
   hexToUint8Array(
-    "0x01ef65a95a000332000000000000000000000000000000000000000000000000",
+    "0x01a0b4d920000332000000000000000000000000000000000000000000000000",
   ),
 );
+priceFeeds.set(
+  "WETH",
+  hexToUint8Array(
+    "0x01d585327c000332000000000000000000000000000000000000000000000000",
+  ),
+); // same as for ETH
+priceFeeds.set(
+  "LINK",
+  hexToUint8Array(
+    "0x0101199b3b000332000000000000000000000000000000000000000000000000",
+  ),
+);
+
+// unsupported (mocked)
+priceFeeds.set(
+  "AAVE",
+  hexToUint8Array(
+    "0x011e22d6bf000332000000000000000000000000000000000000000000000000",
+  ),
+); // same as APT
+priceFeeds.set(
+  "DAI",
+  hexToUint8Array(
+    "0x011e22d6bf000332000000000000000000000000000000000000000000000000",
+  ),
+); // same as APT

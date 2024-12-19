@@ -19,13 +19,8 @@ export interface AptosProviderConfig {
     AAVE_CONFIG: string;
     AAVE_ORACLE: string;
     AAVE_POOL: string;
+    AAVE_RATE: string;
   };
-  // oracle: {
-  //   URL: string;
-  //   CONTRACT_ACCOUNT: string;
-  //   DEPLOYER_ACCOUNT: string;
-  //   WORMHOLE: string;
-  // };
 }
 
 export interface AptosAccountConfig {
@@ -45,6 +40,7 @@ export enum AAVE_PROFILES {
   AAVE_CONFIG = "aave_config",
   AAVE_ORACLE = "aave_oracle",
   AAVE_POOL = "aave_pool",
+  AAVE_RATE = "aave_rate",
   AAVE_LARGE_PACKAGES = "aave_large_packages",
   AAVE_MATH = "aave_math",
   DEFAULT_FUNDER = "default",
@@ -207,17 +203,6 @@ export class AptosProvider {
       AAVE_PROFILES.AAVE_CONFIG,
       process.env.AAVE_CONFIG_PRIVATE_KEY,
     );
-
-    // if (!process.env.AAVE_MOCK_ORACLE_PRIVATE_KEY) {
-    //   throw new Error(
-    //     "Env variable AAVE_MOCK_ORACLE_PRIVATE_KEY does not exist",
-    //   );
-    // }
-    // addProfilePkey(
-    //   aptosProvider,
-    //   AAVE_PROFILES.AAVE_ORACLE,
-    //   process.env.AAVE_ORACLE_PRIVATE_KEY,
-    // );
 
     if (!process.env.AAVE_ORACLE_PRIVATE_KEY) {
       throw new Error("Env variable AAVE_ORACLE_PRIVATE_KEY does not exist");
