@@ -21,7 +21,6 @@
         "noImplicitAny": false,
         "noImplicitThis": false,
         "skipLibCheck": true,
-        "strictNullChecks": false,
         "downlevelIteration": true,
         "esModuleInterop": true,
         "outDir": "dist",
