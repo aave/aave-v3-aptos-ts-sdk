@@ -6,29 +6,22 @@ export const DEFAULT_TESTNET_CONFIG: AptosProviderConfig = {
   network: Network.TESTNET,
   addresses: {
     A_TOKENS:
-      "adf324dfd95a1596469a91f4c4f19d1c0e6a6444215cc7d54d0844fbc3904f51",
+      "d0f9ff25e799cc9e830a12c16b19e96c80afd2cd2519e0650e7decdd817f3976",
     UNDERLYING_TOKENS:
-      "c10094e058b6495b6c0dbcee945176c17e5c7e2f80418b9bb489568380e970ed",
+      "8b36f64859c4abec40091ec600e58b483973a7574c66d0f5a7275c694faba16f",
     VARIABLE_TOKENS:
-      "7e1e44a62f001398a918682716072062715a9b34d342863844c0426c882670a7",
+      "05d20cb8dd9803cbd33fd0ac339fa7ab6b54b6f1d287b89ca32a2063e61d51cb",
     AAVE_ACL:
-      "b04b25a98c07f03797873b5fd1d8d55c036d8d445c8e8f83384992699ad831cb",
+      "b182d0c56e55710e44988b595a2645610212fdc07c6df34570db2c1f4eabbd76",
     AAVE_CONFIG:
-      "8e9684732282321821648dac2822e0594ef013bb4cfc8938d3a4cd1c091c7777",
+      "380926568a74174ad655d6b95b66a5b43346274a6af914ddb7058506b049a9f9",
     AAVE_ORACLE:
-      "b233470cdd1948f950b1d878b9dfffc01b24c68c840fbf699371e1d088b5f566",
+      "929eb88d39b33d1be520549b0beae339957f06bc7cdf0d2fe5a2fd2f3a2b51c4",
     AAVE_POOL:
-      "db7ee0e6dcf55e0c6ed381ded34dae12b204214e7dd1b69eaa7639bcbd7417dc",
+      "a8734ac972ca939d20f7772a01871f41d03e3e9c6da4e60378c6aed88be7dcdd",
+    AAVE_RATE:
+      "96404732ae801b4ec029cc2621697e8d08dd2a815ad56e1d2f1d056d67cb7774",
   },
-  // oracle: {
-  //   URL: "https://hermes-beta.pyth.network",
-  //   CONTRACT_ACCOUNT:
-  //     "0x7e783b349d3e89cf5931af376ebeadbfab855b3fa239b7ada8f5a92fbea6b387",
-  //   DEPLOYER_ACCOUNT:
-  //     "0xb31e712b26fd295357355f6845e77c888298636609e93bc9b05f0f604049f434",
-  //   WORMHOLE:
-  //     "0x5bc11445584a763c1fa7ed39081f1b920954da14e04b32440cba863d03e19625",
-  // },
 };
 
 export const EMPTY_TESTNET_CONFIG = (): AptosProviderConfig => {
@@ -42,13 +35,8 @@ export const EMPTY_TESTNET_CONFIG = (): AptosProviderConfig => {
       AAVE_CONFIG: ZERO_ADDRESS.toString(),
       AAVE_ORACLE: ZERO_ADDRESS.toString(),
       AAVE_POOL: ZERO_ADDRESS.toString(),
+      AAVE_RATE: ZERO_ADDRESS.toString(),
     },
-    // oracle: {
-    //   URL: "https://hermes-beta.pyth.network",
-    //   CONTRACT_ACCOUNT: ZERO_ADDRESS.toString(),
-    //   DEPLOYER_ACCOUNT: ZERO_ADDRESS.toString(),
-    //   WORMHOLE: ZERO_ADDRESS.toString(),
-    // },
   } as AptosProviderConfig;
 };
 
@@ -63,12 +51,7 @@ export const EMPTY_LOCAL_CONFIG = (): AptosProviderConfig => {
       AAVE_CONFIG: ZERO_ADDRESS.toString(),
       AAVE_ORACLE: ZERO_ADDRESS.toString(),
       AAVE_POOL: ZERO_ADDRESS.toString(),
+      AAVE_RATE: ZERO_ADDRESS.toString(),
     },
-    // oracle: {
-    //   URL: "https://hermes-beta.pyth.network",
-    //   CONTRACT_ACCOUNT: ZERO_ADDRESS.toString(),
-    //   DEPLOYER_ACCOUNT: ZERO_ADDRESS.toString(),
-    //   WORMHOLE: ZERO_ADDRESS.toString(),
-    // },
   } as AptosProviderConfig;
 };

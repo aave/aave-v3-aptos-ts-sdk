@@ -1,6 +1,6 @@
 {
     "name": "@aave/aave-v3-aptos-ts-sdk",
-    "version": "0.0.26",
+    "version": "0.0.27",
     "description": "Aave's typescript sdk for Aptos",
     "main": "dist/cmd/index.js",
     "module": "dist/esm/index.js",
@@ -88,7 +88,7 @@
         "@types/node": "^22.10.2",
         "@typescript-eslint/eslint-plugin": "^8.18.1",
         "@typescript-eslint/parser": "^8.18.1",
-        "chalk": "^5.3.0",
+        "chalk": "^5.4.0",
         "eslint": "^9.17.0",
         "eslint-config-airbnb-base": "^15.0.0",
         "eslint-config-airbnb-typescript": "^18.0.0",
