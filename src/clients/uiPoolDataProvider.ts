@@ -134,7 +134,9 @@ export class UiPoolDataProviderClient extends AptosContractWrapperBaseClass {
     );
     const aggregatedReserveDataRaw = resp.at(0) as Array<any>;
     const reservesData = aggregatedReserveDataRaw.map((item) => ({
-      underlyingAsset: item.underlying_asset.toString(),
+      underlyingAsset: AccountAddress.from(
+        item.underlying_asset.toString(),
+      ).toString(),
       name: item.name as string,
       symbol: item.symbol as string,
       decimals: Number(item.decimals.toString()),
@@ -152,7 +154,9 @@ export class UiPoolDataProviderClient extends AptosContractWrapperBaseClass {
       liquidityRate: BigInt(item.liquidity_rate),
       variableBorrowRate: BigInt(item.variable_borrow_rate),
       lastUpdateTimestamp: Number(item.last_update_timestamp.toString()),
-      aTokenAddress: item.a_token_address.toString(),
+      aTokenAddress: AccountAddress.from(
+        item.a_token_address.toString(),
+      ).toString(),
       variableDebtTokenAddress: item.variable_debt_token_address.toString(),
       //
       availableLiquidity: BigInt(item.available_liquidity),
@@ -184,7 +188,9 @@ export class UiPoolDataProviderClient extends AptosContractWrapperBaseClass {
         item.e_mode_liquidation_threshold.toString(),
       ),
       eModeLiquidationBonus: Number(item.e_mode_liquidation_bonus.toString()),
-      eModePriceSource: item.e_mode_price_source.toString(),
+      eModePriceSource: AccountAddress.from(
+        item.e_mode_price_source.toString(),
+      ).toString(),
       eModeLabel: item.e_mode_label as string,
       borrowableInIsolation: item.borrowable_in_isolation as boolean,
     }));
@@ -217,7 +223,9 @@ export class UiPoolDataProviderClient extends AptosContractWrapperBaseClass {
     const userReserves = userReserveDataRaw.map(
       (item) =>
         ({
-          underlyingAsset: item.underlying_asset.toString(),
+          underlyingAsset: AccountAddress.from(
+            item.underlying_asset.toString(),
+          ).toString(),
           scaledATokenBalance: BigInt(item.scaled_a_token_balance),
           usageAsCollateralEnabledOnUser:
             item.usage_as_collateral_enabled_on_user as boolean,
