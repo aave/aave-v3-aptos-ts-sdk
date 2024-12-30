@@ -66,9 +66,9 @@ const reserves: ReserveConfig[] = [
     projectUri: "https://app.aave.com/",
     treasury: AccountAddress.ZERO,
     aTokenName: "Aave USDC",
-    aTokenSymbol: "aUSDC",
+    aTokenSymbol: "AUSDC",
     variableDebtTokenName: "Aave Variable Debt USDC",
-    variableDebtTokenSymbol: "vUSDC",
+    variableDebtTokenSymbol: "VUSDC",
     optimalUsageRatio: 920000000000000000000000000n,
     baseVariableBorrowRate: 0n,
     variableRateSlope1: 65000000000000000000000000n,
@@ -93,9 +93,9 @@ const reserves: ReserveConfig[] = [
     projectUri: "https://app.aave.com/",
     treasury: AccountAddress.ZERO,
     aTokenName: "Aave USDT",
-    aTokenSymbol: "aUSDT",
+    aTokenSymbol: "AUSDT",
     variableDebtTokenName: "Aave Variable Debt USDT",
-    variableDebtTokenSymbol: "vUSDT",
+    variableDebtTokenSymbol: "VUSDT",
     optimalUsageRatio: 920000000000000000000000000n,
     baseVariableBorrowRate: 0n,
     variableRateSlope1: 65000000000000000000000000n,
@@ -176,7 +176,6 @@ const poolSigner = Account.fromPrivateKey({
   }
 
   // configure eModes
-
   for (const eMode of eModes) {
     await poolClient.setEmodeCategory(
       eMode.categoryId,
@@ -189,7 +188,6 @@ const poolSigner = Account.fromPrivateKey({
   }
 
   // create rate strategies
-
   for (const reserve of reservesWithAsset) {
     await poolClient.setReserveInterestRateStrategy(
       reserve.underlyingAsset,
@@ -201,7 +199,6 @@ const poolSigner = Account.fromPrivateKey({
   }
 
   // init reserves that dont exist
-
   const reservesToInit = {
     assets: [] as Array<AccountAddress>,
     decimals: [] as Array<number>,
@@ -231,7 +228,6 @@ const poolSigner = Account.fromPrivateKey({
   if (reservesToInit.assets.length > 0) {
     await poolClient.initReserves(
       reservesToInit.assets,
-      reservesToInit.decimals,
       reservesToInit.treasury,
       reservesToInit.aTokenName,
       reservesToInit.aTokenSymbol,
@@ -240,43 +236,27 @@ const poolSigner = Account.fromPrivateKey({
     );
   }
 
-  const reservesToConfigure = {
-    asset: [] as Array<AccountAddress>,
-    ltv: [] as Array<bigint>,
-    liquidationThreshold: [] as Array<bigint>,
-    liquidationBonus: [] as Array<bigint>,
-    reserveFactor: [] as Array<bigint>,
-    borrowCap: [] as Array<bigint>,
-    supplyCap: [] as Array<bigint>,
-    borrowingEnabled: [] as Array<boolean>,
-    flashloanEnabled: [] as Array<boolean>,
-  };
-
   for (const reserve of reservesWithAsset) {
-    reservesToConfigure.asset.push(reserve.underlyingAsset);
-    reservesToConfigure.ltv.push(reserve.ltv);
-    reservesToConfigure.liquidationThreshold.push(reserve.liquidationThreshold);
-    reservesToConfigure.liquidationBonus.push(reserve.liquidationBonus);
-    reservesToConfigure.reserveFactor.push(reserve.reserveFactor);
-    reservesToConfigure.borrowCap.push(reserve.borrowCap);
-    reservesToConfigure.supplyCap.push(reserve.supplyCap);
-    reservesToConfigure.borrowingEnabled.push(reserve.borrowingEnabled);
-    reservesToConfigure.flashloanEnabled.push(reserve.flashloanEnabled);
-  }
-
-  await poolClient.configureReserves(
-    reservesToConfigure.asset,
-    reservesToConfigure.ltv,
-    reservesToConfigure.liquidationThreshold,
-    reservesToConfigure.liquidationBonus,
-    reservesToConfigure.reserveFactor,
-    reservesToConfigure.borrowCap,
-    reservesToConfigure.supplyCap,
-    reservesToConfigure.borrowingEnabled,
-    reservesToConfigure.flashloanEnabled,
-  );
-
-  for (const reserve of reservesWithAsset) {
+    await poolClient.configureReserveAsCollateral(
+      reserve.underlyingAsset,
+      reserve.ltv,
+      reserve.liquidationThreshold,
+      reserve.liquidationBonus,
+    );
+    await poolClient.setReserveFactor(
+      reserve.underlyingAsset,
+      reserve.reserveFactor,
+    );
+    await poolClient.setBorrowCap(reserve.underlyingAsset, reserve.borrowCap);
+    await poolClient.setSupplyCap(reserve.underlyingAsset, reserve.supplyCap);
+    await poolClient.setReserveBorrowing(
+      reserve.underlyingAsset,
+      reserve.borrowingEnabled,
+    );
+    await poolClient.setReserveFlashLoaning(
+      reserve.underlyingAsset,
+      reserve.flashloanEnabled,
+    );
     await poolClient.setAssetEmodeCategory(
       reserve.underlyingAsset,
       reserve.eModeCategoryId,
