@@ -1,28 +1,22 @@
 import dotenv from "dotenv";
 import { Account, Ed25519PrivateKey } from "@aptos-labs/ts-sdk";
 import { OracleClient, PoolClient } from "../../src/clients";
+import { priceFeeds } from "../../src/helpers/priceFeeds";
 import { AptosProvider } from "../../src/clients/aptosProvider";
 import { DEFAULT_TESTNET_CONFIG } from "../../src/configs/testnet";
 
 dotenv.config();
 
-const priceMapper = {
-  DAI: 100000000,
-  USDC: 100000000,
-  WETH: 300000000000,
-  AAVE: 10000000000,
-};
-
 (async () => {
   // global aptos provider
   const aptosProvider = AptosProvider.fromConfig(DEFAULT_TESTNET_CONFIG);
 
-  if (!process.env.AAVE_MOCK_ORACLE_PRIVATE_KEY) {
-    throw new Error(`AAVE_MOCK_ORACLE_PRIVATE_KEY env was not found`);
+  if (!process.env.AAVE_ORACLE_PRIVATE_KEY) {
+    throw new Error(`AAVE_ORACLE_PRIVATE_KEY env was not found`);
   }
 
   const oracleManageAccount = Account.fromPrivateKey({
-    privateKey: new Ed25519PrivateKey(process.env.AAVE_MOCK_ORACLE_PRIVATE_KEY),
+    privateKey: new Ed25519PrivateKey(process.env.AAVE_ORACLE_PRIVATE_KEY),
   });
 
   const oracleClient = new OracleClient(aptosProvider, oracleManageAccount);
@@ -30,14 +24,14 @@ const priceMapper = {
 
   const assets = await poolClient.getAllReservesTokens();
   for (const asset of assets) {
-    const price = priceMapper[asset.symbol];
-    if (price) {
-      const txReceipt = await oracleClient.setAssetPrice(
+    const priceFeedId = priceFeeds.get(asset.symbol);
+    if (priceFeedId) {
+      const txReceipt = await oracleClient.setAssetFeedId(
         asset.tokenAddress,
-        BigInt(price),
+        priceFeedId,
       );
       console.log(
-        `Asset ${asset.symbol} price set to ${price} with tx hash ${txReceipt.hash}`,
+        `Asset ${asset.symbol} price set to ${priceFeedId} with tx hash ${txReceipt.hash}`,
       );
     }
   }
