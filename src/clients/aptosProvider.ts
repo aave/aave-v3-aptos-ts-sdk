@@ -20,6 +20,7 @@ export interface AptosProviderConfig {
     AAVE_ORACLE: string;
     AAVE_POOL: string;
     AAVE_RATE: string;
+    AAVE_DATA: string;
   };
 }
 
@@ -43,6 +44,7 @@ export enum AAVE_PROFILES {
   AAVE_RATE = "aave_rate",
   AAVE_LARGE_PACKAGES = "aave_large_packages",
   AAVE_MATH = "aave_math",
+  AAVE_DATA = "aave_data",
   DEFAULT_FUNDER = "default",
   TEST_ACCOUNT_0 = "test_account_0",
   TEST_ACCOUNT_1 = "test_account_1",
@@ -115,6 +117,10 @@ export class AptosProvider {
     aptosProvider.addProfileAddress(
       AAVE_PROFILES.AAVE_POOL,
       AccountAddress.fromString(config.addresses.AAVE_POOL),
+    );
+    aptosProvider.addProfileAddress(
+      AAVE_PROFILES.AAVE_RATE,
+      AccountAddress.fromString(config.addresses.AAVE_DATA),
     );
     const aptosConfig = new AptosConfig({
       network: aptosProvider.getNetwork(),
@@ -240,6 +246,15 @@ export class AptosProvider {
       aptosProvider,
       AAVE_PROFILES.AAVE_MATH,
       process.env.AAVE_MATH_PRIVATE_KEY,
+    );
+
+    if (!process.env.AAVE_DATA_PRIVATE_KEY) {
+      throw new Error("Env variable AAVE_DATA_PRIVATE_KEY does not exist");
+    }
+    addProfilePkey(
+      aptosProvider,
+      AAVE_PROFILES.AAVE_DATA,
+      process.env.AAVE_DATA_PRIVATE_KEY,
     );
 
     if (!process.env.DEFAULT_FUNDER_PRIVATE_KEY) {
@@ -412,6 +427,10 @@ export class AptosProvider {
 
   public getAclProfileAccount(): Ed25519Account {
     return this.getProfileAccountByName(AAVE_PROFILES.AAVE_ACL);
+  }
+
+  public getDataProfileAccount(): Ed25519Account {
+    return this.getProfileAccountByName(AAVE_PROFILES.AAVE_DATA);
   }
 
   /** Gets the selected network. */
