@@ -8,6 +8,7 @@ import {
   Ed25519Account,
 } from "@aptos-labs/ts-sdk";
 import YAML from "yaml";
+import { map } from "yaml/dist/schema/common/map";
 
 export interface AptosProviderConfig {
   network: Network;
@@ -59,8 +60,8 @@ export class AptosProvider {
 
   private oracleUrl: string;
 
-  private profileAddressMap: Map<string, AccountAddress> = new Map();
-  private profileAccountMap: Map<string, Ed25519PrivateKey> = new Map();
+  private profileAddressMap = new Map<string, AccountAddress>();
+  private profileAccountMap = new Map<string, Ed25519PrivateKey>();
 
   private aptos: Aptos;
 
@@ -390,9 +391,13 @@ export class AptosProvider {
 
   /** Returns the profile private key by name if found. */
   public getProfileAccountByName(profileName: string): Ed25519Account {
-    return Account.fromPrivateKey({
-      privateKey: this.getProfileAccountPrivateKeyByName(profileName),
-    });
+    const profileAccount = this.getProfileAccountPrivateKeyByName(profileName);
+    if (profileAccount) {
+      return Account.fromPrivateKey({
+        privateKey: this.getProfileAccountPrivateKeyByName(profileName),
+      });
+    }
+    return undefined;
   }
 
   /** Returns the profile address by name if found. */
