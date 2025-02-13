@@ -140,7 +140,7 @@ export class UiPoolDataProviderClient extends AptosContractWrapperBaseClass {
       name: item.name as string,
       symbol: item.symbol as string,
       decimals: Number(item.decimals.toString()),
-      baseLTVasCollateral: BigInt(item.base_lt_vas_collateral),
+      baseLTVasCollateral: BigInt(item.base_ltv_as_collateral),
       reserveLiquidationThreshold: BigInt(item.reserve_liquidation_threshold),
       reserveLiquidationBonus: BigInt(item.reserve_liquidation_bonus),
       reserveFactor: BigInt(item.reserve_factor),
