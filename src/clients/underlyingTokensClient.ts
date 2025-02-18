@@ -2,7 +2,11 @@ import {
   AccountAddress,
   CommittedTransactionResponse,
   Ed25519Account,
+  MoveAddressType,
   MoveFunctionId,
+  MoveOption,
+  MoveOptionType,
+  MoveVector,
 } from "@aptos-labs/ts-sdk";
 import { AptosContractWrapperBaseClass } from "./baseClass";
 import { Metadata } from "../helpers/interfaces";
@@ -79,12 +83,18 @@ export class UnderlyingTokensClient extends AptosContractWrapperBaseClass {
   }
 
   // Get the maximum supply from the metadata object.
-  public async maximum(metadataAddress: AccountAddress): Promise<bigint> {
+  public async maximum(
+    metadataAddress: AccountAddress,
+  ): Promise<bigint | undefined> {
     const [resp] = (
-      await this.callViewMethod(this.tokensContract.UnderlyingMaximumFuncAddr, [
-        metadataAddress,
-      ])
-    ).map(mapToBigInt);
+      await this.callViewMethod<[{ vec: [string | undefined] }]>(
+        this.tokensContract.UnderlyingMaximumFuncAddr,
+        [metadataAddress],
+      )
+    ).map((value) => {
+      const unwrappedValue = value.vec[0];
+      return unwrappedValue ? mapToBigInt(unwrappedValue) : undefined;
+    });
     return resp;
   }
 
