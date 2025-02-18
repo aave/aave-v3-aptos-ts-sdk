@@ -2,32 +2,34 @@ import { MoveFunctionId } from "@aptos-labs/ts-sdk";
 import { AAVE_PROFILES, AptosProvider } from "../clients/aptosProvider";
 
 export class OracleContract {
-  // Resource Func Addr
-  SetMockFuncAddr: MoveFunctionId;
-
   GetAssetPriceFuncAddr: MoveFunctionId;
 
-  SetAssetPriceFuncAddr: MoveFunctionId;
+  GetAssetsPricesFuncAddr: MoveFunctionId;
 
-  IsBorrowAllowedFuncAddr: MoveFunctionId;
+  SetAssetFeedIdFuncAddr: MoveFunctionId;
 
-  IsLiquidationAllowedFuncAddr: MoveFunctionId;
+  BatchSetAssetFeedIdsFuncAddr: MoveFunctionId;
 
-  SetGracePeriodFuncAddr: MoveFunctionId;
+  RemoveAssetFeedIdFuncAddr: MoveFunctionId;
 
-  GetGracePeriodFuncAddr: MoveFunctionId;
+  RemoveAssetFeedIdsFuncAddr: MoveFunctionId;
+
+  GetOracleResourceAccountFuncAddr: MoveFunctionId;
+
+  GetOracleAddressFuncAddr: MoveFunctionId;
 
   constructor(provider: AptosProvider) {
     const OracleManager = provider.getProfileAddressByName(
-      AAVE_PROFILES.AAVE_MOCK_ORACLE,
+      AAVE_PROFILES.AAVE_ORACLE,
     );
     const OracleManagerAccountAddress = OracleManager.toString();
-    this.SetMockFuncAddr = `${OracleManagerAccountAddress}::oracle::set_mock`;
     this.GetAssetPriceFuncAddr = `${OracleManagerAccountAddress}::oracle::get_asset_price`;
-    this.SetAssetPriceFuncAddr = `${OracleManagerAccountAddress}::oracle::set_asset_price`;
-    this.IsBorrowAllowedFuncAddr = `${OracleManagerAccountAddress}::oracle_sentinel::is_borrow_allowed`;
-    this.IsLiquidationAllowedFuncAddr = `${OracleManagerAccountAddress}::oracle_sentinel::is_liquidation_allowed`;
-    this.SetGracePeriodFuncAddr = `${OracleManagerAccountAddress}::oracle_sentinel::set_grace_period`;
-    this.GetGracePeriodFuncAddr = `${OracleManagerAccountAddress}::oracle_sentinel::get_grace_period`;
+    this.GetAssetsPricesFuncAddr = `${OracleManagerAccountAddress}::oracle::get_assets_prices`;
+    this.SetAssetFeedIdFuncAddr = `${OracleManagerAccountAddress}::oracle::set_asset_feed_id`;
+    this.BatchSetAssetFeedIdsFuncAddr = `${OracleManagerAccountAddress}::oracle::batch_set_asset_feed_ids`;
+    this.RemoveAssetFeedIdFuncAddr = `${OracleManagerAccountAddress}::oracle::remove_asset_feed_id`;
+    this.RemoveAssetFeedIdsFuncAddr = `${OracleManagerAccountAddress}::oracle::batch_remove_asset_feed_ids`;
+    this.GetOracleResourceAccountFuncAddr = `${OracleManagerAccountAddress}::oracle_base::get_oracle_resource_account`;
+    this.GetOracleAddressFuncAddr = `${OracleManagerAccountAddress}::oracle_base::oracle_address`;
   }
 }

@@ -86,8 +86,13 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   poolContract: PoolContract;
 
   constructor(provider: AptosProvider, signer?: Ed25519Account) {
-    super(provider, signer || provider.getPoolProfileAccount());
+    super(provider, signer);
     this.poolContract = new PoolContract(provider);
+  }
+
+  public static buildWithDefaultSigner(provider: AptosProvider): PoolClient {
+    const client = new PoolClient(provider, provider.getPoolProfileAccount());
+    return client;
   }
 
   public async mintToTreasury(

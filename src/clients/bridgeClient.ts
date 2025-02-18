@@ -11,8 +11,13 @@ export class BridgeClient extends AptosContractWrapperBaseClass {
   bridgeContract: BridgeContract;
 
   constructor(provider: AptosProvider, signer?: Ed25519Account) {
-    super(provider, signer || provider.getPoolProfileAccount());
+    super(provider, signer);
     this.bridgeContract = new BridgeContract(provider);
+  }
+
+  public static buildWithDefaultSigner(provider: AptosProvider): BridgeClient {
+    const client = new BridgeClient(provider, provider.getPoolProfileAccount());
+    return client;
   }
 
   public async backUnbacked(

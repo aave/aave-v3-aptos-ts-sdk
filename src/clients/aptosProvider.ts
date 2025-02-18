@@ -18,14 +18,10 @@ export interface AptosProviderConfig {
     VARIABLE_TOKENS: string;
     AAVE_ACL: string;
     AAVE_CONFIG: string;
-    AAVE_MOCK_ORACLE: string;
+    AAVE_ORACLE: string;
     AAVE_POOL: string;
-  };
-  oracle: {
-    URL: string;
-    CONTRACT_ACCOUNT: string;
-    DEPLOYER_ACCOUNT: string;
-    WORMHOLE: string;
+    AAVE_RATE: string;
+    AAVE_DATA: string;
   };
 }
 
@@ -44,11 +40,12 @@ export enum AAVE_PROFILES {
   VARIABLE_TOKENS = "variable_tokens",
   AAVE_ACL = "aave_acl",
   AAVE_CONFIG = "aave_config",
-  AAVE_MOCK_ORACLE = "aave_mock_oracle",
   AAVE_ORACLE = "aave_oracle",
   AAVE_POOL = "aave_pool",
+  AAVE_RATE = "aave_rate",
   AAVE_LARGE_PACKAGES = "aave_large_packages",
   AAVE_MATH = "aave_math",
+  AAVE_DATA = "aave_data",
   DEFAULT_FUNDER = "default",
   TEST_ACCOUNT_0 = "test_account_0",
   TEST_ACCOUNT_1 = "test_account_1",
@@ -93,7 +90,7 @@ export class AptosProvider {
   public static fromConfig(config: AptosProviderConfig): AptosProvider {
     let aptosProvider = new AptosProvider();
     aptosProvider.setNetwork(config.network);
-    aptosProvider.setOracleUrl(config.oracle.URL);
+    // aptosProvider.setOracleUrl(config.oracle.URL);
     aptosProvider.addProfileAddress(
       AAVE_PROFILES.A_TOKENS,
       AccountAddress.fromString(config.addresses.A_TOKENS),
@@ -115,12 +112,16 @@ export class AptosProvider {
       AccountAddress.fromString(config.addresses.AAVE_CONFIG),
     );
     aptosProvider.addProfileAddress(
-      AAVE_PROFILES.AAVE_MOCK_ORACLE,
-      AccountAddress.fromString(config.addresses.AAVE_MOCK_ORACLE),
+      AAVE_PROFILES.AAVE_ORACLE,
+      AccountAddress.fromString(config.addresses.AAVE_ORACLE),
     );
     aptosProvider.addProfileAddress(
       AAVE_PROFILES.AAVE_POOL,
       AccountAddress.fromString(config.addresses.AAVE_POOL),
+    );
+    aptosProvider.addProfileAddress(
+      AAVE_PROFILES.AAVE_RATE,
+      AccountAddress.fromString(config.addresses.AAVE_DATA),
     );
     const aptosConfig = new AptosConfig({
       network: aptosProvider.getNetwork(),
@@ -210,17 +211,6 @@ export class AptosProvider {
       process.env.AAVE_CONFIG_PRIVATE_KEY,
     );
 
-    if (!process.env.AAVE_MOCK_ORACLE_PRIVATE_KEY) {
-      throw new Error(
-        "Env variable AAVE_MOCK_ORACLE_PRIVATE_KEY does not exist",
-      );
-    }
-    addProfilePkey(
-      aptosProvider,
-      AAVE_PROFILES.AAVE_MOCK_ORACLE,
-      process.env.AAVE_MOCK_ORACLE_PRIVATE_KEY,
-    );
-
     if (!process.env.AAVE_ORACLE_PRIVATE_KEY) {
       throw new Error("Env variable AAVE_ORACLE_PRIVATE_KEY does not exist");
     }
@@ -257,6 +247,15 @@ export class AptosProvider {
       aptosProvider,
       AAVE_PROFILES.AAVE_MATH,
       process.env.AAVE_MATH_PRIVATE_KEY,
+    );
+
+    if (!process.env.AAVE_DATA_PRIVATE_KEY) {
+      throw new Error("Env variable AAVE_DATA_PRIVATE_KEY does not exist");
+    }
+    addProfilePkey(
+      aptosProvider,
+      AAVE_PROFILES.AAVE_DATA,
+      process.env.AAVE_DATA_PRIVATE_KEY,
     );
 
     if (!process.env.DEFAULT_FUNDER_PRIVATE_KEY) {
@@ -382,6 +381,11 @@ export class AptosProvider {
   public getProfileAccountPrivateKeyByName(
     profileName: string,
   ): Ed25519PrivateKey {
+    if (!this.profileAccountMap.has(profileName)) {
+      throw new Error(
+        `Account "${profileName}" was not found in the profiles map`,
+      );
+    }
     return this.profileAccountMap.get(profileName);
   }
 
@@ -398,11 +402,16 @@ export class AptosProvider {
 
   /** Returns the profile address by name if found. */
   public getProfileAddressByName(profileName: string): AccountAddress {
+    if (!this.profileAddressMap.has(profileName)) {
+      throw new Error(
+        `Address of account "${profileName}" was not found in the profile addresses map`,
+      );
+    }
     return this.profileAddressMap.get(profileName);
   }
 
   public getOracleProfileAccount(): Ed25519Account {
-    return this.getProfileAccountByName(AAVE_PROFILES.AAVE_MOCK_ORACLE);
+    return this.getProfileAccountByName(AAVE_PROFILES.AAVE_ORACLE);
   }
 
   public getPoolProfileAccount(): Ed25519Account {
@@ -423,6 +432,10 @@ export class AptosProvider {
 
   public getAclProfileAccount(): Ed25519Account {
     return this.getProfileAccountByName(AAVE_PROFILES.AAVE_ACL);
+  }
+
+  public getDataProfileAccount(): Ed25519Account {
+    return this.getProfileAccountByName(AAVE_PROFILES.AAVE_DATA);
   }
 
   /** Gets the selected network. */
