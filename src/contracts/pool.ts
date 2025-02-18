@@ -269,7 +269,7 @@ export class PoolContract {
     this.PoolGetRevisionFuncAddr = `${PoolManagerAccountAddress}::pool::get_revision`;
     this.PoolGetReserveConfigurationFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_configuration`;
     this.PoolGetReserveDataFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_data`;
-    this.GetReserveDataAndReservesCountFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_reserve_data_and_reserves_count`;
+    this.GetReserveDataAndReservesCountFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_data_and_reserves_count`;
     this.PoolGetReservesCountFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserves_count`;
     this.PoolGetReservesListFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserves_list`;
     this.PoolGetReserveAddressByIdFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_address_by_id`;
