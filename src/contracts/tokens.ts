@@ -39,6 +39,8 @@ export class TokensContract {
 
   ATokenScaledTotalSupplyFuncAddr: MoveFunctionId;
 
+  ATokenTotalSupplyFuncAddr: MoveFunctionId;
+
   ATokenNameFuncAddr: MoveFunctionId;
 
   ATokenSymbolFuncAddr: MoveFunctionId;
@@ -46,6 +48,8 @@ export class TokensContract {
   ATokenDecimalsFuncAddr: MoveFunctionId;
 
   ATokenScaledBalanceOfFuncAddr: MoveFunctionId;
+
+  ATokenBalanceOfFuncAddr: MoveFunctionId;
 
   ATokenRescueTokensFuncAddr: MoveFunctionId;
 
@@ -78,7 +82,11 @@ export class TokensContract {
 
   VariableScaledBalanceOfFuncAddr: MoveFunctionId;
 
+  VariableBalanceOfFuncAddr: MoveFunctionId;
+
   VariableScaledTotalSupplyFuncAddr: MoveFunctionId;
+
+  VariableTotalSupplyFuncAddr: MoveFunctionId;
 
   VariableGetScaledUserBalanceAndSupplyFuncAddr: MoveFunctionId;
 
@@ -113,9 +121,11 @@ export class TokensContract {
     this.ATokenGetReserveTreasuryAddressFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::get_reserve_treasury_address`;
     this.ATokenGetUnderlyingAssetAddressFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::get_underlying_asset_address`;
     this.ATokenScaledTotalSupplyFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::scaled_total_supply`;
+    this.ATokenTotalSupplyFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::total_supply`;
     this.ATokenNameFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::name`;
     this.ATokenSymbolFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::symbol`;
     this.ATokenDecimalsFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::decimals`;
+    this.ATokenBalanceOfFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::balance_of`;
     this.ATokenScaledBalanceOfFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::scaled_balance_of`;
     this.ATokenRescueTokensFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::rescue_tokens`;
     this.ATokenGetScaledUserBalanceAndSupplyFuncAddr = `${AaveTokensManagerAccountAddress}::a_token_factory::get_scaled_user_balance_and_supply`;
@@ -134,7 +144,9 @@ export class TokensContract {
     this.VariableSymbolFuncAddr = `${AaveTokensManagerAccountAddress}::variable_debt_token_factory::symbol`;
     this.VariableDecimalsFuncAddr = `${AaveTokensManagerAccountAddress}::variable_debt_token_factory::decimals`;
     this.VariableScaledBalanceOfFuncAddr = `${AaveTokensManagerAccountAddress}::variable_debt_token_factory::scaled_balance_of`;
+    this.VariableBalanceOfFuncAddr = `${AaveTokensManagerAccountAddress}::variable_debt_token_factory::balance_of`;
     this.VariableScaledTotalSupplyFuncAddr = `${AaveTokensManagerAccountAddress}::variable_debt_token_factory::scaled_total_supply`;
+    this.VariableTotalSupplyFuncAddr = `${AaveTokensManagerAccountAddress}::variable_debt_token_factory::total_supply`;
     this.VariableGetScaledUserBalanceAndSupplyFuncAddr = `${AaveTokensManagerAccountAddress}::variable_debt_token_factory::get_scaled_user_balance_and_supply`;
     this.VariableGetPreviousIndexFuncAddr = `${AaveTokensManagerAccountAddress}::variable_debt_token_factory::get_previous_index`;
     this.VariableGetRevisionFuncAddr = `${AaveTokensManagerAccountAddress}::variable_debt_token_factory::get_revision`;
