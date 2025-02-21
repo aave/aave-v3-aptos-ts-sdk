@@ -102,6 +102,19 @@ export class VariableTokensClient extends AptosContractWrapperBaseClass {
     return AccountAddress.fromString(resp as string);
   }
 
+  public async balanceOf(
+    owner: AccountAddress,
+    metadataAddress: AccountAddress,
+  ): Promise<bigint> {
+    const [resp] = (
+      await this.callViewMethod(this.tokensContract.VariableBalanceOfFuncAddr, [
+        owner,
+        metadataAddress,
+      ])
+    ).map(mapToBigInt);
+    return resp;
+  }
+
   public async scaledBalanceOf(
     owner: AccountAddress,
     metadataAddress: AccountAddress,
@@ -121,6 +134,16 @@ export class VariableTokensClient extends AptosContractWrapperBaseClass {
     const [resp] = (
       await this.callViewMethod(
         this.tokensContract.VariableScaledTotalSupplyFuncAddr,
+        [metadataAddress],
+      )
+    ).map(mapToBigInt);
+    return resp;
+  }
+
+  public async totalSupplyOf(metadataAddress: AccountAddress): Promise<bigint> {
+    const [resp] = (
+      await this.callViewMethod(
+        this.tokensContract.VariableTotalSupplyFuncAddr,
         [metadataAddress],
       )
     ).map(mapToBigInt);

@@ -262,13 +262,6 @@ export class AclClient extends AptosContractWrapperBaseClass {
     return resp as string;
   }
 
-  public async grantDefaultRoleAdmin(): Promise<CommittedTransactionResponse> {
-    return this.sendTxAndAwaitResponse(
-      this.AclManagerContract.grantDefaultAdminRole,
-      [],
-    );
-  }
-
   public async getDefaultAdminRole(): Promise<string> {
     const [resp] = await this.callViewMethod(
       this.AclManagerContract.defaultAdminRole,

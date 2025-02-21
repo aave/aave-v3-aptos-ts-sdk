@@ -46,6 +46,8 @@ export enum AAVE_PROFILES {
   AAVE_LARGE_PACKAGES = "aave_large_packages",
   AAVE_MATH = "aave_math",
   AAVE_DATA = "aave_data",
+  AAVE_DATA_FEEDS = "data_feeds",
+  AAVE_PLATFORM = "platform",
   DEFAULT_FUNDER = "default",
   TEST_ACCOUNT_0 = "test_account_0",
   TEST_ACCOUNT_1 = "test_account_1",

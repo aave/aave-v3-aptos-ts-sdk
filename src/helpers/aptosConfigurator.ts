@@ -9,6 +9,7 @@ import { PoolClient } from "../clients/poolClient";
 import { UnderlyingTokensClient } from "../clients/underlyingTokensClient";
 import { AptosProvider, AptosProviderConfig } from "../clients/aptosProvider";
 import { OracleClient } from "../clients/oracleClient";
+import { priceFeeds } from "./priceFeeds";
 
 const ONE_OCTA = 100_000_000;
 
@@ -186,9 +187,9 @@ export class AptosConfigurator {
   async setAssetsPrice(assets: AssetPriceConfig[]) {
     const receipts: CommittedTransactionResponse[] = [];
     for (const asset of assets) {
-      const receipt = await this.oracleClient.setAssetPrice(
+      const receipt = await this.oracleClient.setAssetFeedId(
         asset.address,
-        asset.priceInMarketReferenceCurrency,
+        priceFeeds[asset.symbol],
       );
       console.log(
         `TOKEN ${asset.symbol} price set at ${asset.priceInMarketReferenceCurrency}, tx hash ${receipt.hash}`,
@@ -222,7 +223,7 @@ export class AptosConfigurator {
     return tokenWithAddress;
   }
 
-  async try_createTokens<T extends TokenConfig>(
+  async tryCreateTokens<T extends TokenConfig>(
     tokens: T[],
   ): Promise<WithAccountAddress<T>[]> {
     const tokenWithAddress: WithAccountAddress<T>[] = [];
@@ -425,7 +426,7 @@ export class AptosConfigurator {
     return receipts;
   }
 
-  async try_initReserves(
+  async tryInitReserves(
     reservesConfig: WithAccountAddress<ReserveConfig>[],
   ): Promise<CommittedTransactionResponse | undefined> {
     const reservesToInit = {
@@ -492,7 +493,7 @@ export class AptosConfigurator {
 
   async setupProtocol(reservesConfig: ReserveConfig[], eModes: EModeConfig[]) {
     // create tokens if they dont exist and get addresses
-    const tokens = await this.try_createTokens(reservesConfig);
+    const tokens = await this.tryCreateTokens(reservesConfig);
     // set price of assets on the oracle
     await this.setAssetsPrice(tokens);
     // set emodes
@@ -500,7 +501,7 @@ export class AptosConfigurator {
     // set interest rate strategies
     await this.setReservesInterestRateStrategy(tokens);
     // try init reserves that are not initialized
-    await this.try_initReserves(tokens);
+    await this.tryInitReserves(tokens);
     // configure reserves
     await this.configReserves(tokens);
     // set reserves eMode category

@@ -61,8 +61,6 @@ export class AclManagerContract {
 
   getAssetListingAdminRoleFuncAddr: MoveFunctionId;
 
-  grantDefaultAdminRole: MoveFunctionId;
-
   defaultAdminRole: MoveFunctionId;
 
   getRoleAdmin: MoveFunctionId;
@@ -100,7 +98,6 @@ export class AclManagerContract {
     this.getFlashBorrowerRoleFuncAddr = `${AclManagerAccountAddress}::acl_manage::get_flash_borrower_role`;
     this.getBridgeRoleFuncAddr = `${AclManagerAccountAddress}::acl_manage::get_bridge_role`;
     this.getAssetListingAdminRoleFuncAddr = `${AclManagerAccountAddress}::acl_manage::get_asset_listing_admin_role`;
-    this.grantDefaultAdminRole = `${AclManagerAccountAddress}::acl_manage::grant_default_admin_role`;
     this.defaultAdminRole = `${AclManagerAccountAddress}::acl_manage::default_admin_role`;
     this.getRoleAdmin = `${AclManagerAccountAddress}::acl_manage::get_role_admin`;
     this.setRoleAdmin = `${AclManagerAccountAddress}::acl_manage::set_role_admin`;
