@@ -1,11 +1,9 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
 name: Node.js CI
 
 on:
     push:
     workflow_call:
+    workflow_dispatch:
 
 jobs:
     build:
@@ -13,17 +11,46 @@ jobs:
 
         strategy:
             matrix:
-                node-version: [16.x, 18.x]
-                # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+                node-version: [18.x, 20.x]
 
         steps:
-            - uses: actions/checkout@v3
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v3
+            - name: Checkout repository
+              uses: actions/checkout@v4
+            
+            - name: Set up Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v4
               with:
                   node-version: ${{ matrix.node-version }}
-                  cache: "npm"
-            - run: npm ci
-            - run: npm run build
-            - run: npm run fmt:check
-            - run: npm test
+
+            - name: Install PNPM
+              uses: pnpm/action-setup@v4
+              with:
+                  version: 9
+                  run_install: false
+
+            - name: Enable Corepack
+              run: corepack enable
+
+            - name: Get PNPM store directory
+              shell: bash
+              run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+            - name: Setup PNPM cache
+              uses: actions/cache@v4
+              with:
+                  path: ${{ env.STORE_PATH }}
+                  key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: |
+                      ${{ runner.os }}-pnpm-store-
+
+            - name: Install dependencies
+              run: pnpm install
+
+            - name: Build
+              run: pnpm run build
+
+            - name: Format Check
+              run: pnpm run fmt:check
+
+            - name: Run Tests
+              run: pnpm test

@@ -15,25 +15,45 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
-        # https://github.com/actions/checkout/issues/298#issuecomment-664976337
         ref: ${{ github.head_ref }}
-        # Checkout code using bot account
         token: ${{ github.token }}
 
-    - name: Use Node.js
-      uses: actions/setup-node@v3
+    - name: Set Node.js
+      uses: actions/setup-node@v4
       with:
         node-version: 18.x
-        cache: 'npm'
+
+    - name: Install PNPM
+      uses: pnpm/action-setup@v4
+      with:
+        version: 9
+        run_install: false
+
+    - name: Enable Corepack
+      run: corepack enable
+
+    - name: Get PNPM store directory
+      shell: bash
+      run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+    - name: Setup PNPM cache
+      uses: actions/cache@v4
+      with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+              ${{ runner.os }}-pnpm-store-
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
 
     - name: Execute unit tests
       run: |
-        npm ci
-        npm run build
-        npm run fmt:check
-        npm run test
+        pnpm run build
+        pnpm run fmt:check
+        pnpm run test
 
     - name: allow access to coverage.sh
       run: chmod +x ./scripts/coverage.sh
@@ -42,12 +62,12 @@ jobs:
     - name: Extract coverage
       id: coverage
       run: |
-        value=$(npm run test:cov | awk '/All files/ {print $10}' | tr -d '%')
+        value=$(pnpm run test:cov | awk '/All files/ {print $10}' | tr -d '%')
         echo "coverage=$value" >> $GITHUB_OUTPUT
 
     - name: Add test coverage to README
-      run:  ./scripts/coverage.sh
-      shell: bash 
+      run: ./scripts/coverage.sh
+      shell: bash
       env:
         COVERAGE: ${{ steps.coverage.outputs.coverage }}
 
@@ -62,4 +82,4 @@ jobs:
       with:
         commit_message: "Generate coverage badge"
         file_pattern: "README.md"
-        commit_author: Aaave <info@avara.xyz>
+        commit_author: Aave <info@avara.xyz>
