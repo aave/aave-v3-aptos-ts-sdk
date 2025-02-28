@@ -4,18 +4,52 @@ import { AptosProvider } from "./aptosProvider";
 import { UiIncentiveDataProviderContract } from "../contracts/uiIncentiveDataProvider";
 import { Metadata } from "../helpers/interfaces";
 
+/**
+ * Represents the aggregated incentive data for a reserve.
+ *
+ * @typedef {Object} AggregatedReserveIncentiveData
+ * @property {AccountAddress} underlyingAsset - The address of the underlying asset.
+ * @property {IncentiveData} aIncentiveData - The incentive data for the aToken.
+ * @property {IncentiveData} vIncentiveData - The incentive data for the variable debt token.
+ */
 export type AggregatedReserveIncentiveData = {
   underlyingAsset: AccountAddress;
   aIncentiveData: IncentiveData;
   vIncentiveData: IncentiveData;
 };
 
+/**
+ * Represents the incentive data for a specific token.
+ *
+ * @typedef {Object} IncentiveData
+ *
+ * @property {AccountAddress} tokenAddress - The address of the token.
+ * @property {AccountAddress} incentiveControllerAddress - The address of the incentive controller.
+ * @property {[RewardInfo]} rewardsTokenInformation - An array containing information about the rewards token.
+ */
 export type IncentiveData = {
   tokenAddress: AccountAddress;
   incentiveControllerAddress: AccountAddress;
   rewardsTokenInformation: [RewardInfo];
 };
 
+/**
+ * Represents information about a reward token.
+ *
+ * @typedef {Object} RewardInfo
+ *
+ * @property {string} rewardTokenSymbol - The symbol of the reward token.
+ * @property {AccountAddress} rewardTokenAddress - The address of the reward token.
+ * @property {AccountAddress} rewardOracleAddress - The address of the reward oracle.
+ * @property {bigint} emissionPerSecond - The emission rate of the reward token per second.
+ * @property {bigint} incentivesLastUpdateTimestamp - The timestamp of the last update to the incentives.
+ * @property {bigint} tokenIncentivesIndex - The index of the token incentives.
+ * @property {bigint} emissionEndTimestamp - The timestamp when the emission ends.
+ * @property {bigint} rewardPriceFeed - The price feed of the reward token.
+ * @property {number} rewardTokenDecimals - The number of decimals of the reward token.
+ * @property {number} precision - The precision of the reward calculations.
+ * @property {number} priceFeedDecimals - The number of decimals in the price feed.
+ */
 export type RewardInfo = {
   rewardTokenSymbol: string;
   rewardTokenAddress: AccountAddress;
@@ -30,18 +64,48 @@ export type RewardInfo = {
   priceFeedDecimals: number;
 };
 
+/**
+ * Represents the incentive data for a user's reserve.
+ *
+ * @typedef {Object} UserReserveIncentiveData
+ * @property {AccountAddress} underlyingAsset - The address of the underlying asset.
+ * @property {UserIncentiveData} aTokenIncentivesUserData - The incentive data for the aToken.
+ * @property {UserIncentiveData} vTokenIncentivesUserData - The incentive data for the vToken.
+ */
 export type UserReserveIncentiveData = {
   underlyingAsset: AccountAddress;
   aTokenIncentivesUserData: UserIncentiveData;
   vTokenIncentivesUserData: UserIncentiveData;
 };
 
+/**
+ * Represents the incentive data for a user.
+ *
+ * @typedef {Object} UserIncentiveData
+ *
+ * @property {AccountAddress} tokenAddress - The address of the token.
+ * @property {AccountAddress} incentiveControllerAddress - The address of the incentive controller.
+ * @property {[UserRewardInfo]} userRewardsInformation - An array containing information about user rewards.
+ */
 export type UserIncentiveData = {
   tokenAddress: AccountAddress;
   incentiveControllerAddress: AccountAddress;
   userRewardsInformation: [UserRewardInfo];
 };
 
+/**
+ * Represents the reward information for a user.
+ *
+ * @typedef {Object} UserRewardInfo
+ * @property {string} rewardTokenSymbol - The symbol of the reward token.
+ * @property {AccountAddress} rewardOracleAddress - The address of the reward oracle.
+ * @property {AccountAddress} rewardTokenAddress - The address of the reward token.
+ * @property {bigint} userUnclaimedRewards - The amount of unclaimed rewards for the user.
+ * @property {bigint} tokenIncentivesUserIndex - The user's index in the token incentives.
+ * @property {bigint} rewardPriceFeed - The price feed of the reward.
+ * @property {number} priceFeedDecimals - The number of decimals in the price feed.
+ * @property {number} rewardTokenDecimals - The number of decimals in the reward token.
+ */
 export type UserRewardInfo = {
   rewardTokenSymbol: string;
   rewardOracleAddress: AccountAddress;
@@ -53,6 +117,24 @@ export type UserRewardInfo = {
   rewardTokenDecimals: number;
 };
 
+/**
+ * Maps the raw reward token information to a structured `RewardInfo` object.
+ *
+ * @param rewardTokenInfo - The raw reward token information.
+ * @returns A `RewardInfo` object containing the mapped incentive data.
+ *
+ * @property rewardTokenSymbol - The symbol of the reward token.
+ * @property rewardTokenAddress - The address of the reward token.
+ * @property rewardOracleAddress - The address of the reward oracle.
+ * @property emissionPerSecond - The emission rate of the reward token per second.
+ * @property incentivesLastUpdateTimestamp - The timestamp of the last update to the incentives.
+ * @property tokenIncentivesIndex - The index of the token incentives.
+ * @property emissionEndTimestamp - The timestamp when the emission ends.
+ * @property rewardPriceFeed - The price feed of the reward token.
+ * @property rewardTokenDecimals - The number of decimals for the reward token.
+ * @property precision - The precision of the reward token.
+ * @property priceFeedDecimals - The number of decimals for the price feed.
+ */
 const mapIncentiveData = (rewardTokenInfo: any): RewardInfo =>
   ({
     rewardTokenSymbol: rewardTokenInfo.reward_token_symbol as string,
@@ -74,6 +156,12 @@ const mapIncentiveData = (rewardTokenInfo: any): RewardInfo =>
     priceFeedDecimals: rewardTokenInfo.price_feed_decimals as number,
   }) as RewardInfo;
 
+/**
+ * Maps the given reward token information to a UserRewardInfo object.
+ *
+ * @param rewardTokenInfo - The reward token information to map.
+ * @returns A UserRewardInfo object containing the mapped data.
+ */
 const mapUserIncentiveData = (rewardTokenInfo: any): UserRewardInfo =>
   ({
     rewardTokenSymbol: rewardTokenInfo.reward_token_symbol as string,
@@ -92,6 +180,12 @@ const mapUserIncentiveData = (rewardTokenInfo: any): UserRewardInfo =>
     rewardTokenDecimals: rewardTokenInfo.reward_token_decimals as number,
   }) as UserRewardInfo;
 
+/**
+ * Processes raw user reserves incentives data and maps it to structured user reserve incentive data.
+ *
+ * @param userReservesIncentivesDataRaw - An array of raw user reserves incentives data.
+ * @returns An array containing the structured user reserve incentive data.
+ */
 const getUserReservesIncentivesDataInternal = (
   userReservesIncentivesDataRaw: Array<any>,
 ): [UserReserveIncentiveData] => {
@@ -133,6 +227,12 @@ const getUserReservesIncentivesDataInternal = (
   return userReservesIncentives as [UserReserveIncentiveData];
 };
 
+/**
+ * Processes raw aggregated incentives reserve data and maps it to a structured format.
+ *
+ * @param aggregatedIncentivesReserveDataRaw - An array of raw incentive data for reserves.
+ * @returns An array containing a single `AggregatedReserveIncentiveData` object.
+ */
 const getReservesIncentivesDataInternal = (
   aggregatedIncentivesReserveDataRaw: Array<any>,
 ): [AggregatedReserveIncentiveData] => {
@@ -185,6 +285,13 @@ export class UiIncentiveDataProviderClient extends AptosContractWrapperBaseClass
     );
   }
 
+  /**
+   * Creates an instance of `UiIncentiveDataProviderClient` using the provided `AptosProvider`.
+   * The client is initialized with the default signer obtained from the provider's pool profile account.
+   *
+   * @param provider - The `AptosProvider` instance used to create the client.
+   * @returns A new instance of `UiIncentiveDataProviderClient`.
+   */
   public static buildWithDefaultSigner(
     provider: AptosProvider,
   ): UiIncentiveDataProviderClient {
@@ -195,6 +302,15 @@ export class UiIncentiveDataProviderClient extends AptosContractWrapperBaseClass
     return client;
   }
 
+  /**
+   * Fetches the address of the UI Pool Data Provider V3.
+   *
+   * This method calls the `uiIncentiveDataProviderV3DataAddress` view method on the
+   * `uiPoolDataProviderContract` to retrieve the address.
+   *
+   * @returns {Promise<AccountAddress>} A promise that resolves to an `AccountAddress` object
+   * representing the address of the UI Pool Data Provider V3.
+   */
   public async uiPoolDataProviderV3DataAddress(): Promise<AccountAddress> {
     const [resp] = await this.callViewMethod(
       this.uiPoolDataProviderContract.uiIncentiveDataProviderV3DataAddress,
@@ -203,6 +319,17 @@ export class UiIncentiveDataProviderClient extends AptosContractWrapperBaseClass
     return AccountAddress.fromString(resp as string);
   }
 
+  /**
+   * Fetches the V3 data object from the UI Pool Data Provider.
+   *
+   * This method calls the `uiIncentiveDataProviderV3DataObject` view method on the
+   * `uiPoolDataProviderContract` and returns the result as an `AccountAddress`.
+   *
+   * @returns {Promise<AccountAddress>} A promise that resolves to an `AccountAddress` object
+   * representing the V3 data object.
+   *
+   * @throws {Error} If the call to the view method fails or the response cannot be parsed.
+   */
   public async uiPoolDataProviderV3DataObject(): Promise<AccountAddress> {
     const [resp] = await this.callViewMethod(
       this.uiPoolDataProviderContract.uiIncentiveDataProviderV3DataObject,
@@ -211,6 +338,14 @@ export class UiIncentiveDataProviderClient extends AptosContractWrapperBaseClass
     return AccountAddress.fromString((resp as Metadata).inner);
   }
 
+  /**
+   * Fetches the full reserves incentive data from the UI Pool Data Provider contract.
+   *
+   * @returns {Promise<{ aggregatedReservesIncentivesData: [AggregatedReserveIncentiveData], userReserveIncentiveData: [UserReserveIncentiveData] }>}
+   * A promise that resolves to an object containing:
+   * - `aggregatedReservesIncentivesData`: An array of aggregated reserve incentive data.
+   * - `userReserveIncentiveData`: An array of user reserve incentive data.
+   */
   public async getFullReservesIncentiveData(): Promise<{
     aggregatedReservesIncentivesData: [AggregatedReserveIncentiveData];
     userReserveIncentiveData: [UserReserveIncentiveData];
@@ -233,6 +368,13 @@ export class UiIncentiveDataProviderClient extends AptosContractWrapperBaseClass
     return { aggregatedReservesIncentivesData, userReserveIncentiveData };
   }
 
+  /**
+   * Retrieves the incentives data for all reserves.
+   *
+   * @returns {Promise<[AggregatedReserveIncentiveData]>} A promise that resolves to an array containing the aggregated incentives data for all reserves.
+   *
+   * @throws {Error} If the call to the view method fails.
+   */
   public async getReservesIncentivesData(): Promise<
     [AggregatedReserveIncentiveData]
   > {
@@ -247,6 +389,12 @@ export class UiIncentiveDataProviderClient extends AptosContractWrapperBaseClass
     return aggregatedReservesIncentivesData as [AggregatedReserveIncentiveData];
   }
 
+  /**
+   * Retrieves the incentives data for the user's reserves.
+   *
+   * @param user - The account address of the user.
+   * @returns A promise that resolves to an array containing the user's reserve incentive data.
+   */
   public async getUserReservesIncentivesData(
     user: AccountAddress,
   ): Promise<[UserReserveIncentiveData]> {

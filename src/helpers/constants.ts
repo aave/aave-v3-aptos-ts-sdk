@@ -4,6 +4,7 @@
 
 import { AccountAddress } from "@aptos-labs/ts-sdk";
 
+export const ONE_OCTA = 100_000_000;
 export const PERCENTAGE_FACTOR = "10000";
 export const HALF_PERCENTAGE = (BigInt(PERCENTAGE_FACTOR) / 2n).toString();
 export const WAD = (BigInt(10) ** 18n).toString();

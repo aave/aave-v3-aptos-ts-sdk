@@ -40,7 +40,9 @@
         "prettier:fix": "prettier --write .",
         "fmt": "pnpm run prettier:fix && pnpm run lint:fix",
         "fmt:check": "pnpm run prettier && pnpm run lint",
-        "doc": "typedoc src/index.ts --name aave-aptos --out docs/documentation/html --tsconfig tsconfig.json",
+        "doc": "typedoc",
+        "serve-docs": "npx http-server docs/documentation/html",
+        "deploy-docs": "pnpm run docs && gh-pages -d docs/documentation/html",
         "prepare": "husky install"
     },
     "author": "Avara <info@avara.xyz>",
