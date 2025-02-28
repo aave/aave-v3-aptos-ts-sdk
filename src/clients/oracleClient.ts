@@ -102,6 +102,40 @@ export class OracleClient extends AptosContractWrapperBaseClass {
   }
 
   /**
+   * Sets a mock price for a given feed ID.
+   *
+   * @param price - The mock price to be set, represented as a bigint.
+   * @param feedId - The feed ID for which the mock price is to be set, represented as a Uint8Array.
+   * @returns A promise that resolves to a CommittedTransactionResponse once the transaction is committed.
+   */
+  public async setMockPrice(
+    price: bigint,
+    feedId: Uint8Array,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.oracleContract.SetMockPriceFuncAddr,
+      [price, feedId],
+    );
+  }
+
+  /**
+   * Sets a mock feed ID for a given asset.
+   *
+   * @param asset - The account address of the asset.
+   * @param feedId - The feed ID to be set as a mock, represented as a Uint8Array.
+   * @returns A promise that resolves to a CommittedTransactionResponse once the transaction is committed.
+   */
+  public async setMockFeed(
+    asset: AccountAddress,
+    feedId: Uint8Array,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.oracleContract.SetMockFeedIdFuncAddr,
+      [asset, feedId],
+    );
+  }
+
+  /**
    * Sets the feed IDs for a batch of assets in the oracle contract.
    *
    * @param assets - An array of account addresses representing the assets.

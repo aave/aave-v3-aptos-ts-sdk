@@ -3,24 +3,53 @@ name: Deploy documentation
 on:
   push:
     branches:
-      - main
+      - fixes/evgeni/various
   workflow_dispatch:
 
 jobs:
   deploy-typedoc:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-    - uses: actions/setup-node@v3
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
       with:
         node-version: 18
 
+    - name: Install PNPM
+      uses: pnpm/action-setup@v4
+      with:
+        version: 9
+        run_install: false
+
+    - name: Enable Corepack
+      run: corepack enable
+
+    - name: Get PNPM store directory
+      shell: bash
+      run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+    - name: Setup PNPM cache
+      uses: actions/cache@v4
+      with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+              ${{ runner.os }}-pnpm-store-
+
     - name: Install dependencies
-      run: npm ci
+      run: pnpm install
+
+    - name: Install gh-pages globally
+      run: pnpm add -g gh-pages
 
     - name: Generate documentation
-      run: npm run doc
+      run: pnpm run docs
 
-    - name: Deploy documentation
-      run: npm run deploy-docs
+    - name: Publish github pages
+      run: |
+        npx gh-pages -d docs/documentation/html -u "github-actions-bot <support+actions@github.com>" -r https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}

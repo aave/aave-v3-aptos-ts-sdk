@@ -8,6 +8,10 @@ export class OracleContract {
 
   SetAssetFeedIdFuncAddr: MoveFunctionId;
 
+  SetMockFeedIdFuncAddr: MoveFunctionId;
+
+  SetMockPriceFuncAddr: MoveFunctionId;
+
   BatchSetAssetFeedIdsFuncAddr: MoveFunctionId;
 
   RemoveAssetFeedIdFuncAddr: MoveFunctionId;
@@ -50,5 +54,7 @@ export class OracleContract {
     this.RemoveAssetFeedIdsFuncAddr = `${OracleManagerAccountAddress}::oracle::batch_remove_asset_feed_ids`;
     this.GetOracleResourceAccountFuncAddr = `${OracleManagerAccountAddress}::oracle_base::get_oracle_resource_account`;
     this.GetOracleAddressFuncAddr = `${OracleManagerAccountAddress}::oracle_base::oracle_address`;
+    this.SetMockFeedIdFuncAddr = `${OracleManagerAccountAddress}::oracle::set_chainlink_mock_feed`;
+    this.SetMockPriceFuncAddr = `${OracleManagerAccountAddress}::oracle::set_chainlink_mock_price`;
   }
 }
