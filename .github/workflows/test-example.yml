@@ -1,0 +1,43 @@
+name: Borrow Example
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-SC-example:
+    defaults:
+      run:
+        working-directory: ./examples/
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: ./package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy
+        run: |
+          echo ${{ secrets.JSON_RPC_URL_PUBLIC }}
+          if npm run test-borrow-example ; then
+            echo "Borrow example passed!"
+          else
+            echo "Failed to run borrow example ..."
+            exit 1
+          fi
+        env:
+          JSON_RPC_URL_PUBLIC: https://testnet.aptos.net/api/v2
