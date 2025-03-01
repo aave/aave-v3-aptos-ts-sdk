@@ -1,5 +1,9 @@
 import { hexToUint8Array } from "./common";
 
+/**
+ * A map that associates a string key with a Uint8Array value.
+ * This map is used to store price feed data.
+ */
 export const priceFeeds: Map<string, Uint8Array> = new Map<
   string,
   Uint8Array

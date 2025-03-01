@@ -2,6 +2,23 @@ import { Network } from "@aptos-labs/ts-sdk";
 import { AptosProviderConfig } from "../clients/aptosProvider";
 import { ZERO_ADDRESS } from "../helpers";
 
+/**
+ * Configuration object for the Aave V3 Testnet on Aptos.
+ *
+ * @constant
+ * @type {AptosProviderConfig}
+ * @property {Network} network - The network type, set to TESTNET.
+ * @property {Object} addresses - The addresses for various Aave components.
+ * @property {string} addresses.A_TOKENS - Address for Aave A Tokens.
+ * @property {string} addresses.UNDERLYING_TOKENS - Address for underlying tokens.
+ * @property {string} addresses.VARIABLE_TOKENS - Address for variable tokens.
+ * @property {string} addresses.AAVE_ACL - Address for Aave ACL.
+ * @property {string} addresses.AAVE_CONFIG - Address for Aave configuration.
+ * @property {string} addresses.AAVE_ORACLE - Address for Aave oracle.
+ * @property {string} addresses.AAVE_POOL - Address for Aave pool.
+ * @property {string} addresses.AAVE_RATE - Address for Aave rate.
+ * @property {string} addresses.AAVE_DATA - Address for Aave data.
+ */
 export const DEFAULT_TESTNET_CONFIG: AptosProviderConfig = {
   network: Network.TESTNET,
   addresses: {
@@ -26,6 +43,16 @@ export const DEFAULT_TESTNET_CONFIG: AptosProviderConfig = {
   },
 };
 
+/**
+ * Generates an empty configuration object for the Aptos testnet.
+ *
+ * @returns {AptosProviderConfig} An object containing default addresses set to ZERO_ADDRESS for the Aptos testnet.
+ *
+ * @example
+ * const config = EMPTY_TESTNET_CONFIG();
+ * console.log(config.network); // Output: Network.TESTNET
+ * console.log(config.addresses.A_TOKENS); // Output: ZERO_ADDRESS
+ */
 export const EMPTY_TESTNET_CONFIG = (): AptosProviderConfig => {
   return {
     network: Network.TESTNET,
@@ -42,6 +69,11 @@ export const EMPTY_TESTNET_CONFIG = (): AptosProviderConfig => {
   } as AptosProviderConfig;
 };
 
+/**
+ * Generates an empty local configuration for the Aptos provider.
+ *
+ * @returns {AptosProviderConfig} An object containing the local network configuration with all addresses set to ZERO_ADDRESS.
+ */
 export const EMPTY_LOCAL_CONFIG = (): AptosProviderConfig => {
   return {
     network: Network.LOCAL,

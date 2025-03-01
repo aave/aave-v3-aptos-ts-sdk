@@ -19,11 +19,15 @@ const baseConfig = {
     extensions: [".ts", ".js"],
   },
 
+  optimization: {
+    splitChunks: { chunks: "all" }, // Code splitting
+  },
+
   // Configuration for source maps
-  devtool: "source-map",
+  // devtool: "source-map",
 
   // The mode to use for the webpack build
-  mode: "development",
+  mode: "production",
 };
 
 // Base configuration
@@ -34,7 +38,7 @@ const baseConfigUmd = {
   output: {
     // The filename of the output file will be specified in each config
     // The path to the output directory, __dirname is the directory of the current module
-    path: path.resolve(__dirname, "."),
+    path: path.resolve(__dirname, "dist"),
     // The type of the exported library
     libraryTarget: "window", // for UMD we use window
     // The name of the library as it should be exposed in the global scope
@@ -56,6 +60,7 @@ const baseConfigUmd = {
         exclude: /node_modules/,
         options: {
           configFile: "tsconfig.commonjs.json",
+          transpileOnly: true,
         },
       },
     ],

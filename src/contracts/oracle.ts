@@ -18,6 +18,25 @@ export class OracleContract {
 
   GetOracleAddressFuncAddr: MoveFunctionId;
 
+  /**
+   * Constructs an instance of the Oracle class.
+   *
+   * @param provider - An instance of `AptosProvider` used to interact with the Aptos blockchain.
+   *
+   * This constructor initializes various function addresses related to the Oracle contract by
+   * fetching the OracleManager's account address from the provider and constructing the full
+   * function addresses for different oracle operations.
+   *
+   * The following function addresses are initialized:
+   * - `GetAssetPriceFuncAddr`: Address for the `get_asset_price` function.
+   * - `GetAssetsPricesFuncAddr`: Address for the `get_assets_prices` function.
+   * - `SetAssetFeedIdFuncAddr`: Address for the `set_asset_feed_id` function.
+   * - `BatchSetAssetFeedIdsFuncAddr`: Address for the `batch_set_asset_feed_ids` function.
+   * - `RemoveAssetFeedIdFuncAddr`: Address for the `remove_asset_feed_id` function.
+   * - `RemoveAssetFeedIdsFuncAddr`: Address for the `batch_remove_asset_feed_ids` function.
+   * - `GetOracleResourceAccountFuncAddr`: Address for the `get_oracle_resource_account` function.
+   * - `GetOracleAddressFuncAddr`: Address for the `oracle_address` function.
+   */
   constructor(provider: AptosProvider) {
     const OracleManager = provider.getProfileAddressByName(
       AAVE_PROFILES.AAVE_ORACLE,

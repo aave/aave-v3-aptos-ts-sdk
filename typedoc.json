@@ -1,9 +1,11 @@
 {
-    "sidebarLinks": {
-        "Core clients": "clients/aclClient.html",
-        "Configurations": "configs/index.html",
-    },
-    "navigationLinks": {
-        "Main documentation": "https://docs.aave.net/"
-    }
-}
+    "entryPoints": ["src/index.ts"],
+    "out": "docs/documentation/html",
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "excludeExternals": true,
+    "includeVersion": true,
+    "hideGenerator": true,
+    "name": "@aave/aave-v3-aptos-ts-sdk",
+    "tsconfig": "tsconfig.json"
+  }

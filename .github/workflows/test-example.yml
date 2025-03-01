@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  deploy-SC-example:
+  tes-api-example:
     defaults:
       run:
         working-directory: ./examples/
@@ -15,25 +15,41 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Install node
-        uses: actions/setup-node@v3
+      - name: Install PNPM
+        run: npm install -g pnpm
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: "18"
-          cache: "npm"
-          cache-dependency-path: ./package-lock.json
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Get PNPM store directory
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup PNPM cache
+        uses: actions/cache@v4
+        with:
+            path: ${{ env.STORE_PATH }}
+            key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+            restore-keys: |
+                ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: npm install
+        run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: npm run build
+        run: pnpm run build
 
       - name: Deploy
         run: |
           echo ${{ secrets.JSON_RPC_URL_PUBLIC }}
-          if npm run test-borrow-example ; then
+          if pnpm run test-borrow-example ; then
             echo "Borrow example passed!"
           else
             echo "Failed to run borrow example ..."
