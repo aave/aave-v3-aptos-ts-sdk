@@ -1,4 +1,10 @@
-import { Account, AccountAddress, Ed25519PrivateKey } from "@aptos-labs/ts-sdk";
+import {
+  Account,
+  AccountAddress,
+  Ed25519PrivateKey,
+  PrivateKey,
+  PrivateKeyVariants,
+} from "@aptos-labs/ts-sdk";
 import { AptosProvider } from "../../src/clients";
 import { DEFAULT_TESTNET_CONFIG } from "../../src/configs/testnet";
 
@@ -13,7 +19,12 @@ const fundAmount = BigInt(0.5);
   try {
     // set the tx sender
     const aptFunderAccount = Account.fromPrivateKey({
-      privateKey: new Ed25519PrivateKey(aptFunderPrivateKey),
+      privateKey: new Ed25519PrivateKey(
+        PrivateKey.formatPrivateKey(
+          aptFunderPrivateKey,
+          PrivateKeyVariants.Ed25519,
+        ),
+      ),
     });
 
     // get details for each underlying token

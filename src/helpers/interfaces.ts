@@ -7,6 +7,10 @@ export interface Metadata {
   inner: string;
 }
 
+export interface Object {
+  inner: string;
+}
+
 /**
  * Interface representing the data related to a user's reserve in the Aave protocol.
  *

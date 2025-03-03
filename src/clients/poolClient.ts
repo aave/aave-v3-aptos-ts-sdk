@@ -7,6 +7,7 @@ import { AptosContractWrapperBaseClass } from "./baseClass";
 import { AptosProvider } from "./aptosProvider";
 import { PoolContract } from "../contracts/pool";
 import { mapToBigInt } from "../helpers/common";
+import { Object } from "../helpers/interfaces";
 
 /**
  * Represents the configuration map for a reserve.
@@ -59,9 +60,9 @@ export type ReserveData = {
 
   /**
    * The liquidity index, expressed in ray.
-   * @type {number}
+   * @type {bigint}
    */
-  liquidityIndex: number;
+  liquidityIndex: bigint;
 
   /**
    * The current supply rate, expressed in ray.
@@ -98,12 +99,6 @@ export type ReserveData = {
    * @type {AccountAddress}
    */
   aTokenAddress: AccountAddress;
-
-  /**
-   * The address of the stable debt token.
-   * @type {AccountAddress}
-   */
-  stableDebtTokenAddress: AccountAddress;
 
   /**
    * The address of the variable debt token.
@@ -318,33 +313,145 @@ export class PoolClient extends AptosContractWrapperBaseClass {
    * @returns A promise that resolves to the reserve data of the specified asset.
    */
   public async getReserveData(asset: AccountAddress): Promise<ReserveData> {
-    const resp = await this.callViewMethod(
+    const [resp] = await this.callViewMethod(
       this.poolContract.PoolGetReserveDataFuncAddr,
       [asset],
     );
+    const object = AccountAddress.fromString((resp as Object).inner);
 
-    const respRaw = resp.at(0) as any;
-    const reserveData = {
-      configuration: respRaw.configuration as { data: number },
-      liquidityIndex: respRaw.liquidity_index as number,
-      currentLiquidityRate: BigInt(respRaw.current_liquidity_rate.toString()),
-      variableBorrowIndex: BigInt(respRaw.variable_borrow_index.toString()),
-      currentVariableBorrowRate: BigInt(
-        respRaw.current_variable_borrow_rate.toString(),
-      ),
-      lastUpdateTimestamp: respRaw.last_update_timestamp as number,
-      id: respRaw.id as number,
-      variableDebtTokenAddress: AccountAddress.fromString(
-        respRaw.variable_debt_token_address as string,
-      ),
-      accruedToTreasury: BigInt(respRaw.accrued_to_treasury.toString()),
-      unbacked: BigInt(respRaw.unbacked.toString()),
-      isolationModeTotalDebt: BigInt(
-        respRaw.isolation_mode_total_debt.toString(),
-      ),
+    return {
+      configuration: await this.getReserveConfigurationByReserveData(object),
+      liquidityIndex: await this.getReserveLiquidityIndex(object),
+      currentLiquidityRate: await this.getReserveCurrentLiquidityRate(object),
+      variableBorrowIndex: await this.getReserveVariableBorrowIndex(object),
+      currentVariableBorrowRate:
+        await this.getReserveCurrentVariableBorrowRate(object),
+      lastUpdateTimestamp: await this.getReserveLastUpdateTimestamp(object),
+      id: await this.getReserveId(object),
+      aTokenAddress: await this.getReserveATokenAddress(object),
+      variableDebtTokenAddress:
+        await this.getReserveVariableDebtTokenAddress(object),
+      accruedToTreasury: await this.getReserveAccruedToTreasury(object),
+      unbacked: await this.getReserveUnbacked(object),
+      isolationModeTotalDebt:
+        await this.getReserveIsolationModeTotalDebt(object),
     } as ReserveData;
+  }
 
-    return reserveData;
+  public async getReserveConfigurationByReserveData(
+    object: AccountAddress,
+  ): Promise<ReserveConfigurationMap> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.PoolGetReserveConfigurationByReserveData,
+      [object],
+    );
+    return resp as ReserveConfigurationMap;
+  }
+
+  public async getReserveLiquidityIndex(
+    object: AccountAddress,
+  ): Promise<bigint> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.PoolGetReserveLiquidityIndex,
+      [object],
+    );
+    return BigInt(resp.toString());
+  }
+
+  public async getReserveCurrentLiquidityRate(
+    object: AccountAddress,
+  ): Promise<bigint> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.PoolGetReserveCurrentLiquidityRate,
+      [object],
+    );
+    return BigInt(resp.toString());
+  }
+
+  public async getReserveVariableBorrowIndex(
+    object: AccountAddress,
+  ): Promise<bigint> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.PoolGetReserveVariableBorrowIndex,
+      [object],
+    );
+    return BigInt(resp.toString());
+  }
+
+  public async getReserveCurrentVariableBorrowRate(
+    object: AccountAddress,
+  ): Promise<bigint> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.PoolGetReserveCurrentVariableBorrowRate,
+      [object],
+    );
+    return BigInt(resp.toString());
+  }
+
+  public async getReserveLastUpdateTimestamp(
+    object: AccountAddress,
+  ): Promise<number> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.PoolGetReserveLastUpdateTimestamp,
+      [object],
+    );
+    return resp as number;
+  }
+
+  public async getReserveId(object: AccountAddress): Promise<number> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.PoolGetReserveId,
+      [object],
+    );
+    return resp as number;
+  }
+
+  public async getReserveATokenAddress(
+    object: AccountAddress,
+  ): Promise<AccountAddress> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.PoolGetReserveATokenAddress,
+      [object],
+    );
+    return AccountAddress.fromString(resp as string);
+  }
+
+  public async getReserveVariableDebtTokenAddress(
+    object: AccountAddress,
+  ): Promise<AccountAddress> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.PoolGetReserveVariableDebtTokenAddress,
+      [object],
+    );
+    return AccountAddress.fromString(resp as string);
+  }
+
+  public async getReserveAccruedToTreasury(
+    object: AccountAddress,
+  ): Promise<bigint> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.PoolGetReserveAccruedToTreasury,
+      [object],
+    );
+    return BigInt(resp.toString());
+  }
+
+  public async getReserveUnbacked(object: AccountAddress): Promise<bigint> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.PoolGetReserveUnbacked,
+      [object],
+    );
+    return BigInt(resp.toString());
+  }
+
+  public async getReserveIsolationModeTotalDebt(
+    object: AccountAddress,
+  ): Promise<bigint> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.PoolGetReserveIsolationModeTotalDebt,
+      [object],
+    );
+    return BigInt(resp.toString());
   }
 
   /**
@@ -364,7 +471,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     const respRaw = resp.at(0) as any;
     const reserveData = {
       configuration: respRaw.configuration as { data: number },
-      liquidityIndex: respRaw.liquidity_index as number,
+      liquidityIndex: BigInt(respRaw.liquidity_index),
       currentLiquidityRate: BigInt(respRaw.current_liquidity_rate.toString()),
       variableBorrowIndex: BigInt(respRaw.variable_borrow_index.toString()),
       currentVariableBorrowRate: BigInt(
@@ -697,10 +804,11 @@ export class PoolClient extends AptosContractWrapperBaseClass {
    */
   public async setPoolPause(
     paused: boolean,
+    gracePeriod: bigint,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
       this.poolContract.PoolConfiguratorSetPoolPauseFuncAddr,
-      [paused],
+      [paused, gracePeriod],
     );
   }
 
@@ -843,10 +951,11 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   public async setReservePaused(
     asset: AccountAddress,
     paused: boolean,
+    gracePeriod: bigint = 0n,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
       this.poolContract.PoolConfiguratorSetReservePauseFuncAddr,
-      [asset, paused],
+      [asset, paused, gracePeriod],
     );
   }
 

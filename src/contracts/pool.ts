@@ -73,6 +73,30 @@ export class PoolContract {
 
   PoolScaledVariableTokenBalanceOfFuncAddr: MoveFunctionId;
 
+  PoolGetReserveLiquidityIndex: MoveFunctionId;
+
+  PoolGetReserveConfigurationByReserveData: MoveFunctionId;
+
+  PoolGetReserveCurrentLiquidityRate: MoveFunctionId;
+
+  PoolGetReserveVariableBorrowIndex: MoveFunctionId;
+
+  PoolGetReserveCurrentVariableBorrowRate: MoveFunctionId;
+
+  PoolGetReserveLastUpdateTimestamp: MoveFunctionId;
+
+  PoolGetReserveId: MoveFunctionId;
+
+  PoolGetReserveATokenAddress: MoveFunctionId;
+
+  PoolGetReserveVariableDebtTokenAddress: MoveFunctionId;
+
+  PoolGetReserveAccruedToTreasury: MoveFunctionId;
+
+  PoolGetReserveUnbacked: MoveFunctionId;
+
+  PoolGetReserveIsolationModeTotalDebt: MoveFunctionId;
+
   /**
    * -------------------------------------------------------------------------
    * Pool Configurator
@@ -318,6 +342,18 @@ export class PoolContract {
     this.PoolScaledATokenBalanceOfFuncAddr = `${PoolManagerAccountAddress}::pool::scaled_a_token_balance_of`;
     this.PoolScaledVariableTokenTotalSupplyFuncAddr = `${PoolManagerAccountAddress}::pool::scaled_variable_token_total_supply`;
     this.PoolScaledVariableTokenBalanceOfFuncAddr = `${PoolManagerAccountAddress}::pool::scaled_variable_token_balance_of`;
+    this.PoolGetReserveLiquidityIndex = `${PoolManagerAccountAddress}::pool::get_reserve_liquidity_index`;
+    this.PoolGetReserveConfigurationByReserveData = `${PoolManagerAccountAddress}::pool::get_reserve_configuration_by_reserve_data`;
+    this.PoolGetReserveCurrentLiquidityRate = `${PoolManagerAccountAddress}::pool::get_reserve_current_liquidity_rate`;
+    this.PoolGetReserveVariableBorrowIndex = `${PoolManagerAccountAddress}::pool::get_reserve_variable_borrow_index`;
+    this.PoolGetReserveCurrentVariableBorrowRate = `${PoolManagerAccountAddress}::pool::get_reserve_current_variable_borrow_rate`;
+    this.PoolGetReserveLastUpdateTimestamp = `${PoolManagerAccountAddress}::pool::get_reserve_last_update_timestamp`;
+    this.PoolGetReserveId = `${PoolManagerAccountAddress}::pool::get_reserve_id`;
+    this.PoolGetReserveATokenAddress = `${PoolManagerAccountAddress}::pool::get_reserve_a_token_address`;
+    this.PoolGetReserveVariableDebtTokenAddress = `${PoolManagerAccountAddress}::pool::get_reserve_variable_debt_token_address`;
+    this.PoolGetReserveAccruedToTreasury = `${PoolManagerAccountAddress}::pool::get_reserve_accrued_to_treasury`;
+    this.PoolGetReserveUnbacked = `${PoolManagerAccountAddress}::pool::get_reserve_unbacked`;
+    this.PoolGetReserveIsolationModeTotalDebt = `${PoolManagerAccountAddress}::pool::get_reserve_isolation_mode_total_debt`;
 
     /**
      * -------------------------------------------------------------------------

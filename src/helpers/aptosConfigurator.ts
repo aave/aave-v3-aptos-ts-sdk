@@ -4,6 +4,8 @@ import {
   CommittedTransactionResponse,
   Ed25519Account,
   Ed25519PrivateKey,
+  PrivateKey,
+  PrivateKeyVariants,
 } from "@aptos-labs/ts-sdk";
 import { PoolClient } from "../clients/poolClient";
 import { UnderlyingTokensClient } from "../clients/underlyingTokensClient";
@@ -186,14 +188,26 @@ export class AptosConfigurator {
     mnemonic?: string,
   ) {
     this.provider = AptosProvider.fromConfig(config);
+
     const poolSigner = Account.fromPrivateKey({
-      privateKey: new Ed25519PrivateKey(poolPK),
+      privateKey: new Ed25519PrivateKey(
+        PrivateKey.formatPrivateKey(poolPK, PrivateKeyVariants.Ed25519),
+      ),
     });
+
     const oracleSigner = Account.fromPrivateKey({
-      privateKey: new Ed25519PrivateKey(oraclePK),
+      privateKey: new Ed25519PrivateKey(
+        PrivateKey.formatPrivateKey(oraclePK, PrivateKeyVariants.Ed25519),
+      ),
     });
+
     const underlyingTokenSigner = Account.fromPrivateKey({
-      privateKey: new Ed25519PrivateKey(underlyingTokensPK),
+      privateKey: new Ed25519PrivateKey(
+        PrivateKey.formatPrivateKey(
+          underlyingTokensPK,
+          PrivateKeyVariants.Ed25519,
+        ),
+      ),
     });
     this.underlyingTokenClient = new UnderlyingTokensClient(
       this.provider,

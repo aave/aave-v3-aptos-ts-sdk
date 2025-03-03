@@ -20,7 +20,6 @@ export {
 } from "./poolClient";
 export { OracleClient } from "./oracleClient";
 export { UnderlyingTokensClient } from "./underlyingTokensClient";
-export { BridgeClient } from "./bridgeClient";
 export { FlashloanClient } from "./flashloanClient";
 export { VariableTokensClient } from "./variableTokensClient";
 export { PoolAddressesProviderClient } from "./poolAddressesProviderClient";

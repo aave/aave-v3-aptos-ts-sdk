@@ -6,6 +6,8 @@ import {
   Ed25519PrivateKey,
   Account,
   Ed25519Account,
+  PrivateKeyVariants,
+  PrivateKey,
 } from "@aptos-labs/ts-sdk";
 import YAML from "yaml";
 
@@ -470,7 +472,12 @@ export class AptosProvider {
           );
       }
 
-      const aptosPrivateKey = new Ed25519PrivateKey(profileConfig.private_key);
+      const aptosPrivateKey = new Ed25519PrivateKey(
+        PrivateKey.formatPrivateKey(
+          profileConfig.private_key,
+          PrivateKeyVariants.Ed25519,
+        ),
+      );
       aptosProvider.addProfileAccount(profile, aptosPrivateKey);
       const profileAccount = Account.fromPrivateKey({
         privateKey: aptosPrivateKey,
@@ -632,7 +639,9 @@ const addProfilePkey = (
   profile: string,
   privateKey: string,
 ) => {
-  const aptosPrivateKey = new Ed25519PrivateKey(privateKey);
+  const aptosPrivateKey = new Ed25519PrivateKey(
+    PrivateKey.formatPrivateKey(privateKey, PrivateKeyVariants.Ed25519),
+  );
   aptosProvider.addProfileAccount(profile, aptosPrivateKey);
   const profileAccount = Account.fromPrivateKey({
     privateKey: aptosPrivateKey,
