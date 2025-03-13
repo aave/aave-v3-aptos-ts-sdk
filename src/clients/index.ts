@@ -20,7 +20,6 @@ export {
 } from "./poolClient";
 export { OracleClient } from "./oracleClient";
 export { UnderlyingTokensClient } from "./underlyingTokensClient";
-export { BridgeClient } from "./bridgeClient";
 export { FlashloanClient } from "./flashloanClient";
 export { VariableTokensClient } from "./variableTokensClient";
 export { PoolAddressesProviderClient } from "./poolAddressesProviderClient";
@@ -32,7 +31,7 @@ export {
   UserIncentiveData,
   UserReserveIncentiveData,
   UserRewardInfo,
-} from "./uiIncentiveDataProvider";
+} from "./uiIncentiveDataProviderClient";
 export {
   UiPoolDataProviderClient,
   ReservesData,
@@ -40,4 +39,4 @@ export {
   AggregatedReserveData,
   UserReserveData as UiDataProviderUserReserveData,
   UserReservesData,
-} from "./uiPoolDataProvider";
+} from "./uiPoolDataProviderClient";

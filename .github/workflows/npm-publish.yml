@@ -12,9 +12,10 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
       
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
           registry-url: https://registry.npmjs.org/
@@ -32,5 +33,5 @@ jobs:
       - uses: softprops/action-gh-release@v1
         with:
           files: |
-            bundle.js
-            bundle.min.js
+            dist/bundle.js
+            dist/bundle.min.js

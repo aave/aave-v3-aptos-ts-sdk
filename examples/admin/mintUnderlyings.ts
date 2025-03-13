@@ -1,4 +1,10 @@
-import { Account, AccountAddress, Ed25519PrivateKey } from "@aptos-labs/ts-sdk";
+import {
+  Account,
+  AccountAddress,
+  Ed25519PrivateKey,
+  PrivateKey,
+  PrivateKeyVariants,
+} from "@aptos-labs/ts-sdk";
 import { UnderlyingTokensClient } from "../../src/clients/underlyingTokensClient";
 import { PoolClient } from "../../src/clients/poolClient";
 import { AptosProvider } from "../../src/clients";
@@ -24,7 +30,12 @@ const fundAmount = BigInt(1000);
 
     // set the tx sender
     const underlyingManagerAccount = Account.fromPrivateKey({
-      privateKey: new Ed25519PrivateKey(UNDERLYING_MANAGER_PRIVATE_KEY),
+      privateKey: new Ed25519PrivateKey(
+        PrivateKey.formatPrivateKey(
+          UNDERLYING_MANAGER_PRIVATE_KEY,
+          PrivateKeyVariants.Ed25519,
+        ),
+      ),
     });
     underlyingTokensClient.setSigner(underlyingManagerAccount);
 

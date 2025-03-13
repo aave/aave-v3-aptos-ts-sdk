@@ -1,5 +1,10 @@
 import dotenv from "dotenv";
-import { Account, Ed25519PrivateKey } from "@aptos-labs/ts-sdk";
+import {
+  Account,
+  Ed25519PrivateKey,
+  PrivateKey,
+  PrivateKeyVariants,
+} from "@aptos-labs/ts-sdk";
 import { OracleClient, PoolClient } from "../../src/clients";
 import { priceFeeds } from "../../src/helpers/priceFeeds";
 import { AptosProvider } from "../../src/clients/aptosProvider";
@@ -16,7 +21,12 @@ dotenv.config();
   }
 
   const oracleManageAccount = Account.fromPrivateKey({
-    privateKey: new Ed25519PrivateKey(process.env.AAVE_ORACLE_PRIVATE_KEY),
+    privateKey: new Ed25519PrivateKey(
+      PrivateKey.formatPrivateKey(
+        process.env.AAVE_ORACLE_PRIVATE_KEY,
+        PrivateKeyVariants.Ed25519,
+      ),
+    ),
   });
 
   const oracleClient = new OracleClient(aptosProvider, oracleManageAccount);
