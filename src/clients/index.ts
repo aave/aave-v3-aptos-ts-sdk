@@ -31,7 +31,7 @@ export {
   UserIncentiveData,
   UserReserveIncentiveData,
   UserRewardInfo,
-} from "./uiIncentiveDataProvider";
+} from "./uiIncentiveDataProviderClient";
 export {
   UiPoolDataProviderClient,
   ReservesData,
@@ -39,4 +39,4 @@ export {
   AggregatedReserveData,
   UserReserveData as UiDataProviderUserReserveData,
   UserReservesData,
-} from "./uiPoolDataProvider";
+} from "./uiPoolDataProviderClient";

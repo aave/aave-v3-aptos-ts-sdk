@@ -4,7 +4,7 @@ import {
   Ed25519Account,
 } from "@aptos-labs/ts-sdk";
 import { AptosContractWrapperBaseClass } from "./baseClass";
-import { AclManagerContract } from "../contracts/acl_manage";
+import { AclManagerContract } from "../contracts/aclManage";
 import { AptosProvider } from "./aptosProvider";
 
 /**

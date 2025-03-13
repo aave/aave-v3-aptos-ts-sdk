@@ -6,7 +6,7 @@ import {
 } from "@aptos-labs/ts-sdk";
 import { AptosContractWrapperBaseClass } from "./baseClass";
 import { AptosProvider } from "./aptosProvider";
-import { SupplyBorrowContract } from "../contracts/supply_borrow";
+import { SupplyBorrowContract } from "../contracts/supplyBborrow";
 import { mapToBigInt } from "../helpers/common";
 
 /**
