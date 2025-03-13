@@ -7,50 +7,74 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy-typedoc:
+  build-typedoc:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 18
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
 
-    - name: Install PNPM
-      uses: pnpm/action-setup@v4
-      with:
-        version: 9
-        run_install: false
+      - name: Install PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
 
-    - name: Enable Corepack
-      run: corepack enable
+      - name: Enable Corepack
+        run: corepack enable
 
-    - name: Get PNPM store directory
-      shell: bash
-      run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - name: Get PNPM store directory
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
-    - name: Setup PNPM cache
-      uses: actions/cache@v4
-      with:
+      - name: Setup PNPM cache
+        uses: actions/cache@v4
+        with:
           path: ${{ env.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-              ${{ runner.os }}-pnpm-store-
+            ${{ runner.os }}-pnpm-store-
 
-    - name: Install dependencies
-      run: pnpm install
+      - name: Install dependencies
+        run: pnpm install
 
-    - name: Install gh-pages globally
-      run: pnpm add -g gh-pages
+      - name: Install gh-pages globally
+        run: pnpm add -g gh-pages
 
-    - name: Generate documentation
-      run: pnpm run docs
+      - name: Generate documentation
+        run: pnpm run docs
 
-    - name: Deploy with gh-pages
-      run: |
-        git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-        npx gh-pages -d ./docs/documentation/html -u "github-actions-bot <support+actions@github.com>"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload generated docs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: typedoc-html
+          path: ./docs/documentation/html
+
+  deploy-typedoc:
+    needs: build-typedoc
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download documentation artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: typedoc-html
+          path: ./docs/documentation/html
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./docs/documentation/html
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
