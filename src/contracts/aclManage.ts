@@ -53,8 +53,6 @@ export class AclManagerContract {
 
   addPoolAdminFuncAddr: MoveFunctionId;
 
-  AddPoolAdminFuncAddr: MoveFunctionId;
-
   removePoolAdminFuncAddr: MoveFunctionId;
 
   isPoolAdminFuncAddr: MoveFunctionId;

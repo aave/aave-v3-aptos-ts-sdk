@@ -1,6 +1,6 @@
 {
     "name": "@aave/aave-v3-aptos-ts-sdk",
-    "version": "0.0.32",
+    "version": "0.0.33",
     "description": "Aave's typescript sdk for Aptos",
     "main": "dist/cmd/index.js",
     "module": "dist/esm/index.js",
@@ -70,7 +70,7 @@
     ],
     "sideEffects": false,
     "dependencies": {
-        "@aptos-labs/ts-sdk": "^1.35.0",
+        "@aptos-labs/ts-sdk": "^1.36.0",
         "bignumber.js": "^9.1.2",
         "buffer": "^6.0.3",
         "crypto-js": "^4.2.0",

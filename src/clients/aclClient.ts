@@ -105,7 +105,7 @@ export class AclClient extends AptosContractWrapperBaseClass {
     user: AccountAddress,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.AclManagerContract.AddPoolAdminFuncAddr,
+      this.AclManagerContract.addPoolAdminFuncAddr,
       [user],
     );
   }
