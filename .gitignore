@@ -76,3 +76,5 @@ docs
 # Misc
 .DS_Store
 
+# idea
+.idea

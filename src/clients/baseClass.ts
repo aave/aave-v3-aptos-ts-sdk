@@ -4,15 +4,16 @@ import {
   CommittedTransactionResponse,
   Ed25519Account,
   EntryFunctionArgumentTypes,
+  Event,
   HexInput,
+  isBlockMetadataTransactionResponse,
+  isUserTransactionResponse,
   MoveFunctionId,
   MoveValue,
   SimpleEntryFunctionArgumentTypes,
-  UserTransactionResponse,
-  isBlockMetadataTransactionResponse,
-  isUserTransactionResponse,
-  Event,
   SimpleTransaction,
+  TypeArgument,
+  UserTransactionResponse,
 } from "@aptos-labs/ts-sdk";
 import { AptosProvider } from "./aptosProvider";
 
@@ -62,6 +63,7 @@ async function fundAccount(
  * @param user - The account address of the user initiating the transaction.
  * @param func_addr - The identifier of the Move function to be called.
  * @param func_args - An array of arguments to be passed to the Move function.
+ * @param type_args - Typed arguments to be passed to the Move function.
  * @returns A promise that resolves to the transaction data object.
  */
 async function transactionData(
@@ -71,12 +73,14 @@ async function transactionData(
   func_args: Array<
     EntryFunctionArgumentTypes | SimpleEntryFunctionArgumentTypes
   >,
+  type_args: TypeArgument[] = [],
 ) {
   return aptos.transaction.build.simple({
     sender: user,
     data: {
       function: func_addr,
       functionArguments: func_args,
+      typeArguments: type_args,
     },
   });
 }
@@ -88,6 +92,7 @@ async function transactionData(
  * @param signer - The account that will sign the transaction.
  * @param func_addr - The address of the Move function to be called.
  * @param func_args - The arguments to be passed to the Move function.
+ * @param type_args - Typed arguments to be passed to the Move function.
  * @returns A promise that resolves when the transaction is confirmed.
  */
 async function transaction(
@@ -97,12 +102,14 @@ async function transaction(
   func_args: Array<
     EntryFunctionArgumentTypes | SimpleEntryFunctionArgumentTypes
   >,
+  type_args: TypeArgument[] = [],
 ) {
   const transaction = await aptos.transaction.build.simple({
     sender: signer.accountAddress,
     data: {
       function: func_addr,
       functionArguments: func_args,
+      typeArguments: type_args,
     },
   });
   // using signAndSubmit combined
@@ -120,6 +127,7 @@ async function transaction(
  * @param {Aptos} aptos - The Aptos client instance.
  * @param {MoveFunctionId} func_addr - The address of the function to be called.
  * @param {Array<EntryFunctionArgumentTypes | SimpleEntryFunctionArgumentTypes>} func_args - The arguments to be passed to the function.
+ * @param type_args - Typed arguments to be passed to the Move function.
  * @returns {Promise<T>} - A promise that resolves to the result of the view function.
  */
 async function view<T extends MoveValue[]>(
@@ -128,11 +136,13 @@ async function view<T extends MoveValue[]>(
   func_args: Array<
     EntryFunctionArgumentTypes | SimpleEntryFunctionArgumentTypes
   >,
+  type_args: TypeArgument[] = [],
 ) {
   return aptos.view<T>({
     payload: {
       function: func_addr,
       functionArguments: func_args,
+      typeArguments: type_args,
     },
   });
 }
@@ -199,6 +209,7 @@ export class AptosContractWrapperBaseClass {
    *
    * @param functionId - The ID of the Move function to be called.
    * @param func_args - An array of arguments for the entry function.
+   * @param type_args - Typed arguments to be passed to the Move function.
    * @returns A promise that resolves to the committed transaction response.
    */
   public async sendTxAndAwaitResponse(
@@ -206,12 +217,14 @@ export class AptosContractWrapperBaseClass {
     func_args: Array<
       EntryFunctionArgumentTypes | SimpleEntryFunctionArgumentTypes
     >,
+    type_args: TypeArgument[] = [],
   ): Promise<CommittedTransactionResponse> {
     return transaction(
       this.aptosProvider.getAptos(),
       this.signer,
       functionId,
       func_args,
+      type_args,
     );
   }
 
@@ -221,6 +234,7 @@ export class AptosContractWrapperBaseClass {
    * @param user - The account address of the user initiating the transaction.
    * @param functionId - The identifier of the Move function to be called.
    * @param func_args - An array of arguments for the entry function.
+   * @param type_args - Typed arguments to be passed to the Move function.
    * @returns A promise that resolves to a SimpleTransaction object.
    */
   public async buildTx(
@@ -229,12 +243,14 @@ export class AptosContractWrapperBaseClass {
     func_args: Array<
       EntryFunctionArgumentTypes | SimpleEntryFunctionArgumentTypes
     >,
+    type_args: TypeArgument[] = [],
   ): Promise<SimpleTransaction> {
     return transactionData(
       this.aptosProvider.getAptos(),
       user,
       functionId,
       func_args,
+      type_args,
     );
   }
 
@@ -244,6 +260,7 @@ export class AptosContractWrapperBaseClass {
    * @template T - The type of the return value, which extends an array of MoveValue.
    * @param {MoveFunctionId} functionId - The identifier of the function to call.
    * @param {Array<EntryFunctionArgumentTypes | SimpleEntryFunctionArgumentTypes>} func_args - The arguments to pass to the function.
+   * @param type_args - Typed arguments to be passed to the Move function.
    * @returns {Promise<T>} - A promise that resolves to the result of the view method call.
    */
   public async callViewMethod<T extends MoveValue[]>(
@@ -251,8 +268,14 @@ export class AptosContractWrapperBaseClass {
     func_args: Array<
       EntryFunctionArgumentTypes | SimpleEntryFunctionArgumentTypes
     >,
+    type_args: TypeArgument[] = [],
   ): Promise<T> {
-    return view<T>(this.aptosProvider.getAptos(), functionId, func_args);
+    return view<T>(
+      this.aptosProvider.getAptos(),
+      functionId,
+      func_args,
+      type_args,
+    );
   }
 
   /**
@@ -355,10 +378,8 @@ export class AptosContractWrapperBaseClass {
       account_address: { _eq: account.toString() },
     };
 
-    const filteredEvents = await this.aptosProvider.getAptos().getEvents({
+    return await this.aptosProvider.getAptos().getEvents({
       options: { where: whereCondition, limit },
     });
-
-    return filteredEvents;
   }
 }

@@ -30,6 +30,8 @@
         "get-aptos": "tsx examples/quiries/getAptos.ts",
         "get-addresses": "tsx examples/quiries/getAddresses.ts",
         "get-user-data": "tsx examples/quiries/getUserData.ts",
+        "get-protocol-data": "tsx examples/quiries/getProtocolData.ts",
+        "get-mapped-fa": "tsx examples/quiries/getMappedFaAddress.ts",
         "get-asset-price": "tsx examples/quiries/getAssetPrice.ts",
         "setup-testnet": "tsx examples/admin/setupTestnet.ts",
         "mint-underlyings": "tsx examples/admin/mintUnderlyings.ts",

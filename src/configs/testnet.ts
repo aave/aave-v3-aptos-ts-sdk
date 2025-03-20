@@ -20,24 +20,24 @@ import { ZERO_ADDRESS } from "../helpers";
  * @property {string} addresses.AAVE_DATA - Address for Aave data.
  */
 export const DEFAULT_TESTNET_CONFIG: AptosProviderConfig = {
-  network: Network.TESTNET,
+  network: Network.LOCAL,
   addresses: {
     A_TOKENS:
-      "68d265c5fd096673f64dd71ad77fffdbea9f96e1a6efd65704e8e4648a4c83ab",
+      "e671301ec5ecfe5de46b87a87c6f479c788f1a7cfafc1b474bc0b0a4330b0c15",
     UNDERLYING_TOKENS:
-      "e24b50a6f88cfcf8c684d1ee9eee8972b61eedfabe10139821e24e85c1d4a12f",
+      "014066b3e527b0b87a6216b7cf1379f1f828de5e0aceea9b4a0b9a421945a933",
     VARIABLE_TOKENS:
-      "ed77450ea30a643893c4047784bbb4b75e182a11d8cd728a36d02575a8dcff2c",
+      "e900ccb0df257158941427d94abbecfa6f9693c1a4da0ddac02ad82baf197e55",
     AAVE_ACL:
-      "5e9f527f47e0a187d611f45e5bba8e7243af54dbda31920ff5db41138e0706dc",
+      "024e01fa503119e76bf9eea69eec59884fc3da82f5ea23bf5f20f8ce358a4606",
     AAVE_CONFIG:
-      "8b0039f9bd18b819a6891f16db3ab50e2400024291ee3c9019de5abe32246958",
+      "a888dd108ea636a234c973b8b72b9cadf0c7ae94d6f355c64dde9fdc275724ee",
     AAVE_ORACLE:
-      "a08790ab581acb4a54ffaa2c9630f29851a842c73710ddf97d675c260a77e2d3",
+      "c1b23ac8ce67df6361b241bfa30a22c9b177fe39c471334a514eea977e6673a9",
     AAVE_POOL:
-      "4741de1a64e54e16eef6278e4af610136230f2ac90e40cdcd5f29790b45e4dc4",
+      "d5044d9f4b80910ef7b8910a68d2ac257d14319fb9315ddce1ca5190878bc8ea",
     AAVE_RATE:
-      "6341e72afa3f77ed32716e82a84c8a86c26a7d31e837043a53bc28ecabe3dc55",
+      "800010ed1fe94674af83640117490d459e20441eab132c17e7ff39b7ae07a722",
     AAVE_DATA:
       "568ea1b4c9d473897be294ad40402c0102a3f3416bd8a5f25769bbfb571313bc",
   },

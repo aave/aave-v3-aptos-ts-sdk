@@ -2,7 +2,6 @@ import { AccountAddress, Ed25519Account } from "@aptos-labs/ts-sdk";
 import { AptosContractWrapperBaseClass } from "./baseClass";
 import { AptosProvider } from "./aptosProvider";
 import { UiPoolDataProviderContract } from "../contracts/uiPoolDataProvider";
-import { Metadata } from "../helpers/interfaces";
 
 /**
  * Represents the aggregated reserve data for a specific asset in the Aave protocol.
@@ -219,41 +218,10 @@ export class UiPoolDataProviderClient extends AptosContractWrapperBaseClass {
   public static buildWithDefaultSigner(
     provider: AptosProvider,
   ): UiPoolDataProviderClient {
-    const client = new UiPoolDataProviderClient(
+    return new UiPoolDataProviderClient(
       provider,
       provider.getPoolProfileAccount(),
     );
-    return client;
-  }
-
-  /**
-   * Fetches the V3.2 data address from the UI Pool Data Provider contract.
-   *
-   * @returns {Promise<AccountAddress>} A promise that resolves to an AccountAddress instance representing the V3.2 data address.
-   *
-   * @throws {Error} If the call to the view method fails or the response cannot be parsed into an AccountAddress.
-   */
-  public async uiPoolDataProviderV32DataAddress(): Promise<AccountAddress> {
-    const [resp] = await this.callViewMethod(
-      this.uiPoolDataProviderContract.uiPoolDataProviderV32DataAddress,
-      [],
-    );
-    return AccountAddress.fromString(resp as string);
-  }
-
-  /**
-   * Fetches the V3 data object from the UI Pool Data Provider contract.
-   *
-   * @returns {Promise<AccountAddress>} A promise that resolves to an AccountAddress object.
-   *
-   * @throws {Error} If the call to the view method fails or the response is invalid.
-   */
-  public async uiPoolDataProviderV3DataObject(): Promise<AccountAddress> {
-    const [resp] = await this.callViewMethod(
-      this.uiPoolDataProviderContract.uiPoolDataProviderV3DataObject,
-      [],
-    );
-    return AccountAddress.fromString((resp as Metadata).inner);
   }
 
   /**
@@ -435,7 +403,7 @@ export class UiPoolDataProviderClient extends AptosContractWrapperBaseClass {
    *   - `decimals`: The number of decimals for the asset.
    * - `userEmodeCategoryId`: The eMode category ID of the user.
    */
-  public async getUserReserveData(user: string): Promise<UserReservesData> {
+  public async getUserReservesData(user: string): Promise<UserReservesData> {
     const resp = await this.callViewMethod(
       this.uiPoolDataProviderContract.getUserReservesData,
       [user],
