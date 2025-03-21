@@ -13,6 +13,7 @@ import { AptosProvider, AptosProviderConfig } from "../clients/aptosProvider";
 import { OracleClient } from "../clients/oracleClient";
 import { priceFeeds } from "./priceFeeds";
 import { ONE_OCTA } from "./constants";
+import { RateClient } from "../clients";
 
 /**
  * Interface representing the configuration of a reserve in the Aave protocol.
@@ -167,6 +168,7 @@ type WithAccountAddress<T> = T & { address: AccountAddress };
 export class AptosConfigurator {
   provider: AptosProvider;
   poolClient: PoolClient;
+  rateClient: RateClient;
   oracleClient: OracleClient;
   underlyingTokenClient: UnderlyingTokensClient;
   mnemonic?: string;
@@ -184,6 +186,7 @@ export class AptosConfigurator {
     config: AptosProviderConfig,
     poolPK: string,
     oraclePK: string,
+    ratePK: string,
     underlyingTokensPK: string,
     mnemonic?: string,
   ) {
@@ -201,6 +204,12 @@ export class AptosConfigurator {
       ),
     });
 
+    const rateSigner = Account.fromPrivateKey({
+      privateKey: new Ed25519PrivateKey(
+        PrivateKey.formatPrivateKey(ratePK, PrivateKeyVariants.Ed25519),
+      ),
+    });
+
     const underlyingTokenSigner = Account.fromPrivateKey({
       privateKey: new Ed25519PrivateKey(
         PrivateKey.formatPrivateKey(
@@ -215,6 +224,7 @@ export class AptosConfigurator {
     );
     this.poolClient = new PoolClient(this.provider, poolSigner);
     this.oracleClient = new OracleClient(this.provider, oracleSigner);
+    this.rateClient = new RateClient(this.provider, rateSigner);
     this.mnemonic = mnemonic;
   }
 
@@ -293,7 +303,7 @@ export class AptosConfigurator {
   async setReserveInterestRateStrategy(
     strategy: ReserveStrategyConfig,
   ): Promise<CommittedTransactionResponse> {
-    const receipt = await this.poolClient.setReserveInterestRateStrategy(
+    const receipt = await this.rateClient.setReserveInterestRateStrategy(
       strategy.address,
       strategy.optimalUsageRatio,
       strategy.baseVariableBorrowRate,

@@ -21,6 +21,7 @@ export {
 export { OracleClient } from "./oracleClient";
 export { UnderlyingTokensClient } from "./underlyingTokensClient";
 export { FlashloanClient } from "./flashloanClient";
+export { RateClient } from "./rateClient";
 export { VariableTokensClient } from "./variableTokensClient";
 export { PoolAddressesProviderClient } from "./poolAddressesProviderClient";
 export {
