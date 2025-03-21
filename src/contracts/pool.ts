@@ -177,29 +177,6 @@ export class PoolContract {
 
   /**
    * -------------------------------------------------------------------------
-   * default_reserve_interest_rate_strategy
-   * -------------------------------------------------------------------------=
-   */
-  // Entry
-  SetReserveInterestRateStrategyFuncAddr: MoveFunctionId;
-
-  // View
-  GetGetOptimalUsageRatioFuncAddr: MoveFunctionId;
-
-  GetGetMaxExcessUsageRatioFuncAddr: MoveFunctionId;
-
-  GetVariableRateSlope1FuncAddr: MoveFunctionId;
-
-  GetVariableRateSlope2FuncAddr: MoveFunctionId;
-
-  GetBaseVariableBorrowRateFuncAddr: MoveFunctionId;
-
-  GetMaxVariableBorrowRateFuncAddr: MoveFunctionId;
-
-  CalculateInterestRatesFuncAddr: MoveFunctionId;
-
-  /**
-   * -------------------------------------------------------------------------
    * pool data provider
    * -------------------------------------------------------------------------=
    */
@@ -393,20 +370,6 @@ export class PoolContract {
     this.PoolConfigureEmodeCategoryFuncAddr = `${PoolManagerAccountAddress}::emode_logic::configure_emode_category`;
     this.PoolGetEmodeCategoryDataFuncAddr = `${PoolManagerAccountAddress}::emode_logic::get_emode_category_data`;
     this.PoolGetUserEmodeFuncAddr = `${PoolManagerAccountAddress}::emode_logic::get_user_emode`;
-
-    /**
-     * -------------------------------------------------------------------------
-     * default_reserve_interest_rate_strategy
-     * -------------------------------------------------------------------------
-     */
-    this.SetReserveInterestRateStrategyFuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::set_reserve_interest_rate_strategy`;
-    this.GetGetOptimalUsageRatioFuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::get_optimal_usage_ratio`;
-    this.GetGetMaxExcessUsageRatioFuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::get_max_excess_usage_ratio`;
-    this.GetVariableRateSlope1FuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::get_variable_rate_slope1`;
-    this.GetVariableRateSlope2FuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::get_variable_rate_slope2`;
-    this.GetBaseVariableBorrowRateFuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::get_base_variable_borrow_rate`;
-    this.GetMaxVariableBorrowRateFuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::get_max_variable_borrow_rate`;
-    this.CalculateInterestRatesFuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::calculate_interest_rates`;
 
     /**
      * -------------------------------------------------------------------------
