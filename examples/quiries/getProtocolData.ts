@@ -1,6 +1,6 @@
 import { ATokensClient } from "../../src/clients/aTokensClient";
 import { UnderlyingTokensClient } from "../../src/clients/underlyingTokensClient";
-import { UiPoolDataProviderClient } from "../../src/clients/uiPoolDataProvider";
+import { UiPoolDataProviderClient } from "../../src/clients/uiPoolDataProviderClient";
 import { PoolClient } from "../../src/clients/poolClient";
 import { AptosProvider } from "../../src/clients/aptosProvider";
 import { DEFAULT_TESTNET_CONFIG } from "../../src/configs/testnet";

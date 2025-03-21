@@ -40,6 +40,7 @@ export interface AptosProviderConfig {
     AAVE_POOL: string;
     AAVE_RATE: string;
     AAVE_DATA: string;
+    AAVE_MATH: string;
   };
 }
 
@@ -199,6 +200,14 @@ export class AptosProvider {
     );
     aptosProvider.addProfileAddress(
       AAVE_PROFILES.AAVE_RATE,
+      AccountAddress.fromString(config.addresses.AAVE_RATE),
+    );
+    aptosProvider.addProfileAddress(
+      AAVE_PROFILES.AAVE_MATH,
+      AccountAddress.fromString(config.addresses.AAVE_MATH),
+    );
+    aptosProvider.addProfileAddress(
+      AAVE_PROFILES.AAVE_DATA,
       AccountAddress.fromString(config.addresses.AAVE_DATA),
     );
     const aptosConfig = new AptosConfig({
@@ -224,6 +233,7 @@ export class AptosProvider {
    * - `AAVE_CONFIG_PRIVATE_KEY`: Private key for AAVE_CONFIG profile.
    * - `AAVE_ORACLE_PRIVATE_KEY`: Private key for AAVE_ORACLE profile.
    * - `AAVE_POOL_PRIVATE_KEY`: Private key for AAVE_POOL profile.
+   * - `AAVE_RATE_PRIVATE_KEY`: Private key for AAVE_RATE profile.
    * - `AAVE_LARGE_PACKAGES_PRIVATE_KEY`: Private key for AAVE_LARGE_PACKAGES profile.
    * - `AAVE_MATH_PRIVATE_KEY`: Private key for AAVE_MATH profile.
    * - `AAVE_DATA_PRIVATE_KEY`: Private key for AAVE_DATA profile.
@@ -330,6 +340,15 @@ export class AptosProvider {
       aptosProvider,
       AAVE_PROFILES.AAVE_POOL,
       process.env.AAVE_POOL_PRIVATE_KEY,
+    );
+
+    if (!process.env.AAVE_RATE_PRIVATE_KEY) {
+      throw new Error("Env variable AAVE_RATE_PRIVATE_KEY does not exist");
+    }
+    addProfilePkey(
+      aptosProvider,
+      AAVE_PROFILES.AAVE_RATE,
+      process.env.AAVE_RATE_PRIVATE_KEY,
     );
 
     if (!process.env.AAVE_LARGE_PACKAGES_PRIVATE_KEY) {
@@ -615,6 +634,15 @@ export class AptosProvider {
    */
   public getDataProfileAccount(): Ed25519Account {
     return this.getProfileAccountByName(AAVE_PROFILES.AAVE_DATA);
+  }
+
+  /**
+   * Retrieves the data profile account associated with the AAVE_RATE profile.
+   *
+   * @returns {Ed25519Account} The Ed25519 account corresponding to the AAVE_RATE profile.
+   */
+  public getRateProfileAccount(): Ed25519Account {
+    return this.getProfileAccountByName(AAVE_PROFILES.AAVE_RATE);
   }
 
   /**

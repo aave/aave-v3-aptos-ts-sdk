@@ -40,6 +40,8 @@ export const DEFAULT_TESTNET_CONFIG: AptosProviderConfig = {
       "6341e72afa3f77ed32716e82a84c8a86c26a7d31e837043a53bc28ecabe3dc55",
     AAVE_DATA:
       "568ea1b4c9d473897be294ad40402c0102a3f3416bd8a5f25769bbfb571313bc",
+    AAVE_MATH:
+      "568ea1b4c9d473897be294ad40402c0102a3f3416bd8a5f25769bbfb571313bc",
   },
 };
 
