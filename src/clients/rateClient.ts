@@ -174,6 +174,7 @@ export class RateClient extends AptosContractWrapperBaseClass {
     totalVariableDebt: bigint,
     reserveFactor: bigint,
     reserve: AccountAddress,
+    reserveSymbol: string,
     aTokenUnderlyingBalance: bigint,
   ): Promise<{
     currentLiquidityRate: bigint;
@@ -189,6 +190,7 @@ export class RateClient extends AptosContractWrapperBaseClass {
           totalVariableDebt.toString(),
           reserveFactor.toString(),
           reserve,
+          reserveSymbol,
           aTokenUnderlyingBalance,
         ],
       )
