@@ -58,13 +58,13 @@ export class RateContract {
      * -------------------------------------------------------------------------
      */
     this.SetReserveInterestRateStrategyFuncAddr = `${RateManagerAccountAddress}::default_reserve_interest_rate_strategy::set_reserve_interest_rate_strategy`;
+    this.AssetInterestRateExists = `${RateManagerAccountAddress}::interest_rate_strategy::asset_interest_rate_exists`;
     this.GetGetOptimalUsageRatioFuncAddr = `${RateManagerAccountAddress}::interest_rate_strategy::get_optimal_usage_ratio`;
-    this.GetGetMaxExcessUsageRatioFuncAddr = `${RateManagerAccountAddress}::interest_rate_strategy::get_max_excess_usage_ratio`;
     this.GetVariableRateSlope1FuncAddr = `${RateManagerAccountAddress}::interest_rate_strategy::get_variable_rate_slope1`;
     this.GetVariableRateSlope2FuncAddr = `${RateManagerAccountAddress}::interest_rate_strategy::get_variable_rate_slope2`;
     this.GetBaseVariableBorrowRateFuncAddr = `${RateManagerAccountAddress}::interest_rate_strategy::get_base_variable_borrow_rate`;
     this.GetMaxVariableBorrowRateFuncAddr = `${RateManagerAccountAddress}::interest_rate_strategy::get_max_variable_borrow_rate`;
+    this.GetGetMaxExcessUsageRatioFuncAddr = `${RateManagerAccountAddress}::interest_rate_strategy::get_max_excess_usage_ratio`;
     this.CalculateInterestRatesFuncAddr = `${RateManagerAccountAddress}::interest_rate_strategy::calculate_interest_rates`;
-    this.AssetInterestRateExists = `${RateManagerAccountAddress}::default_reserve_interest_rate_strategy::asset_interest_rate_exists`;
   }
 }
