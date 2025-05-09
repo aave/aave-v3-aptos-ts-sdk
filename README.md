@@ -4,10 +4,9 @@
 ![check-code-coverage](https://img.shields.io/badge/coverage-96.33%25-green)
 
 > **PREREQUISITES:**
-> 
->    - NodeJS 20+
->    - pnpm / yarn (see package.json)
-
+>
+> - NodeJS 20+
+> - pnpm / yarn (see package.json)
 
 Aave's typescript sdk for Aptos. Please note that it is currently under WIP!
 
@@ -40,15 +39,18 @@ In your code, once the script is fully loaded, just use `window.aptosSdk` to acc
 
 ## Documentation
 
-- [`TypeDoc API`] is available for all exported classes, interfaces and methods.
+- [`TypeDoc API`](https://aave.github.io/aave-v3-aptos-ts-sdk/) is available for all exported classes, interfaces and methods.
 
 ## Contributing
+
 We welcome contributions from the community!
 
 If you would like to contribute to `aave-v3-aptos-ts-sdk`, please read the [CONTRIBUTING file](CONTRIBUTING.md).
 
 ## License
+
 `aave-v3-aptos-ts-sdk` is released under the [License](LICENSE).
 
 ## Powered By
+
 `aave-v3-aptos-ts-sdk` is developed with love by Aave Labs
