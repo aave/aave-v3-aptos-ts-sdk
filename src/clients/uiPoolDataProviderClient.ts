@@ -2,7 +2,6 @@ import { AccountAddress, Ed25519Account } from "@aptos-labs/ts-sdk";
 import { AptosContractWrapperBaseClass } from "./baseClass";
 import { AptosProvider } from "./aptosProvider";
 import { UiPoolDataProviderContract } from "../contracts/uiPoolDataProvider";
-import { Metadata } from "../helpers/interfaces";
 
 /**
  * Represents the aggregated reserve data for a specific asset in the Aave protocol.
@@ -37,7 +36,6 @@ import { Metadata } from "../helpers/interfaces";
  * @property {boolean} isPaused - Whether the asset is paused.
  * @property {boolean} isSiloedBorrowing - Whether the asset has siloed borrowing.
  * @property {bigint} accruedToTreasury - The amount accrued to the treasury.
- * @property {bigint} unbacked - The amount of unbacked assets.
  * @property {bigint} isolationModeTotalDebt - The total debt in isolation mode.
  * @property {boolean} flashLoanEnabled - Whether flash loans are enabled for the asset.
  * @property {bigint} debtCeiling - The debt ceiling for the asset.
@@ -48,7 +46,6 @@ import { Metadata } from "../helpers/interfaces";
  * @property {number} eModeLtv - The loan-to-value ratio in eMode.
  * @property {number} eModeLiquidationThreshold - The liquidation threshold in eMode.
  * @property {number} eModeLiquidationBonus - The liquidation bonus in eMode.
- * @property {string} eModePriceSource - The price source in eMode.
  * @property {string} eModeLabel - The label for eMode.
  * @property {boolean} borrowableInIsolation - Whether the asset is borrowable in isolation.
  */
@@ -77,7 +74,6 @@ export type AggregatedReserveData = {
   availableLiquidity: bigint;
   totalScaledVariableDebt: bigint;
   priceInMarketReferenceCurrency: bigint;
-  priceOracle: string;
   variableRateSlope1: bigint;
   variableRateSlope2: bigint;
   baseVariableBorrowRate: bigint;
@@ -86,7 +82,6 @@ export type AggregatedReserveData = {
   isPaused: boolean;
   isSiloedBorrowing: boolean;
   accruedToTreasury: bigint;
-  unbacked: bigint;
   isolationModeTotalDebt: bigint;
   flashLoanEnabled: boolean;
   //
@@ -99,9 +94,12 @@ export type AggregatedReserveData = {
   eModeLtv: number;
   eModeLiquidationThreshold: number;
   eModeLiquidationBonus: number;
-  eModePriceSource: string;
   eModeLabel: string;
   borrowableInIsolation: boolean;
+  // liquidation
+  deficit: bigint;
+  virtualUnderlyingBalance: bigint;
+  isVirtualAccActive: boolean;
 };
 
 /**
@@ -227,36 +225,6 @@ export class UiPoolDataProviderClient extends AptosContractWrapperBaseClass {
   }
 
   /**
-   * Fetches the V3.2 data address from the UI Pool Data Provider contract.
-   *
-   * @returns {Promise<AccountAddress>} A promise that resolves to an AccountAddress instance representing the V3.2 data address.
-   *
-   * @throws {Error} If the call to the view method fails or the response cannot be parsed into an AccountAddress.
-   */
-  public async uiPoolDataProviderV32DataAddress(): Promise<AccountAddress> {
-    const [resp] = await this.callViewMethod(
-      this.uiPoolDataProviderContract.uiPoolDataProviderV32DataAddress,
-      [],
-    );
-    return AccountAddress.fromString(resp as string);
-  }
-
-  /**
-   * Fetches the V3 data object from the UI Pool Data Provider contract.
-   *
-   * @returns {Promise<AccountAddress>} A promise that resolves to an AccountAddress object.
-   *
-   * @throws {Error} If the call to the view method fails or the response is invalid.
-   */
-  public async uiPoolDataProviderV3DataObject(): Promise<AccountAddress> {
-    const [resp] = await this.callViewMethod(
-      this.uiPoolDataProviderContract.uiPoolDataProviderV3DataObject,
-      [],
-    );
-    return AccountAddress.fromString((resp as Metadata).inner);
-  }
-
-  /**
    * Retrieves the list of reserve accounts.
    *
    * This method calls the `getReservesList` function on the `uiPoolDataProviderContract`
@@ -304,7 +272,6 @@ export class UiPoolDataProviderClient extends AptosContractWrapperBaseClass {
    * - availableLiquidity: The available liquidity.
    * - totalScaledVariableDebt: The total scaled variable debt.
    * - priceInMarketReferenceCurrency: The price in market reference currency.
-   * - priceOracle: The address of the price oracle.
    * - variableRateSlope1: The variable rate slope 1.
    * - variableRateSlope2: The variable rate slope 2.
    * - baseVariableBorrowRate: The base variable borrow rate.
@@ -312,7 +279,6 @@ export class UiPoolDataProviderClient extends AptosContractWrapperBaseClass {
    * - isPaused: Whether the reserve is paused.
    * - isSiloedBorrowing: Whether siloed borrowing is enabled.
    * - accruedToTreasury: The amount accrued to the treasury.
-   * - unbacked: The unbacked amount.
    * - isolationModeTotalDebt: The total debt in isolation mode.
    * - flashLoanEnabled: Whether flash loans are enabled.
    * - debtCeiling: The debt ceiling.
@@ -323,7 +289,6 @@ export class UiPoolDataProviderClient extends AptosContractWrapperBaseClass {
    * - eModeLtv: The eMode loan-to-value ratio.
    * - eModeLiquidationThreshold: The eMode liquidation threshold.
    * - eModeLiquidationBonus: The eMode liquidation bonus.
-   * - eModePriceSource: The address of the eMode price source.
    * - eModeLabel: The label for the eMode.
    * - borrowableInIsolation: Whether borrowing in isolation is enabled.
    *
@@ -370,7 +335,6 @@ export class UiPoolDataProviderClient extends AptosContractWrapperBaseClass {
       priceInMarketReferenceCurrency: BigInt(
         item.price_in_market_reference_currency,
       ),
-      priceOracle: item.price_oracle.toString(),
       variableRateSlope1: BigInt(item.variable_rate_slope1),
       variableRateSlope2: BigInt(item.variable_rate_slope2),
       baseVariableBorrowRate: BigInt(item.base_variable_borrow_rate),
@@ -379,7 +343,6 @@ export class UiPoolDataProviderClient extends AptosContractWrapperBaseClass {
       isPaused: item.is_paused as boolean,
       isSiloedBorrowing: item.is_siloed_borrowing as boolean,
       accruedToTreasury: BigInt(item.accrued_to_treasury),
-      unbacked: BigInt(item.unbacked),
       isolationModeTotalDebt: BigInt(item.isolation_mode_total_debt),
       flashLoanEnabled: item.flash_loan_enabled as boolean,
       //
@@ -394,12 +357,13 @@ export class UiPoolDataProviderClient extends AptosContractWrapperBaseClass {
         item.e_mode_liquidation_threshold.toString(),
       ),
       eModeLiquidationBonus: Number(item.e_mode_liquidation_bonus.toString()),
-      eModePriceSource: AccountAddress.from(
-        item.e_mode_price_source.toString(),
-      ).toString(),
       eModeLabel: item.e_mode_label as string,
       borrowableInIsolation: item.borrowable_in_isolation as boolean,
-    }));
+      // liquidation
+      deficit: BigInt(item.deficit),
+      virtualUnderlyingBalance: BigInt(item.virtual_underlying_balance),
+      isVirtualAccActive: item.is_virtual_acc_active as boolean,
+    })) as AggregatedReserveData[];
 
     const basicCurrencyInfoRaw = resp.at(1) as any;
     const baseCurrencyData = {
@@ -415,7 +379,7 @@ export class UiPoolDataProviderClient extends AptosContractWrapperBaseClass {
       networkBaseTokenPriceDecimals: Number(
         basicCurrencyInfoRaw.network_base_token_price_decimals.toString(),
       ),
-    };
+    } as BaseCurrencyData;
 
     return { reservesData, baseCurrencyData };
   }

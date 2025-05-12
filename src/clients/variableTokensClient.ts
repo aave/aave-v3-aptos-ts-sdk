@@ -67,56 +67,6 @@ export class VariableTokensClient extends AptosContractWrapperBaseClass {
   }
 
   /**
-   * Creates a new variable token with the specified parameters.
-   *
-   * @param maximumSupply - The maximum supply of the token.
-   * @param name - The name of the token.
-   * @param symbol - The symbol of the token.
-   * @param decimals - The number of decimal places the token uses.
-   * @param iconUri - The URI of the token's icon.
-   * @param projectUri - The URI of the project's website or information page.
-   * @param underlyingAsset - The account address of the underlying asset.
-   * @returns A promise that resolves to the committed transaction response.
-   */
-  public async createToken(
-    maximumSupply: bigint,
-    name: string,
-    symbol: string,
-    decimals: number,
-    iconUri: string,
-    projectUri: string,
-    underlyingAsset: AccountAddress,
-  ): Promise<CommittedTransactionResponse> {
-    return this.sendTxAndAwaitResponse(
-      this.tokensContract.VariableCreateTokenFuncAddr,
-      [
-        maximumSupply,
-        name,
-        symbol,
-        decimals,
-        iconUri,
-        projectUri,
-        underlyingAsset,
-      ],
-    );
-  }
-
-  /**
-   * Retrieves the revision number of the variable tokens contract.
-   *
-   * @returns {Promise<number>} A promise that resolves to the revision number.
-   *
-   * @throws {Error} If the call to the view method fails.
-   */
-  public async getRevision(): Promise<number> {
-    const [resp] = await this.callViewMethod(
-      this.tokensContract.VariableGetRevisionFuncAddr,
-      [],
-    );
-    return resp as number;
-  }
-
-  /**
    * Retrieves the metadata associated with a given token symbol for a specific account.
    *
    * @param owner - The account address of the token owner.
@@ -130,7 +80,7 @@ export class VariableTokensClient extends AptosContractWrapperBaseClass {
     symbol: string,
   ): Promise<AccountAddress> {
     const [resp] = await this.callViewMethod(
-      this.tokensContract.VariableGetMetadataBySymbolFuncAddr,
+      this.tokensContract.variableGetMetadataBySymbolFuncAddr,
       [owner, symbol],
     );
     return AccountAddress.fromString((resp as Metadata).inner);
@@ -139,17 +89,13 @@ export class VariableTokensClient extends AptosContractWrapperBaseClass {
   /**
    * Retrieves the token address for a given owner and token symbol.
    *
-   * @param owner - The account address of the token owner.
    * @param symbol - The symbol of the token.
    * @returns A promise that resolves to the account address of the token.
    */
-  public async getTokenAddress(
-    owner: AccountAddress,
-    symbol: string,
-  ): Promise<AccountAddress> {
+  public async getTokenAddress(symbol: string): Promise<AccountAddress> {
     const [resp] = await this.callViewMethod(
-      this.tokensContract.VariableGetTokenAddressFuncAddr,
-      [owner, symbol],
+      this.tokensContract.variableGetTokenAddressFuncAddr,
+      [symbol],
     );
     return AccountAddress.fromString(resp as string);
   }
@@ -157,17 +103,13 @@ export class VariableTokensClient extends AptosContractWrapperBaseClass {
   /**
    * Retrieves the metadata of a specific asset for a given owner.
    *
-   * @param owner - The account address of the asset owner.
    * @param symbol - The symbol of the asset.
    * @returns A promise that resolves to the account address containing the asset metadata.
    */
-  public async getAssetMetadata(
-    owner: AccountAddress,
-    symbol: string,
-  ): Promise<AccountAddress> {
+  public async getAssetMetadata(symbol: string): Promise<AccountAddress> {
     const [resp] = await this.callViewMethod(
-      this.tokensContract.VariableGetAssetMetadataFuncAddr,
-      [owner, symbol],
+      this.tokensContract.variableGetAssetMetadataFuncAddr,
+      [symbol],
     );
     return AccountAddress.fromString((resp as Metadata).inner);
   }
@@ -182,7 +124,7 @@ export class VariableTokensClient extends AptosContractWrapperBaseClass {
     metadataAddress: AccountAddress,
   ): Promise<AccountAddress> {
     const [resp] = await this.callViewMethod(
-      this.tokensContract.VariableGetUnderlyingAddressFuncAddr,
+      this.tokensContract.variableGetUnderlyingAddressFuncAddr,
       [metadataAddress],
     );
     return AccountAddress.fromString(resp as string);
@@ -200,7 +142,7 @@ export class VariableTokensClient extends AptosContractWrapperBaseClass {
     metadataAddress: AccountAddress,
   ): Promise<bigint> {
     const [resp] = (
-      await this.callViewMethod(this.tokensContract.VariableBalanceOfFuncAddr, [
+      await this.callViewMethod(this.tokensContract.variableBalanceOfFuncAddr, [
         owner,
         metadataAddress,
       ])
@@ -221,7 +163,7 @@ export class VariableTokensClient extends AptosContractWrapperBaseClass {
   ): Promise<bigint> {
     const [resp] = (
       await this.callViewMethod(
-        this.tokensContract.VariableScaledBalanceOfFuncAddr,
+        this.tokensContract.variableScaledBalanceOfFuncAddr,
         [owner, metadataAddress],
       )
     ).map(mapToBigInt);
@@ -234,12 +176,12 @@ export class VariableTokensClient extends AptosContractWrapperBaseClass {
    * @param metadataAddress - The address of the token's metadata.
    * @returns A promise that resolves to the scaled total supply of the token as a bigint.
    */
-  public async scaledTotalSupplyOf(
+  public async scaledTotalSupply(
     metadataAddress: AccountAddress,
   ): Promise<bigint> {
     const [resp] = (
       await this.callViewMethod(
-        this.tokensContract.VariableScaledTotalSupplyFuncAddr,
+        this.tokensContract.variableScaledTotalSupplyFuncAddr,
         [metadataAddress],
       )
     ).map(mapToBigInt);
@@ -252,10 +194,10 @@ export class VariableTokensClient extends AptosContractWrapperBaseClass {
    * @param metadataAddress - The account address of the token metadata.
    * @returns A promise that resolves to the total supply of the token as a bigint.
    */
-  public async totalSupplyOf(metadataAddress: AccountAddress): Promise<bigint> {
+  public async totalSupply(metadataAddress: AccountAddress): Promise<bigint> {
     const [resp] = (
       await this.callViewMethod(
-        this.tokensContract.VariableTotalSupplyFuncAddr,
+        this.tokensContract.variableTotalSupplyFuncAddr,
         [metadataAddress],
       )
     ).map(mapToBigInt);
@@ -272,14 +214,14 @@ export class VariableTokensClient extends AptosContractWrapperBaseClass {
   public async getScaledUserBalanceAndSupply(
     owner: AccountAddress,
     metadataAddress: AccountAddress,
-  ): Promise<bigint> {
-    const [resp] = (
+  ): Promise<{ scaledUserBalance: bigint; supply: bigint }> {
+    const [scaledUserBalance, supply] = (
       await this.callViewMethod(
-        this.tokensContract.VariableGetScaledUserBalanceAndSupplyFuncAddr,
+        this.tokensContract.variableGetScaledUserBalanceAndSupplyFuncAddr,
         [owner, metadataAddress],
       )
     ).map(mapToBigInt);
-    return resp;
+    return { scaledUserBalance, supply };
   }
 
   /**
@@ -295,7 +237,7 @@ export class VariableTokensClient extends AptosContractWrapperBaseClass {
   ): Promise<bigint> {
     const [resp] = (
       await this.callViewMethod(
-        this.tokensContract.VariableGetPreviousIndexFuncAddr,
+        this.tokensContract.variableGetPreviousIndexFuncAddr,
         [user, metadataAddress],
       )
     ).map(mapToBigInt);
@@ -310,7 +252,7 @@ export class VariableTokensClient extends AptosContractWrapperBaseClass {
    */
   public async name(metadataAddress: AccountAddress): Promise<string> {
     const [resp] = await this.callViewMethod(
-      this.tokensContract.VariableNameFuncAddr,
+      this.tokensContract.variableNameFuncAddr,
       [metadataAddress],
     );
     return resp as string;
@@ -324,7 +266,7 @@ export class VariableTokensClient extends AptosContractWrapperBaseClass {
    */
   public async symbol(metadataAddress: AccountAddress): Promise<string> {
     const [resp] = await this.callViewMethod(
-      this.tokensContract.VariableSymbolFuncAddr,
+      this.tokensContract.variableSymbolFuncAddr,
       [metadataAddress],
     );
     return resp as string;
@@ -338,27 +280,10 @@ export class VariableTokensClient extends AptosContractWrapperBaseClass {
    */
   public async decimals(metadataAddress: AccountAddress): Promise<bigint> {
     const [resp] = (
-      await this.callViewMethod(this.tokensContract.VariableDecimalsFuncAddr, [
+      await this.callViewMethod(this.tokensContract.variableDecimalsFuncAddr, [
         metadataAddress,
       ])
     ).map(mapToBigInt);
     return resp;
-  }
-
-  /**
-   * Retrieves the decimal precision for a given token.
-   *
-   * @param funcAddr - The address of the Move function to call.
-   * @param metadataAddr - The address of the account containing the token metadata.
-   * @returns A promise that resolves to the decimal precision of the token as a bigint.
-   */
-  public async getDecimals(
-    funcAddr: MoveFunctionId,
-    metadataAddr: AccountAddress,
-  ): Promise<bigint> {
-    const [res] = (await this.callViewMethod(funcAddr, [metadataAddr])).map(
-      mapToBigInt,
-    );
-    return res;
   }
 }

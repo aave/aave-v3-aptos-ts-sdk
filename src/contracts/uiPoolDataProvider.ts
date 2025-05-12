@@ -26,10 +26,6 @@ export class UiPoolDataProviderContract {
    */
 
   // View
-  uiPoolDataProviderV32DataAddress: MoveFunctionId;
-
-  uiPoolDataProviderV3DataObject: MoveFunctionId;
-
   getReservesList: MoveFunctionId;
 
   getReservesData: MoveFunctionId;
@@ -54,8 +50,6 @@ export class UiPoolDataProviderContract {
     );
     const PeripheryManagerAccountAddress = PeripheryManager.toString();
 
-    this.uiPoolDataProviderV32DataAddress = `${PeripheryManagerAccountAddress}::ui_pool_data_provider_v3::ui_pool_data_provider_v3_data_address`;
-    this.uiPoolDataProviderV3DataObject = `${PeripheryManagerAccountAddress}::ui_pool_data_provider_v3::ui_pool_data_provider_v3_data_object`;
     this.getReservesList = `${PeripheryManagerAccountAddress}::ui_pool_data_provider_v3::get_reserves_list`;
     this.getReservesData = `${PeripheryManagerAccountAddress}::ui_pool_data_provider_v3::get_reserves_data`;
     this.getUserReservesData = `${PeripheryManagerAccountAddress}::ui_pool_data_provider_v3::get_user_reserves_data`;

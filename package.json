@@ -27,7 +27,9 @@
         "borrow": "tsx examples/users/borrow.ts",
         "withdraw": "tsx examples/users/withdraw.ts",
         "repay": "tsx examples/users/repay.ts",
-        "get-aptos": "tsx examples/quiries/getAptos.ts",
+        "get-apt": "tsx examples/quiries/getAPT.ts",
+        "get-usdt": "tsx examples/quiries/getUSDT.ts",
+        "get-susde": "tsx examples/quiries/getsUSDe.ts",
         "get-addresses": "tsx examples/quiries/getAddresses.ts",
         "get-user-data": "tsx examples/quiries/getUserData.ts",
         "get-asset-price": "tsx examples/quiries/getAssetPrice.ts",
@@ -82,7 +84,8 @@
         "tslib": "^2.8.1",
         "tsx": "^4.19.4",
         "util": "^0.12.5",
-        "yaml": "^2.7.1"
+        "yaml": "^2.7.1",
+        "yargs": "^17.7.2"
     },
     "devDependencies": {
         "@types/bn.js": "^5.1.6",

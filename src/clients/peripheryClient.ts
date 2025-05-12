@@ -41,57 +41,6 @@ export class PeripheryClient extends AptosContractWrapperBaseClass {
     return client;
   }
 
-  public async checkIsFundsAdmin(): Promise<boolean> {
-    const [resp] = await this.callViewMethod(
-      this.peripheryContract.CheckIsFundsAdmin,
-      [],
-    );
-    return resp as boolean;
-  }
-
-  public async getRevision(): Promise<number> {
-    const [resp] = await this.callViewMethod(
-      this.peripheryContract.GetRevision,
-      [],
-    );
-    return resp as number;
-  }
-
-  public async getFundsAdmin(): Promise<AccountAddress> {
-    const [resp] = (
-      await this.callViewMethod(this.peripheryContract.GetFundsAdmin, [])
-    ).map((item) => AccountAddress.fromString(item as string));
-    return resp;
-  }
-
-  public async uiPoolDataProviderV3DataAddress(): Promise<AccountAddress> {
-    const [resp] = await this.callViewMethod(
-      this.peripheryContract.AdminControlledEcosystemReserveAddress,
-      [],
-    );
-    return AccountAddress.fromString(resp as string);
-  }
-
-  public async uiPoolDataProviderV3DataObject(): Promise<AccountAddress> {
-    const [resp] = await this.callViewMethod(
-      this.peripheryContract.AdminControlledEcosystemReserveObject,
-      [],
-    );
-    return AccountAddress.fromString((resp as Metadata).inner);
-  }
-
-  public async transferOut(
-    assetMetadata: AccountAddress,
-    receiver: AccountAddress,
-    amount: BigInt,
-  ): Promise<CommittedTransactionResponse> {
-    return this.sendTxAndAwaitResponse(this.peripheryContract.TransferOut, [
-      assetMetadata,
-      receiver,
-      amount.toString(),
-    ]);
-  }
-
   //===================
 
   public async emissionManagerAddress(): Promise<AccountAddress> {

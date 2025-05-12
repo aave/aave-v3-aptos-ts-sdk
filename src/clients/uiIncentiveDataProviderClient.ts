@@ -2,7 +2,6 @@ import { AccountAddress, Ed25519Account } from "@aptos-labs/ts-sdk";
 import { AptosContractWrapperBaseClass } from "./baseClass";
 import { AptosProvider } from "./aptosProvider";
 import { UiIncentiveDataProviderContract } from "../contracts/uiIncentiveDataProvider";
-import { Metadata } from "../helpers/interfaces";
 
 /**
  * Represents the aggregated incentive data for a reserve.
@@ -40,7 +39,6 @@ export type IncentiveData = {
  *
  * @property {string} rewardTokenSymbol - The symbol of the reward token.
  * @property {AccountAddress} rewardTokenAddress - The address of the reward token.
- * @property {AccountAddress} rewardOracleAddress - The address of the reward oracle.
  * @property {bigint} emissionPerSecond - The emission rate of the reward token per second.
  * @property {bigint} incentivesLastUpdateTimestamp - The timestamp of the last update to the incentives.
  * @property {bigint} tokenIncentivesIndex - The index of the token incentives.
@@ -53,7 +51,6 @@ export type IncentiveData = {
 export type RewardInfo = {
   rewardTokenSymbol: string;
   rewardTokenAddress: AccountAddress;
-  rewardOracleAddress: AccountAddress;
   emissionPerSecond: bigint;
   incentivesLastUpdateTimestamp: bigint;
   tokenIncentivesIndex: bigint;
@@ -98,7 +95,6 @@ export type UserIncentiveData = {
  *
  * @typedef {Object} UserRewardInfo
  * @property {string} rewardTokenSymbol - The symbol of the reward token.
- * @property {AccountAddress} rewardOracleAddress - The address of the reward oracle.
  * @property {AccountAddress} rewardTokenAddress - The address of the reward token.
  * @property {bigint} userUnclaimedRewards - The amount of unclaimed rewards for the user.
  * @property {bigint} tokenIncentivesUserIndex - The user's index in the token incentives.
@@ -108,7 +104,6 @@ export type UserIncentiveData = {
  */
 export type UserRewardInfo = {
   rewardTokenSymbol: string;
-  rewardOracleAddress: AccountAddress;
   rewardTokenAddress: AccountAddress;
   userUnclaimedRewards: bigint;
   tokenIncentivesUserIndex: bigint;
@@ -125,7 +120,6 @@ export type UserRewardInfo = {
  *
  * @property rewardTokenSymbol - The symbol of the reward token.
  * @property rewardTokenAddress - The address of the reward token.
- * @property rewardOracleAddress - The address of the reward oracle.
  * @property emissionPerSecond - The emission rate of the reward token per second.
  * @property incentivesLastUpdateTimestamp - The timestamp of the last update to the incentives.
  * @property tokenIncentivesIndex - The index of the token incentives.
@@ -140,9 +134,6 @@ const mapIncentiveData = (rewardTokenInfo: any): RewardInfo =>
     rewardTokenSymbol: rewardTokenInfo.reward_token_symbol as string,
     rewardTokenAddress: AccountAddress.fromString(
       rewardTokenInfo.reward_token_address.toString(),
-    ),
-    rewardOracleAddress: AccountAddress.fromString(
-      rewardTokenInfo.reward_oracle_address.toString(),
     ),
     emissionPerSecond: BigInt(rewardTokenInfo.emission_per_second),
     incentivesLastUpdateTimestamp: BigInt(
@@ -165,9 +156,6 @@ const mapIncentiveData = (rewardTokenInfo: any): RewardInfo =>
 const mapUserIncentiveData = (rewardTokenInfo: any): UserRewardInfo =>
   ({
     rewardTokenSymbol: rewardTokenInfo.reward_token_symbol as string,
-    rewardOracleAddress: AccountAddress.fromString(
-      rewardTokenInfo.reward_oracle_address.toString(),
-    ),
     rewardTokenAddress: AccountAddress.fromString(
       rewardTokenInfo.reward_token_address.toString(),
     ),
@@ -300,42 +288,6 @@ export class UiIncentiveDataProviderClient extends AptosContractWrapperBaseClass
       provider.getPoolProfileAccount(),
     );
     return client;
-  }
-
-  /**
-   * Fetches the address of the UI Pool Data Provider V3.
-   *
-   * This method calls the `uiIncentiveDataProviderV3DataAddress` view method on the
-   * `uiPoolDataProviderContract` to retrieve the address.
-   *
-   * @returns {Promise<AccountAddress>} A promise that resolves to an `AccountAddress` object
-   * representing the address of the UI Pool Data Provider V3.
-   */
-  public async uiPoolDataProviderV3DataAddress(): Promise<AccountAddress> {
-    const [resp] = await this.callViewMethod(
-      this.uiPoolDataProviderContract.uiIncentiveDataProviderV3DataAddress,
-      [],
-    );
-    return AccountAddress.fromString(resp as string);
-  }
-
-  /**
-   * Fetches the V3 data object from the UI Pool Data Provider.
-   *
-   * This method calls the `uiIncentiveDataProviderV3DataObject` view method on the
-   * `uiPoolDataProviderContract` and returns the result as an `AccountAddress`.
-   *
-   * @returns {Promise<AccountAddress>} A promise that resolves to an `AccountAddress` object
-   * representing the V3 data object.
-   *
-   * @throws {Error} If the call to the view method fails or the response cannot be parsed.
-   */
-  public async uiPoolDataProviderV3DataObject(): Promise<AccountAddress> {
-    const [resp] = await this.callViewMethod(
-      this.uiPoolDataProviderContract.uiIncentiveDataProviderV3DataObject,
-      [],
-    );
-    return AccountAddress.fromString((resp as Metadata).inner);
   }
 
   /**

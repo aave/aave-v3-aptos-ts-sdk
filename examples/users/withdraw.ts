@@ -8,22 +8,47 @@ import {
 import { PoolClient } from "../../src/clients/poolClient";
 import { AptosProvider, CoreClient } from "../../src/clients";
 import { DEFAULT_TESTNET_CONFIG } from "../../src/configs";
+import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
 
-const USER_APTOS_ACCOUNT_PRIVATE_KEY = "0x0";
-const CURRENCY_TO_WITHDRAW = "DAI";
-const AMOUNT_TO_WITHDRAW = "100";
+const main = async () => {
+  const argv = await yargs(hideBin(process.argv))
+    .option("privateKey", {
+      alias: "k",
+      type: "string",
+      description: "User's Ed25519 private key",
+      demandOption: true,
+    })
+    .option("symbol", {
+      alias: "s",
+      type: "string",
+      description: "Symbol of the currency to withdraw (e.g. DAI)",
+      demandOption: true,
+    })
+    .option("amount", {
+      alias: "a",
+      type: "number",
+      description: "Amount to withdraw (as u64)",
+      demandOption: true,
+    })
+    .example(
+      "pnpm run withdraw -k 0xabc123 -s DAI -a 100",
+      "Withdraw 100 units of DAI using the provided private key",
+    )
+    .help()
+    .parse();
 
-(async () => {
-  // global aptos provider
+  const privateKey = argv.privateKey.startsWith("0x")
+    ? argv.privateKey
+    : "0x" + argv.privateKey;
+  const symbol = argv.symbol;
+  const withdrawAmount = BigInt(argv.amount);
+
   const aptosProvider = AptosProvider.fromConfig(DEFAULT_TESTNET_CONFIG);
-  // all pool-related operations client
   const poolClient = new PoolClient(aptosProvider);
-  // user account
+
   const aptosPrivateKey = new Ed25519PrivateKey(
-    PrivateKey.formatPrivateKey(
-      USER_APTOS_ACCOUNT_PRIVATE_KEY,
-      PrivateKeyVariants.Ed25519,
-    ),
+    PrivateKey.formatPrivateKey(privateKey, PrivateKeyVariants.Ed25519),
   );
   const userAccount = Account.fromPrivateKey({ privateKey: aptosPrivateKey });
   const coreClient = new CoreClient(
@@ -34,14 +59,18 @@ const AMOUNT_TO_WITHDRAW = "100";
   try {
     const allReserveUnderlyingTokens = await poolClient.getAllReservesTokens();
     const underlyingToken = allReserveUnderlyingTokens.find(
-      (token) => token.symbol === CURRENCY_TO_WITHDRAW,
+      (token) => token.symbol === symbol,
     );
+
     if (!underlyingToken) {
-      throw new Error(`${underlyingToken} token was not found`);
+      throw new Error(`Token '${symbol}' was not found`);
     }
-    const withdrawAmount = BigInt(AMOUNT_TO_WITHDRAW);
-    console.log("Underlying token: ", underlyingToken.tokenAddress.toString());
-    console.log("Value to withdraw: ", withdrawAmount.toString());
+
+    console.log(
+      "✅ Underlying token:",
+      underlyingToken.tokenAddress.toString(),
+    );
+    console.log("💸 Value to withdraw:", withdrawAmount.toString());
 
     const txHash = await coreClient.withdraw(
       underlyingToken.tokenAddress,
@@ -49,8 +78,11 @@ const AMOUNT_TO_WITHDRAW = "100";
       userAccount.accountAddress,
     );
 
-    console.info("Transaction executed: ", txHash.hash);
+    console.info("✅ Transaction executed");
+    console.info("🔗 Tx Hash:", txHash.hash);
   } catch (ex) {
-    console.error("Expection = ", ex);
+    console.error("❌ Exception = ", ex);
   }
-})();
+};
+
+main();

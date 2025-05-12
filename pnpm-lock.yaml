@@ -58,6 +58,9 @@ importers:
       yaml:
         specifier: ^2.7.1
         version: 2.7.1
+      yargs:
+        specifier: ^17.7.2
+        version: 17.7.2
     devDependencies:
       '@types/bn.js':
         specifier: ^5.1.6

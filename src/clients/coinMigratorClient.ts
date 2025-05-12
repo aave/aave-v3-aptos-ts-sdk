@@ -56,42 +56,72 @@ export class CoinMigratorClient extends AptosContractWrapperBaseClass {
   }
 
   /**
-   * Converts a specified amount of coins to FA (Financial Asset).
+   * Converts a specified amount of coins to FA (Fungible Asset).
+   *
+   * @param amount - The amount of coins to be converted, represented as a bigint.
+   * @param coinType - The coin type generic over CoinType e.g. "0x1::aptos_coin::AptosCoin".
+   * @returns A promise that resolves to a `CommittedTransactionResponse` object containing the transaction details.
+   */
+  public async coinToFa(
+    amount: bigint,
+    coinType: string,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.coinMigratorContract.coinToFaFuncAddr,
+      [amount.toString()],
+      [coinType],
+    );
+  }
+
+  /**
+   * Converts a specified amount of Aptos Coins to FA (Fungible Asset).
    *
    * @param amount - The amount of coins to be converted, represented as a bigint.
    * @returns A promise that resolves to a `CommittedTransactionResponse` object containing the transaction details.
    */
-  public async coinToFa(amount: bigint): Promise<CommittedTransactionResponse> {
+  public async aptosCoinToFa(
+    amount: bigint,
+  ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.coinMigratorContract.CoinToFaFuncAddr,
+      this.coinMigratorContract.coinToFaFuncAddr,
       [amount.toString()],
+      ["0x1::aptos_coin::AptosCoin"],
     );
   }
 
   /**
-   * Converts the specified amount from FA to Coin.
+   * Retrieves the FA (Fungible Address) associated with the coin migrator contract.
    *
-   * @param amount - The amount to be converted, specified as a bigint.
-   * @returns A promise that resolves to a CommittedTransactionResponse object.
+   * @param coinType - The coin type generic over CoinType e.g. "0x1::aptos_coin::AptosCoin".
+   * This method calls the `GetFaAddrFuncAddr` view method on the coin migrator contract
+   * and maps the response to an `AccountAddress` object.
+   * @returns {Promise<AccountAddress>} A promise that resolves to the FA address as an `AccountAddress` object.
    */
-  public async faToCoin(amount: bigint): Promise<CommittedTransactionResponse> {
-    return this.sendTxAndAwaitResponse(
-      this.coinMigratorContract.FaToCoinFuncAddr,
-      [amount.toString()],
-    );
+  public async getFaAddress(coinType: string): Promise<AccountAddress> {
+    const [resp] = (
+      await this.callViewMethod(
+        this.coinMigratorContract.getFaAddrFuncAddr,
+        [],
+        [coinType],
+      )
+    ).map((item) => AccountAddress.fromString(item as string));
+    return resp;
   }
 
   /**
-   * Retrieves the FA (Financial Address) associated with the coin migrator contract.
+   * Retrieves the FA (Fungible Address) associated with the Aptos Coin migrator contract.
    *
    * This method calls the `GetFaAddrFuncAddr` view method on the coin migrator contract
    * and maps the response to an `AccountAddress` object.
-   *
    * @returns {Promise<AccountAddress>} A promise that resolves to the FA address as an `AccountAddress` object.
    */
-  public async getFaAddress(): Promise<AccountAddress> {
+  public async getAptosCoinFaAddress(): Promise<AccountAddress> {
     const [resp] = (
-      await this.callViewMethod(this.coinMigratorContract.GetFaAddrFuncAddr, [])
+      await this.callViewMethod(
+        this.coinMigratorContract.getFaAddrFuncAddr,
+        [],
+        ["0x1::aptos_coin::AptosCoin"],
+      )
     ).map((item) => AccountAddress.fromString(item as string));
     return resp;
   }

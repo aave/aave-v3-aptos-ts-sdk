@@ -30,7 +30,7 @@ To contribute code, please follow these steps:
 4. Push your branch to your fork.
 5. Create a pull request from your branch to the develop branch of the `aave-v3-aptos-ts-sdk` repository.
 
->  **NOTE:** When creating a pull request, please include a clear and concise title and description of your changes, as well as any relevant context or background information.
+> **NOTE:** When creating a pull request, please include a clear and concise title and description of your changes, as well as any relevant context or background information.
 
 ## Code Style
 
@@ -73,4 +73,5 @@ To generate the documentation for a specific branch, run the following command:
 ```sh
 npm run doc
 ```
+
 The documentation will be generated inside each of the packages in the `./docs/documentation/html` directory.

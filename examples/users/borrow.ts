@@ -8,22 +8,50 @@ import {
 import { PoolClient } from "../../src/clients/poolClient";
 import { AptosProvider, CoreClient } from "../../src/clients";
 import { DEFAULT_TESTNET_CONFIG } from "../../src/configs";
+import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
 
-const USER_APTOS_ACCOUNT_PRIVATE_KEY = "0x0";
-const CURRENCY_TO_BORROW = "DAI";
-const AMOUNT_TO_BORROW = "100";
+const INTEREST_RATE_MODE = 2;
+const REFERRAL_CODE = 0;
 
-(async () => {
-  // global aptos provider
+const main = async () => {
+  const argv = await yargs(hideBin(process.argv))
+    .option("privateKey", {
+      alias: "k",
+      type: "string",
+      description: "User's Ed25519 private key",
+      demandOption: true,
+    })
+    .option("symbol", {
+      alias: "s",
+      type: "string",
+      description: "Symbol of the currency to borrow (e.g. DAI)",
+      demandOption: true,
+    })
+    .option("amount", {
+      alias: "a",
+      type: "number",
+      description: "Amount to borrow (as integer u64)",
+      demandOption: true,
+    })
+    .example(
+      "pnpm run borrow -k 0xabc123 -s DAI -a 100",
+      "Borrow 100 units of DAI using the provided private key",
+    )
+    .help()
+    .parse();
+
+  const privateKey = argv.privateKey.startsWith("0x")
+    ? argv.privateKey
+    : "0x" + argv.privateKey;
+  const currency = argv.symbol;
+  const amount = BigInt(argv.amount);
+
   const aptosProvider = AptosProvider.fromConfig(DEFAULT_TESTNET_CONFIG);
-  // all pool-related operations client
   const poolClient = new PoolClient(aptosProvider);
-  // user account
+
   const aptosPrivateKey = new Ed25519PrivateKey(
-    PrivateKey.formatPrivateKey(
-      USER_APTOS_ACCOUNT_PRIVATE_KEY,
-      PrivateKeyVariants.Ed25519,
-    ),
+    PrivateKey.formatPrivateKey(privateKey, PrivateKeyVariants.Ed25519),
   );
   const userAccount = Account.fromPrivateKey({ privateKey: aptosPrivateKey });
   const coreClient = new CoreClient(
@@ -34,25 +62,32 @@ const AMOUNT_TO_BORROW = "100";
   try {
     const allReserveUnderlyingTokens = await poolClient.getAllReservesTokens();
     const underlyingToken = allReserveUnderlyingTokens.find(
-      (token) => token.symbol === CURRENCY_TO_BORROW,
+      (token) => token.symbol === currency,
     );
+
     if (!underlyingToken) {
-      throw new Error(`${underlyingToken} token was not found`);
+      throw new Error(`Token '${currency}' was not found`);
     }
-    const borrowAmount = BigInt(AMOUNT_TO_BORROW);
-    console.log("Underlying token: ", underlyingToken?.tokenAddress.toString());
-    console.log("Value to borrow: ", borrowAmount.toString());
+
+    console.log(
+      "✅ Underlying token address:",
+      underlyingToken.tokenAddress.toString(),
+    );
+    console.log("📦 Borrow amount:", amount.toString());
 
     const txHash = await coreClient.borrow(
       underlyingToken.tokenAddress,
-      borrowAmount,
-      2,
-      0,
+      amount,
+      INTEREST_RATE_MODE, // interestRateMode
+      REFERRAL_CODE, // referralCode
       userAccount.accountAddress,
     );
 
-    console.info("Transaction executed: ", txHash.hash);
+    console.info("✅ Transaction executed");
+    console.info("🔗 Tx Hash:", txHash.hash);
   } catch (ex) {
-    console.error("Expection = ", ex);
+    console.error("❌ Exception = ", ex);
   }
-})();
+};
+
+main();

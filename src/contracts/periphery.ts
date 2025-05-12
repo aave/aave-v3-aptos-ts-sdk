@@ -2,14 +2,6 @@ import { MoveFunctionId } from "@aptos-labs/ts-sdk";
 import { AAVE_PROFILES, AptosProvider } from "../clients/aptosProvider";
 
 export class PeripheryContract {
-  // admin controoled ecosystem reserve
-  CheckIsFundsAdmin: MoveFunctionId;
-  GetRevision: MoveFunctionId;
-  GetFundsAdmin: MoveFunctionId;
-  AdminControlledEcosystemReserveAddress: MoveFunctionId;
-  AdminControlledEcosystemReserveObject: MoveFunctionId;
-  TransferOut: MoveFunctionId;
-
   // emission manager
   EmissionManagerAddress: MoveFunctionId;
   EmissionManagerObject: MoveFunctionId;
@@ -62,12 +54,6 @@ export class PeripheryContract {
     );
     // admin controlled ecosystem reserve
     const PeripheryManagerAccountAddress = PeripheryManager.toString();
-    this.CheckIsFundsAdmin = `${PeripheryManagerAccountAddress}::admin_controlled_ecosystem_reserve::check_is_funds_admin`;
-    this.GetRevision = `${PeripheryManagerAccountAddress}::admin_controlled_ecosystem_reserve::get_revision`;
-    this.GetFundsAdmin = `${PeripheryManagerAccountAddress}::admin_controlled_ecosystem_reserve::get_funds_admin`;
-    this.AdminControlledEcosystemReserveAddress = `${PeripheryManagerAccountAddress}::admin_controlled_ecosystem_reserve::admin_controlled_ecosystem_reserve_address`;
-    this.AdminControlledEcosystemReserveObject = `${PeripheryManagerAccountAddress}::admin_controlled_ecosystem_reserve::admin_controlled_ecosystem_reserve_object`;
-    this.TransferOut = `${PeripheryManagerAccountAddress}::admin_controlled_ecosystem_reserve::transfer_out`;
 
     // emission manager
     this.EmissionManagerAddress = `${PeripheryManagerAccountAddress}::emission_manager::emission_manager_address`;
@@ -85,7 +71,6 @@ export class PeripheryContract {
     this.RewardsControllerAddress = `${PeripheryManagerAccountAddress}::rewards_controller::rewards_controller_address`;
     this.RewardsControllerObject = `${PeripheryManagerAccountAddress}::rewards_controller::rewards_controller_object`;
     this.GetClaimer = `${PeripheryManagerAccountAddress}::rewards_controller::get_claimer`;
-    this.GetRevision = `${PeripheryManagerAccountAddress}::rewards_controller::get_revision`;
     this.GetRewardOracle = `${PeripheryManagerAccountAddress}::rewards_controller::get_reward_oracle`;
     this.GetPullRewardsTransferStrategy = `${PeripheryManagerAccountAddress}::rewards_controller::get_pull_rewards_transfer_strategy`;
     this.ClaimRewards = `${PeripheryManagerAccountAddress}::rewards_controller::claim_rewards`;
