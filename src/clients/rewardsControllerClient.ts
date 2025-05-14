@@ -2,7 +2,6 @@ import {
   AccountAddress,
   CommittedTransactionResponse,
   Ed25519Account,
-  MoveOption,
 } from "@aptos-labs/ts-sdk";
 import { AptosContractWrapperBaseClass } from "./baseClass";
 import { AptosProvider } from "./aptosProvider";

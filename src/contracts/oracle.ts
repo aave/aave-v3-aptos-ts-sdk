@@ -2,25 +2,37 @@ import { MoveFunctionId } from "@aptos-labs/ts-sdk";
 import { AAVE_PROFILES, AptosProvider } from "../clients/aptosProvider";
 
 export class OracleContract {
-  GetAssetPriceFuncAddr: MoveFunctionId;
+  isAssetPriceCappedFuncAddr: MoveFunctionId;
 
-  GetAssetsPricesFuncAddr: MoveFunctionId;
+  getAssetPriceFuncAddr: MoveFunctionId;
 
-  SetAssetFeedIdFuncAddr: MoveFunctionId;
+  getPriceCapFuncAddr: MoveFunctionId;
 
-  SetMockFeedIdFuncAddr: MoveFunctionId;
+  getAssetsPricesFuncAddr: MoveFunctionId;
 
-  SetMockPriceFuncAddr: MoveFunctionId;
+  setAssetFeedIdFuncAddr: MoveFunctionId;
 
-  BatchSetAssetFeedIdsFuncAddr: MoveFunctionId;
+  setPriceCapStableAdapter: MoveFunctionId;
 
-  RemoveAssetFeedIdFuncAddr: MoveFunctionId;
+  removePriceCapStableAdapter: MoveFunctionId;
 
-  RemoveAssetFeedIdsFuncAddr: MoveFunctionId;
+  setAssetCustomPriceFuncAddr: MoveFunctionId;
 
-  GetOracleResourceAccountFuncAddr: MoveFunctionId;
+  batchSetAssetFeedIdsFuncAddr: MoveFunctionId;
 
-  GetOracleAddressFuncAddr: MoveFunctionId;
+  batchSetAssetCustomPricesFuncAddr: MoveFunctionId;
+
+  batchRemoveAssetCustomPricesFuncAddr: MoveFunctionId;
+
+  removeAssetFeedIdFuncAddr: MoveFunctionId;
+
+  removeAssetFeedIdsFuncAddr: MoveFunctionId;
+
+  removeAssetCustomPriceFuncAddr: MoveFunctionId;
+
+  getOracleAddressFuncAddr: MoveFunctionId;
+
+  getAssetPriceDecimalsFuncAddr: MoveFunctionId;
 
   /**
    * Constructs an instance of the Oracle class.
@@ -32,29 +44,35 @@ export class OracleContract {
    * function addresses for different oracle operations.
    *
    * The following function addresses are initialized:
-   * - `GetAssetPriceFuncAddr`: Address for the `get_asset_price` function.
-   * - `GetAssetsPricesFuncAddr`: Address for the `get_assets_prices` function.
-   * - `SetAssetFeedIdFuncAddr`: Address for the `set_asset_feed_id` function.
-   * - `BatchSetAssetFeedIdsFuncAddr`: Address for the `batch_set_asset_feed_ids` function.
-   * - `RemoveAssetFeedIdFuncAddr`: Address for the `remove_asset_feed_id` function.
-   * - `RemoveAssetFeedIdsFuncAddr`: Address for the `batch_remove_asset_feed_ids` function.
-   * - `GetOracleResourceAccountFuncAddr`: Address for the `get_oracle_resource_account` function.
-   * - `GetOracleAddressFuncAddr`: Address for the `oracle_address` function.
+   * - `getAssetPriceFuncAddr`: Address for the `get_asset_price` function.
+   * - `getAssetsPricesFuncAddr`: Address for the `get_assets_prices` function.
+   * - `setAssetFeedIdFuncAddr`: Address for the `set_asset_feed_id` function.
+   * - `batchSetAssetFeedIdsFuncAddr`: Address for the `batch_set_asset_feed_ids` function.
+   * - `removeAssetFeedIdFuncAddr`: Address for the `remove_asset_feed_id` function.
+   * - `removeAssetFeedIdsFuncAddr`: Address for the `batch_remove_asset_feed_ids` function.
+   * - `getOracleResourceAccountFuncAddr`: Address for the `get_oracle_resource_account` function.
+   * - `getOracleAddressFuncAddr`: Address for the `oracle_address` function.
    */
   constructor(provider: AptosProvider) {
     const OracleManager = provider.getProfileAddressByName(
       AAVE_PROFILES.AAVE_ORACLE,
     );
     const OracleManagerAccountAddress = OracleManager.toString();
-    this.GetAssetPriceFuncAddr = `${OracleManagerAccountAddress}::oracle::get_asset_price`;
-    this.GetAssetsPricesFuncAddr = `${OracleManagerAccountAddress}::oracle::get_assets_prices`;
-    this.SetAssetFeedIdFuncAddr = `${OracleManagerAccountAddress}::oracle::set_asset_feed_id`;
-    this.BatchSetAssetFeedIdsFuncAddr = `${OracleManagerAccountAddress}::oracle::batch_set_asset_feed_ids`;
-    this.RemoveAssetFeedIdFuncAddr = `${OracleManagerAccountAddress}::oracle::remove_asset_feed_id`;
-    this.RemoveAssetFeedIdsFuncAddr = `${OracleManagerAccountAddress}::oracle::batch_remove_asset_feed_ids`;
-    this.GetOracleResourceAccountFuncAddr = `${OracleManagerAccountAddress}::oracle_base::get_oracle_resource_account`;
-    this.GetOracleAddressFuncAddr = `${OracleManagerAccountAddress}::oracle_base::oracle_address`;
-    this.SetMockFeedIdFuncAddr = `${OracleManagerAccountAddress}::oracle::set_chainlink_mock_feed`;
-    this.SetMockPriceFuncAddr = `${OracleManagerAccountAddress}::oracle::set_chainlink_mock_price`;
+    this.isAssetPriceCappedFuncAddr = `${OracleManagerAccountAddress}::oracle::is_asset_price_capped`;
+    this.getAssetPriceFuncAddr = `${OracleManagerAccountAddress}::oracle::get_asset_price`;
+    this.getAssetPriceDecimalsFuncAddr = `${OracleManagerAccountAddress}::oracle::get_asset_price_decimals`;
+    this.getPriceCapFuncAddr = `${OracleManagerAccountAddress}::oracle::get_price_cap`;
+    this.getAssetsPricesFuncAddr = `${OracleManagerAccountAddress}::oracle::get_assets_prices`;
+    this.setPriceCapStableAdapter = `${OracleManagerAccountAddress}::oracle::set_price_cap_stable_adapter`;
+    this.removePriceCapStableAdapter = `${OracleManagerAccountAddress}::oracle::remove_price_cap_stable_adapter`;
+    this.setAssetFeedIdFuncAddr = `${OracleManagerAccountAddress}::oracle::set_asset_feed_id`;
+    this.batchSetAssetFeedIdsFuncAddr = `${OracleManagerAccountAddress}::oracle::batch_set_asset_feed_ids`;
+    this.batchSetAssetCustomPricesFuncAddr = `${OracleManagerAccountAddress}::oracle::batch_set_asset_custom_prices`;
+    this.removeAssetFeedIdFuncAddr = `${OracleManagerAccountAddress}::oracle::remove_asset_feed_id`;
+    this.removeAssetFeedIdsFuncAddr = `${OracleManagerAccountAddress}::oracle::batch_remove_asset_feed_ids`;
+    this.removeAssetCustomPriceFuncAddr = `${OracleManagerAccountAddress}::oracle::remove_asset_custom_price`;
+    this.getOracleAddressFuncAddr = `${OracleManagerAccountAddress}::oracle::oracle_address`;
+    this.setAssetCustomPriceFuncAddr = `${OracleManagerAccountAddress}::oracle::set_asset_custom_price`;
+    this.batchRemoveAssetCustomPricesFuncAddr = `${OracleManagerAccountAddress}::oracle::batch_remove_asset_custom_prices`;
   }
 }

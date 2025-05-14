@@ -60,23 +60,25 @@ async function fundAccount(
  *
  * @param aptos - The Aptos client instance used to build the transaction.
  * @param user - The account address of the user initiating the transaction.
- * @param func_addr - The identifier of the Move function to be called.
- * @param func_args - An array of arguments to be passed to the Move function.
+ * @param funcAddr - The identifier of the Move function to be called.
+ * @param funcArgs - An array of arguments to be passed to the Move function.
  * @returns A promise that resolves to the transaction data object.
  */
 async function transactionData(
   aptos: Aptos,
   user: AccountAddress,
-  func_addr: MoveFunctionId,
-  func_args: Array<
+  funcAddr: MoveFunctionId,
+  funcArgs: Array<
     EntryFunctionArgumentTypes | SimpleEntryFunctionArgumentTypes
   >,
+  typeArgs: string[] = [],
 ) {
   return aptos.transaction.build.simple({
     sender: user,
     data: {
-      function: func_addr,
-      functionArguments: func_args,
+      function: funcAddr,
+      functionArguments: funcArgs,
+      typeArguments: typeArgs,
     },
   });
 }
@@ -86,23 +88,25 @@ async function transactionData(
  *
  * @param aptos - The Aptos client instance.
  * @param signer - The account that will sign the transaction.
- * @param func_addr - The address of the Move function to be called.
- * @param func_args - The arguments to be passed to the Move function.
+ * @param funcAddr - The address of the Move function to be called.
+ * @param funcArgs - The arguments to be passed to the Move function.
  * @returns A promise that resolves when the transaction is confirmed.
  */
 async function transaction(
   aptos: Aptos,
   signer: Ed25519Account,
-  func_addr: MoveFunctionId,
-  func_args: Array<
+  funcAddr: MoveFunctionId,
+  funcArgs: Array<
     EntryFunctionArgumentTypes | SimpleEntryFunctionArgumentTypes
   >,
+  typeArgs: string[] = [],
 ) {
   const transaction = await aptos.transaction.build.simple({
     sender: signer.accountAddress,
     data: {
-      function: func_addr,
-      functionArguments: func_args,
+      function: funcAddr,
+      functionArguments: funcArgs,
+      typeArguments: typeArgs,
     },
   });
   // using signAndSubmit combined
@@ -118,21 +122,23 @@ async function transaction(
  *
  * @template T - The type of the return value, which extends an array of MoveValue.
  * @param {Aptos} aptos - The Aptos client instance.
- * @param {MoveFunctionId} func_addr - The address of the function to be called.
- * @param {Array<EntryFunctionArgumentTypes | SimpleEntryFunctionArgumentTypes>} func_args - The arguments to be passed to the function.
+ * @param {MoveFunctionId} funcAddr - The address of the function to be called.
+ * @param {Array<EntryFunctionArgumentTypes | SimpleEntryFunctionArgumentTypes>} funcArgs - The arguments to be passed to the function.
  * @returns {Promise<T>} - A promise that resolves to the result of the view function.
  */
 async function view<T extends MoveValue[]>(
   aptos: Aptos,
-  func_addr: MoveFunctionId,
-  func_args: Array<
+  funcAddr: MoveFunctionId,
+  funcArgs: Array<
     EntryFunctionArgumentTypes | SimpleEntryFunctionArgumentTypes
   >,
+  typeArgs: string[] = [],
 ) {
   return aptos.view<T>({
     payload: {
-      function: func_addr,
-      functionArguments: func_args,
+      function: funcAddr,
+      functionArguments: funcArgs,
+      typeArguments: typeArgs,
     },
   });
 }
@@ -198,20 +204,22 @@ export class AptosContractWrapperBaseClass {
    * Sends a transaction and awaits the response.
    *
    * @param functionId - The ID of the Move function to be called.
-   * @param func_args - An array of arguments for the entry function.
+   * @param funcArgs - An array of arguments for the entry function.
    * @returns A promise that resolves to the committed transaction response.
    */
   public async sendTxAndAwaitResponse(
     functionId: MoveFunctionId,
-    func_args: Array<
+    funcArgs: Array<
       EntryFunctionArgumentTypes | SimpleEntryFunctionArgumentTypes
     >,
+    typeArgs: string[] = [],
   ): Promise<CommittedTransactionResponse> {
     return transaction(
       this.aptosProvider.getAptos(),
       this.signer,
       functionId,
-      func_args,
+      funcArgs,
+      typeArgs,
     );
   }
 
@@ -220,21 +228,23 @@ export class AptosContractWrapperBaseClass {
    *
    * @param user - The account address of the user initiating the transaction.
    * @param functionId - The identifier of the Move function to be called.
-   * @param func_args - An array of arguments for the entry function.
+   * @param funcArgs - An array of arguments for the entry function.
    * @returns A promise that resolves to a SimpleTransaction object.
    */
   public async buildTx(
     user: AccountAddress,
     functionId: MoveFunctionId,
-    func_args: Array<
+    funcArgs: Array<
       EntryFunctionArgumentTypes | SimpleEntryFunctionArgumentTypes
     >,
+    typeArgs: string[] = [],
   ): Promise<SimpleTransaction> {
     return transactionData(
       this.aptosProvider.getAptos(),
       user,
       functionId,
-      func_args,
+      funcArgs,
+      typeArgs,
     );
   }
 
@@ -243,16 +253,23 @@ export class AptosContractWrapperBaseClass {
    *
    * @template T - The type of the return value, which extends an array of MoveValue.
    * @param {MoveFunctionId} functionId - The identifier of the function to call.
-   * @param {Array<EntryFunctionArgumentTypes | SimpleEntryFunctionArgumentTypes>} func_args - The arguments to pass to the function.
+   * @param {Array<EntryFunctionArgumentTypes | SimpleEntryFunctionArgumentTypes>} funcArgs - The arguments to pass to the function.
+   * @param {string[]} typeArgs - Optional generic type arguments for the function (e.g. `["0x1::aptos_coin::AptosCoin"]`).
    * @returns {Promise<T>} - A promise that resolves to the result of the view method call.
    */
   public async callViewMethod<T extends MoveValue[]>(
     functionId: MoveFunctionId,
-    func_args: Array<
+    funcArgs: Array<
       EntryFunctionArgumentTypes | SimpleEntryFunctionArgumentTypes
     >,
+    typeArgs: string[] = [],
   ): Promise<T> {
-    return view<T>(this.aptosProvider.getAptos(), functionId, func_args);
+    return view<T>(
+      this.aptosProvider.getAptos(),
+      functionId,
+      funcArgs,
+      typeArgs,
+    );
   }
 
   /**

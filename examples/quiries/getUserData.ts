@@ -1,20 +1,29 @@
 import { AccountAddress } from "@aptos-labs/ts-sdk";
 import { UnderlyingTokensClient } from "../../src/clients/underlyingTokensClient";
-import { UiPoolDataProviderClient } from "../../src/clients/uiPoolDataProvider";
+import { UiPoolDataProviderClient } from "../../src/clients/uiPoolDataProviderClient";
 import { PoolClient } from "../../src/clients/poolClient";
 import { AptosProvider } from "../../src/clients/aptosProvider";
 import { DEFAULT_TESTNET_CONFIG } from "../../src/configs/testnet";
+import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
 
-const USER_APTOS_ACCOUNT = "0x0";
+const main = async () => {
+  const argv = await yargs(hideBin(process.argv))
+    .option("account", {
+      alias: "a",
+      type: "string",
+      description: "User Aptos account address",
+      demandOption: true,
+    })
+    .example("pnpm run get-user-data -a 0x123...", "Fetch user's reserve data")
+    .help()
+    .parse();
 
-(async () => {
-  // global aptos provider
   const aptosProvider = AptosProvider.fromConfig(DEFAULT_TESTNET_CONFIG);
-
   const uiPoolDataProviderClient = new UiPoolDataProviderClient(aptosProvider);
   const poolClient = new PoolClient(aptosProvider);
   const underlyingTokensClient = new UnderlyingTokensClient(aptosProvider);
-  const userAccount = AccountAddress.fromString(USER_APTOS_ACCOUNT);
+  const userAccount = AccountAddress.fromString(argv.account);
 
   try {
     const allReserveUnderlyingTokens = await poolClient.getAllReservesTokens();
@@ -27,31 +36,40 @@ const USER_APTOS_ACCOUNT = "0x0";
         (token) =>
           token.tokenAddress.toString() === userReserve.underlyingAsset,
       );
+
       if (!underlyingToken) {
-        throw new Error(`${underlyingToken} token was not found`);
+        throw new Error(
+          `Token with address ${userReserve.underlyingAsset} was not found`,
+        );
       }
+
       const underlyingTokenMetadata =
         await underlyingTokensClient.getMetadataBySymbol(
           underlyingToken.symbol,
         );
+
       const underlyingTokenBalance = await underlyingTokensClient.balanceOf(
         userAccount,
         underlyingTokenMetadata,
       );
+
       console.log(
-        "UNDERLYING ASSET ADDRESS-SYMBOL: ",
-        userReserve.underlyingAsset,
-        underlyingToken.symbol,
+        `\n=== 💠 ${underlyingToken.symbol} (${userReserve.underlyingAsset}) ===`,
       );
       console.log(
-        "UNSCALED UNDERLYING ASSET BALANCE: ",
-        underlyingTokenBalance,
+        `Unscaled Underlying Balance : ${underlyingTokenBalance.toString()}`,
       );
-      console.log("SCALED ATOKEN BALANCE: ", userReserve.scaledATokenBalance);
-      console.log("SCALED VARTOKEN BALANCE: ", userReserve.scaledVariableDebt);
-      console.log("==========================================================");
+      console.log(
+        `Scaled aToken Balance       : ${userReserve.scaledATokenBalance.toString()}`,
+      );
+      console.log(
+        `Scaled varToken Debt        : ${userReserve.scaledVariableDebt.toString()}`,
+      );
     }
+    console.log("\n✅ Done.\n");
   } catch (ex) {
-    console.error("Expection = ", ex);
+    console.error("❌ Exception = ", ex);
   }
-})();
+};
+
+main();

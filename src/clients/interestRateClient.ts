@@ -6,30 +6,43 @@ import {
 import { AptosContractWrapperBaseClass } from "./baseClass";
 import { AptosProvider } from "./aptosProvider";
 import { mapToBigInt } from "../helpers/common";
-import { RateContract } from "../contracts/rate";
+import { InterestRateContract } from "../contracts/interestRate";
 
-export class RateClient extends AptosContractWrapperBaseClass {
-  rateContract: RateContract;
+export type InterestRateDataRay = {
+  optimalUsageRatio: bigint;
+  baseVariableBorrowRate: bigint;
+  variableRateSlope1: bigint;
+  variableRateSlope2: bigint;
+};
+
+export class InterestRateClient extends AptosContractWrapperBaseClass {
+  interestRateContract: InterestRateContract;
 
   constructor(provider: AptosProvider, signer?: Ed25519Account) {
     super(provider, signer);
-    this.rateContract = new RateContract(provider);
+    this.interestRateContract = new InterestRateContract(provider);
   }
 
   /**
-   * Creates an instance of `RateClient` using the default signer provided by the `AptosProvider`.
+   * Creates an instance of `InterestRateClient` using the default signer provided by the `AptosProvider`.
    *
    * @param provider - An instance of `AptosProvider` which provides the necessary configurations and signer.
-   * @returns A new instance of `RateClient` initialized with the default signer.
+   * @returns A new instance of `InterestRateClient` initialized with the default signer.
    */
-  public static buildWithDefaultSigner(provider: AptosProvider): RateClient {
-    return new RateClient(provider, provider.getRateProfileAccount());
+  public static buildWithDefaultSigner(
+    provider: AptosProvider,
+  ): InterestRateClient {
+    const client = new InterestRateClient(
+      provider,
+      provider.getPoolProfileAccount(),
+    );
+    return client;
   }
 
   /**
    * Sets the interest rate strategy for a given reserve asset.
    *
-   * @param asset - The address of the reserve asset.
+   * @param reserve - The address of the reserve asset.
    * @param optimalUsageRatio - The optimal usage ratio for the reserve.
    * @param baseVariableBorrowRate - The base variable borrow rate for the reserve.
    * @param variableRateSlope1 - The first slope of the variable rate for the reserve.
@@ -37,16 +50,16 @@ export class RateClient extends AptosContractWrapperBaseClass {
    * @returns A promise that resolves to a `CommittedTransactionResponse` object.
    */
   public async setReserveInterestRateStrategy(
-    asset: AccountAddress,
+    reserve: AccountAddress,
     optimalUsageRatio: bigint,
     baseVariableBorrowRate: bigint,
     variableRateSlope1: bigint,
     variableRateSlope2: bigint,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.rateContract.SetReserveInterestRateStrategyFuncAddr,
+      this.interestRateContract.setReserveInterestRateStrategyFuncAddr,
       [
-        asset,
+        reserve,
         optimalUsageRatio.toString(),
         baseVariableBorrowRate.toString(),
         variableRateSlope1.toString(),
@@ -64,7 +77,7 @@ export class RateClient extends AptosContractWrapperBaseClass {
   public async getOptimalUsageRatio(asset: AccountAddress): Promise<bigint> {
     const [resp] = (
       await this.callViewMethod(
-        this.rateContract.GetGetOptimalUsageRatioFuncAddr,
+        this.interestRateContract.getGetOptimalUsageRatioFuncAddr,
         [asset],
       )
     ).map(mapToBigInt);
@@ -80,7 +93,7 @@ export class RateClient extends AptosContractWrapperBaseClass {
   public async getMaxExcessUsageRatio(asset: AccountAddress): Promise<bigint> {
     const [resp] = (
       await this.callViewMethod(
-        this.rateContract.GetGetMaxExcessUsageRatioFuncAddr,
+        this.interestRateContract.getGetMaxExcessUsageRatioFuncAddr,
         [asset],
       )
     ).map(mapToBigInt);
@@ -96,7 +109,7 @@ export class RateClient extends AptosContractWrapperBaseClass {
   public async getVariableRateSlope1(asset: AccountAddress): Promise<bigint> {
     const [resp] = (
       await this.callViewMethod(
-        this.rateContract.GetVariableRateSlope1FuncAddr,
+        this.interestRateContract.getVariableRateSlope1FuncAddr,
         [asset],
       )
     ).map(mapToBigInt);
@@ -112,7 +125,7 @@ export class RateClient extends AptosContractWrapperBaseClass {
   public async getVariableRateSlope2(asset: AccountAddress): Promise<bigint> {
     const [resp] = (
       await this.callViewMethod(
-        this.rateContract.GetVariableRateSlope2FuncAddr,
+        this.interestRateContract.getVariableRateSlope2FuncAddr,
         [asset],
       )
     ).map(mapToBigInt);
@@ -130,7 +143,7 @@ export class RateClient extends AptosContractWrapperBaseClass {
   ): Promise<bigint> {
     const [resp] = (
       await this.callViewMethod(
-        this.rateContract.GetBaseVariableBorrowRateFuncAddr,
+        this.interestRateContract.getBaseVariableBorrowRateFuncAddr,
         [asset],
       )
     ).map(mapToBigInt);
@@ -148,7 +161,7 @@ export class RateClient extends AptosContractWrapperBaseClass {
   ): Promise<bigint> {
     const [resp] = (
       await this.callViewMethod(
-        this.rateContract.GetMaxVariableBorrowRateFuncAddr,
+        this.interestRateContract.getMaxVariableBorrowRateFuncAddr,
         [asset],
       )
     ).map(mapToBigInt);
@@ -164,32 +177,32 @@ export class RateClient extends AptosContractWrapperBaseClass {
    * @param totalVariableDebt - The total variable debt of the reserve.
    * @param reserveFactor - The reserve factor.
    * @param reserve - The address of the reserve account.
-   * @param aTokenUnderlyingBalance - The balance of the aToken underlying.
+   * @param virtualUnderlyingBalance - The virtual balance of the aToken underlying.
    * @returns An object containing the current liquidity rate and current variable borrow rate.
    */
   public async calculateInterestRates(
     unbacked: bigint,
     liquidityAdded: bigint,
     liquidityTaken: bigint,
-    totalVariableDebt: bigint,
+    totalDebt: bigint,
     reserveFactor: bigint,
     reserve: AccountAddress,
-    aTokenUnderlyingBalance: bigint,
+    virtualUnderlyingBalance: bigint,
   ): Promise<{
     currentLiquidityRate: bigint;
     currentVariableBorrowRate: bigint;
   }> {
     const [currentLiquidityRate, currentVariableBorrowRate] = (
       await this.callViewMethod(
-        this.rateContract.CalculateInterestRatesFuncAddr,
+        this.interestRateContract.calculateInterestRatesFuncAddr,
         [
-          unbacked.toString(),
-          liquidityAdded.toString(),
-          liquidityTaken.toString(),
-          totalVariableDebt.toString(),
-          reserveFactor.toString(),
+          unbacked,
+          liquidityAdded,
+          liquidityTaken,
+          totalDebt,
+          reserveFactor,
           reserve,
-          aTokenUnderlyingBalance,
+          virtualUnderlyingBalance,
         ],
       )
     ).map(mapToBigInt);
@@ -200,18 +213,52 @@ export class RateClient extends AptosContractWrapperBaseClass {
   }
 
   /**
-   * Asserts that interest rate exists for a given asset.
+   *  Returns the full InterestRateData object for the given reserve, in ray
    *
-   * @param asset - The account address of the asset.
-   * @param reserveSymbol - The reserve symbol.
+   * @param reserve - The address of the reserve account.
+   * @returns The InterestRateDataRay object for the given reserve.
    */
-  public async assertInterestRateExists(
-    asset: AccountAddress,
-    reserveSymbol: string,
-  ): Promise<void> {
-    await this.callViewMethod(
-      this.rateContract.GetGetOptimalUsageRatioFuncAddr,
-      [asset, reserveSymbol],
+  public async getReserveInterestRateStrategy(
+    reserve: AccountAddress,
+  ): Promise<InterestRateDataRay> {
+    const resp = await this.callViewMethod(
+      this.interestRateContract.getReserveInterestRateStrategyFuncAddr,
+      [reserve],
     );
+    const respRaw = resp.at(0) as any;
+    const reserveInterestRateStrategy = {
+      optimalUsageRatio: BigInt(respRaw.optimal_usage_ratio.toString()),
+      baseVariableBorrowRate: BigInt(
+        respRaw.base_variable_borrow_rate.toString(),
+      ),
+      variableRateSlope1: BigInt(respRaw.variable_rate_slope1.toString()),
+      variableRateSlope2: BigInt(respRaw.variable_rate_slope2.toString()),
+    } as InterestRateDataRay;
+    return reserveInterestRateStrategy;
+  }
+
+  /**
+   *  Returns the full InterestRateData object for the given reserve, in bps
+   *
+   * @param reserve - The address of the reserve account.
+   * @returns The InterestRateDataRay object for the given reserve.
+   */
+  public async getReserveInterestRateStrategyBps(
+    reserve: AccountAddress,
+  ): Promise<InterestRateDataRay> {
+    const resp = await this.callViewMethod(
+      this.interestRateContract.getReserveInterestRateStrategyBspFuncAddr,
+      [reserve],
+    );
+    const respRaw = resp.at(0) as any;
+    const reserveInterestRateStrategy = {
+      optimalUsageRatio: BigInt(respRaw.optimal_usage_ratio.toString()),
+      baseVariableBorrowRate: BigInt(
+        respRaw.base_variable_borrow_rate.toString(),
+      ),
+      variableRateSlope1: BigInt(respRaw.variable_rate_slope1.toString()),
+      variableRateSlope2: BigInt(respRaw.variable_rate_slope2.toString()),
+    } as InterestRateDataRay;
+    return reserveInterestRateStrategy;
   }
 }

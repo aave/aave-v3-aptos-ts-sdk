@@ -18,9 +18,8 @@ import { AAVE_PROFILES, AptosProvider } from "../clients/aptosProvider";
  */
 export class CoinMigratorContract {
   // Resource Func Addr
-  CoinToFaFuncAddr: MoveFunctionId;
-  FaToCoinFuncAddr: MoveFunctionId;
-  GetFaAddrFuncAddr: MoveFunctionId;
+  coinToFaFuncAddr: MoveFunctionId;
+  getFaAddrFuncAddr: MoveFunctionId;
 
   /**
    * Constructs a new instance of the CoinMigrator class.
@@ -28,17 +27,15 @@ export class CoinMigratorContract {
    * @param provider - An instance of AptosProvider used to interact with the Aptos blockchain.
    *
    * Initializes the following properties:
-   * - `CoinToFaFuncAddr`: The address of the function to migrate coins to FA.
-   * - `FaToCoinFuncAddr`: The address of the function to migrate FA to coins.
-   * - `GetFaAddrFuncAddr`: The address of the function to get the FA address.
+   * - `coinToFaFuncAddr`: The address of the function to migrate coins to FA.
+   * - `getFaAddrFuncAddr`: The address of the function to get the FA address.
    */
   constructor(provider: AptosProvider) {
     const CoinMigratorManager = provider.getProfileAddressByName(
       AAVE_PROFILES.AAVE_POOL,
     );
     const CoinMigratorAccountAddress = CoinMigratorManager.toString();
-    this.CoinToFaFuncAddr = `${CoinMigratorAccountAddress}::coin_migrator::coin_to_fa`;
-    this.FaToCoinFuncAddr = `${CoinMigratorAccountAddress}::coin_migrator::fa_to_coin`;
-    this.GetFaAddrFuncAddr = `${CoinMigratorAccountAddress}::coin_migrator::get_fa_address`;
+    this.coinToFaFuncAddr = `${CoinMigratorAccountAddress}::coin_migrator::coin_to_fa`;
+    this.getFaAddrFuncAddr = `${CoinMigratorAccountAddress}::coin_migrator::get_fa_address`;
   }
 }

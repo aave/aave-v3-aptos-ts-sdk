@@ -20,82 +20,135 @@ import { AAVE_PROFILES, AptosProvider } from "../clients/aptosProvider";
  */
 export class PoolContract {
   // Resource Func Addr
+
+  /**
+   * -------------------------------------------------------------------------
+   * Pool Collector
+   * -------------------------------------------------------------------------
+   */
+  collectorGetCollectedFeesFuncAddr: MoveFunctionId;
+
+  collectorAddressFeeFuncAddr: MoveFunctionId;
+
+  collectorIsFundsAdminFuncAddr: MoveFunctionId;
+
+  collectorWithdrawFuncAddr: MoveFunctionId;
+
+  /**
+   * -------------------------------------------------------------------------
+   * Pool Fee Manager
+   * -------------------------------------------------------------------------
+   */
+  feeManagerSetAptFeeFuncAddr: MoveFunctionId;
+
+  feeManagerTransferAptFeeFuncAddr: MoveFunctionId;
+
+  feeManagerGetAptFeeFuncAddr: MoveFunctionId;
+
+  feeManagerGetFeeCollectorAddressFuncAddr: MoveFunctionId;
+
+  feeManagerGetFeeCollectorAptBalanceFuncAddr: MoveFunctionId;
+
+  feeManagerGetTotalFeesFuncAddr: MoveFunctionId;
+
+  feeManagerGetFeeConfigObjectAddressFuncAddr: MoveFunctionId;
+
+  /**
+   * -------------------------------------------------------------------------
+   * Pool Token Logic
+   * -------------------------------------------------------------------------=
+   */
+  // Entry
+  poolTokenLogicMintToTreasuryFuncAddr: MoveFunctionId;
+
+  poolTokenLogicTransferFuncAddr: MoveFunctionId;
+
+  poolTokenLogicSetIncentivesControllerFuncAddr: MoveFunctionId;
+
   /**
    * -------------------------------------------------------------------------
    * Pool
    * -------------------------------------------------------------------------=
    */
   // Entry
-  PoolMintToTreasuryFuncAddr: MoveFunctionId;
+  poolResetIsolationModeTotalDebtFuncAddr: MoveFunctionId;
 
-  PoolResetIsolationModeTotalDebtFuncAddr: MoveFunctionId;
+  poolRescueTokensFuncAddr: MoveFunctionId;
 
-  PoolRescueTokensFuncAddr: MoveFunctionId;
+  poolSetBridgeProtocolFeeFuncAddr: MoveFunctionId;
 
-  PoolSetBridgeProtocolFeeFuncAddr: MoveFunctionId;
-
-  PoolSetFlashloanPremiumsFuncAddr: MoveFunctionId;
+  poolSetFlashloanPremiumsFuncAddr: MoveFunctionId;
 
   // Pool View
-  PoolGetRevisionFuncAddr: MoveFunctionId;
+  poolGetReserveConfigurationFuncAddr: MoveFunctionId;
 
-  PoolGetReserveConfigurationFuncAddr: MoveFunctionId;
+  poolGetReserveDataFuncAddr: MoveFunctionId;
 
-  PoolGetReserveDataFuncAddr: MoveFunctionId;
+  getReserveDataAndReservesCountFuncAddr: MoveFunctionId;
 
-  GetReserveDataAndReservesCountFuncAddr: MoveFunctionId;
+  poolGetReservesCountFuncAddr: MoveFunctionId;
 
-  PoolGetReservesCountFuncAddr: MoveFunctionId;
+  poolGetNormalizedDebtByReserveData: MoveFunctionId;
 
-  PoolGetReservesListFuncAddr: MoveFunctionId;
+  poolGetReservesListFuncAddr: MoveFunctionId;
 
-  PoolGetReserveAddressByIdFuncAddr: MoveFunctionId;
+  poolGetReserveAddressByIdFuncAddr: MoveFunctionId;
 
-  PoolGetReserveNormalizedVariableDebtFuncAddr: MoveFunctionId;
+  poolGetReserveNormalizedVariableDebtFuncAddr: MoveFunctionId;
 
-  PoolGetReserveNormalizedIncomeFuncAddr: MoveFunctionId;
+  poolGetReserveNormalizedIncomeFuncAddr: MoveFunctionId;
 
-  PoolGetUserConfigurationFuncAddr: MoveFunctionId;
+  poolGetUserConfigurationFuncAddr: MoveFunctionId;
 
-  PoolGetBridgeProtocolFeeFuncAddr: MoveFunctionId;
+  poolGetNumberOfActiveReservesFuncAddr: MoveFunctionId;
 
-  PoolGetFlashloanPremiumTotalFuncAddr: MoveFunctionId;
+  poolGetNumberOfActiveAndDroppedReservesFuncAddr: MoveFunctionId;
 
-  PoolGetFlashloanPremiumToProtocolFuncAddr: MoveFunctionId;
+  poolGetBridgeProtocolFeeFuncAddr: MoveFunctionId;
 
-  PoolMaxNumberReservesFuncAddr: MoveFunctionId;
+  poolGetFlashloanPremiumTotalFuncAddr: MoveFunctionId;
 
-  PoolScaledATokenTotalSupplyFuncAddr: MoveFunctionId;
+  poolGetFlashloanPremiumToProtocolFuncAddr: MoveFunctionId;
 
-  PoolScaledATokenBalanceOfFuncAddr: MoveFunctionId;
+  poolMaxNumberReservesFuncAddr: MoveFunctionId;
 
-  PoolScaledVariableTokenTotalSupplyFuncAddr: MoveFunctionId;
+  poolScaledATokenTotalSupplyFuncAddr: MoveFunctionId;
 
-  PoolScaledVariableTokenBalanceOfFuncAddr: MoveFunctionId;
+  poolScaledATokenBalanceOfFuncAddr: MoveFunctionId;
 
-  PoolGetReserveLiquidityIndex: MoveFunctionId;
+  poolScaledVariableTokenTotalSupplyFuncAddr: MoveFunctionId;
 
-  PoolGetReserveConfigurationByReserveData: MoveFunctionId;
+  poolScaledVariableTokenBalanceOfFuncAddr: MoveFunctionId;
 
-  PoolGetReserveCurrentLiquidityRate: MoveFunctionId;
+  poolGetReserveLiquidityIndex: MoveFunctionId;
 
-  PoolGetReserveVariableBorrowIndex: MoveFunctionId;
+  poolGetReserveConfigurationByReserveData: MoveFunctionId;
 
-  PoolGetReserveCurrentVariableBorrowRate: MoveFunctionId;
+  poolGetReserveCurrentLiquidityRate: MoveFunctionId;
 
-  PoolGetReserveLastUpdateTimestamp: MoveFunctionId;
+  poolGetReserveVariableBorrowIndex: MoveFunctionId;
 
-  PoolGetReserveId: MoveFunctionId;
+  poolGetReserveCurrentVariableBorrowRate: MoveFunctionId;
 
-  PoolGetReserveATokenAddress: MoveFunctionId;
+  poolGetReserveLastUpdateTimestamp: MoveFunctionId;
 
-  PoolGetReserveVariableDebtTokenAddress: MoveFunctionId;
+  poolGetReserveLiquidationGracePeriodUntil: MoveFunctionId;
 
-  PoolGetReserveAccruedToTreasury: MoveFunctionId;
+  poolGetReserveVirtualUnderlyingBalance: MoveFunctionId;
 
-  PoolGetReserveUnbacked: MoveFunctionId;
+  poolGetReserveId: MoveFunctionId;
 
-  PoolGetReserveIsolationModeTotalDebt: MoveFunctionId;
+  poolGetReserveATokenAddress: MoveFunctionId;
+
+  poolGetReserveVariableDebtTokenAddress: MoveFunctionId;
+
+  poolGetReserveAccruedToTreasury: MoveFunctionId;
+
+  poolGetReserveUnbacked: MoveFunctionId;
+
+  poolGetReserveIsolationModeTotalDebt: MoveFunctionId;
+
+  poolGetReserveDeficitFuncAddr: MoveFunctionId;
 
   /**
    * -------------------------------------------------------------------------
@@ -103,52 +156,55 @@ export class PoolContract {
    * -------------------------------------------------------------------------=
    */
   // Entry
-  PoolConfiguratorInitReservesFuncAddr: MoveFunctionId;
+  poolConfiguratorInitReservesFuncAddr: MoveFunctionId;
 
-  PoolConfiguratorDropReserveFuncAddr: MoveFunctionId;
+  poolConfiguratorDropReserveFuncAddr: MoveFunctionId;
 
-  PoolConfiguratorSetAssetEmodeCategoryFuncAddr: MoveFunctionId;
+  poolConfiguratorSetAssetEmodeCategoryFuncAddr: MoveFunctionId;
 
-  PoolConfiguratorSetBorrowCapFuncAddr: MoveFunctionId;
+  poolConfiguratorSetBorrowCapFuncAddr: MoveFunctionId;
 
-  PoolConfiguratorSetBorrowableInIsolationFuncAddr: MoveFunctionId;
+  poolConfiguratorSetBorrowableInIsolationFuncAddr: MoveFunctionId;
 
-  PoolConfiguratorSetDebtCeilingFuncAddr: MoveFunctionId;
+  poolConfiguratorSetDebtCeilingFuncAddr: MoveFunctionId;
 
-  PoolConfiguratorSetEmodeCategoryFuncAddr: MoveFunctionId;
+  poolConfiguratorSetEmodeCategoryFuncAddr: MoveFunctionId;
 
-  PoolConfiguratorSetLiquidationProtocolFeeFuncAddr: MoveFunctionId;
+  poolConfiguratorSetLiquidationProtocolFeeFuncAddr: MoveFunctionId;
 
-  PoolConfiguratorSetPoolPauseFuncAddr: MoveFunctionId;
+  poolConfiguratorSetPoolPauseFuncAddr: MoveFunctionId;
 
-  PoolConfiguratorSetReserveActiveFuncAddr: MoveFunctionId;
+  poolConfiguratorSetPoolPauseNoGracePeriodFuncAddr: MoveFunctionId;
 
-  PoolConfiguratorSetReserveBorrowingFuncAddr: MoveFunctionId;
+  poolConfiguratorSetReserveActiveFuncAddr: MoveFunctionId;
 
-  PoolConfiguratorConfigureReserveAsCollateralFuncAddr: MoveFunctionId;
+  poolConfiguratorSetReserveBorrowingFuncAddr: MoveFunctionId;
 
-  PoolConfiguratorSetReserveFactorFuncAddr: MoveFunctionId;
+  poolConfiguratorConfigureReserveAsCollateralFuncAddr: MoveFunctionId;
 
-  PoolConfiguratorSetReserveFlashLoaningFuncAddr: MoveFunctionId;
+  poolConfiguratorSetReserveFactorFuncAddr: MoveFunctionId;
 
-  PoolConfiguratorSetReserveFreezeFuncAddr: MoveFunctionId;
+  poolConfiguratorSetReserveFlashLoaningFuncAddr: MoveFunctionId;
 
-  PoolConfiguratorSetReservePauseFuncAddr: MoveFunctionId;
+  poolConfiguratorSetReserveFreezeFuncAddr: MoveFunctionId;
 
-  PoolConfiguratorSetSiloedBorrowingFuncAddr: MoveFunctionId;
+  poolConfiguratorGetPendingLtvFuncAddr: MoveFunctionId;
 
-  PoolConfiguratorSetSupplyCapFuncAddr: MoveFunctionId;
+  poolConfiguratorSetReservePauseFuncAddr: MoveFunctionId;
 
-  PoolConfiguratorSetUnbackedMintCapFuncAddr: MoveFunctionId;
+  poolConfiguratorSetReservePauseNoGracePeriodFuncAddr: MoveFunctionId;
 
-  PoolConfiguratorUpdateBridgeProtocolFeeFuncAddr: MoveFunctionId;
+  poolConfiguratorDisableLiquidationGracePeriodFuncAddr: MoveFunctionId;
 
-  PoolConfiguratorUpdateFlashloanPremiumToProtocolFuncAddr: MoveFunctionId;
+  poolConfiguratorSetSiloedBorrowingFuncAddr: MoveFunctionId;
 
-  PoolConfiguratorUpdateFlashloanPremiumTotalFuncAddr: MoveFunctionId;
+  poolConfiguratorSetSupplyCapFuncAddr: MoveFunctionId;
 
-  // View
-  PoolConfiguratorGetRevisionFuncAddr: MoveFunctionId;
+  poolConfiguratorUpdateFlashloanPremiumToProtocolFuncAddr: MoveFunctionId;
+
+  poolConfiguratorUpdateInterestRateStrategyFuncAddr: MoveFunctionId;
+
+  poolConfiguratorUpdateFlashloanPremiumTotalFuncAddr: MoveFunctionId;
 
   /**
    * -------------------------------------------------------------------------
@@ -163,14 +219,20 @@ export class PoolContract {
    * -------------------------------------------------------------------------=
    */
   // Entry
-  PoolSetUserEmodeFuncAddr: MoveFunctionId;
-
-  PoolConfigureEmodeCategoryFuncAddr: MoveFunctionId;
+  poolSetUserEmodeFuncAddr: MoveFunctionId;
 
   // View
-  PoolGetEmodeCategoryDataFuncAddr: MoveFunctionId;
+  poolGetEmodeCategoryDataFuncAddr: MoveFunctionId;
 
-  PoolGetUserEmodeFuncAddr: MoveFunctionId;
+  poolGetUserEmodeFuncAddr: MoveFunctionId;
+
+  poolGetEmodeEmodeLabelFuncAddr: MoveFunctionId;
+
+  poolGetEmodeEmodeLiquidationBonusFuncAddr: MoveFunctionId;
+
+  poolIsInEmodeCategoryFuncAddr: MoveFunctionId;
+
+  poolGetEmodeConfigurationFuncAddr: MoveFunctionId;
 
   // Generic Logic
   // Internal methods are tested in other modules
@@ -181,86 +243,41 @@ export class PoolContract {
    * -------------------------------------------------------------------------=
    */
   // View
-  GetAllReservesTokensFuncAddr: MoveFunctionId;
+  getAllReservesTokensFuncAddr: MoveFunctionId;
 
-  GetAllATokensFuncAddr: MoveFunctionId;
+  getAllATokensFuncAddr: MoveFunctionId;
 
-  GetAllVariableTokensFuncAddr: MoveFunctionId;
+  getAllVariableTokensFuncAddr: MoveFunctionId;
 
-  GetReserveConfigurationDataFuncAddr: MoveFunctionId;
+  getReserveConfigurationDataFuncAddr: MoveFunctionId;
 
-  GetReserveEModeCategoryFuncAddr: MoveFunctionId;
+  getReserveEModeCategoryFuncAddr: MoveFunctionId;
 
-  GetReserveCapsFuncAddr: MoveFunctionId;
+  getReserveCapsFuncAddr: MoveFunctionId;
 
-  GetPausedFuncAddr: MoveFunctionId;
+  getPausedFuncAddr: MoveFunctionId;
 
-  GetSiloedBorrowingFuncAddr: MoveFunctionId;
+  getSiloedBorrowingFuncAddr: MoveFunctionId;
 
-  GetLiquidationProtocolFeeTokensFuncAddr: MoveFunctionId;
+  getLiquidationProtocolFeeTokensFuncAddr: MoveFunctionId;
 
-  GetUnbackedMintCapFuncAddr: MoveFunctionId;
+  getDebtCeilingFuncAddr: MoveFunctionId;
 
-  GetDebtCeilingFuncAddr: MoveFunctionId;
+  getDebtCeilingDecimalsFuncAddr: MoveFunctionId;
 
-  GetDebtCeilingDecimalsFuncAddr: MoveFunctionId;
+  getReserveDataFuncAddr: MoveFunctionId;
 
-  GetReserveDataFuncAddr: MoveFunctionId;
+  getATokenTotalSupplyFuncAddr: MoveFunctionId;
 
-  GetATokenTotalSupplyFuncAddr: MoveFunctionId;
+  getTotalDebtFuncAddr: MoveFunctionId;
 
-  GetTotalDebtFuncAddr: MoveFunctionId;
+  getUserReserveDataFuncAddr: MoveFunctionId;
 
-  GetUserReserveDataFuncAddr: MoveFunctionId;
+  getReserveTokensAddressesFuncAddr: MoveFunctionId;
 
-  GetReserveTokensAddressesFuncAddr: MoveFunctionId;
+  getFlashLoanEnabledFuncAddr: MoveFunctionId;
 
-  GetFlashLoanEnabledFuncAddr: MoveFunctionId;
-
-  /**
-   * -------------------------------------------------------------------------
-   * pool addresses provider
-   * -------------------------------------------------------------------------=
-   */
-  // View
-  HasIdMappedAccountFuncAddr: MoveFunctionId;
-
-  GetMarketIdFuncAddr: MoveFunctionId;
-
-  GetAddressFuncAddr: MoveFunctionId;
-
-  GetPoolFuncAddr: MoveFunctionId;
-
-  GetPoolConfiguratorFuncAddr: MoveFunctionId;
-
-  GetPriceOracleFuncAddr: MoveFunctionId;
-
-  GetAclManagerFuncAddr: MoveFunctionId;
-
-  GetAclAdminFuncAddr: MoveFunctionId;
-
-  GetPriceOracleSentinelFuncAddr: MoveFunctionId;
-
-  GetPoolDataProviderFuncAddr: MoveFunctionId;
-
-  // Entry
-  SetMarketIdFuncAddr: MoveFunctionId;
-
-  SetAddressFuncAddr: MoveFunctionId;
-
-  SetPoolImplFuncAddr: MoveFunctionId;
-
-  SetPoolConfiguratorFuncAddr: MoveFunctionId;
-
-  SetPriceOracleFuncAddr: MoveFunctionId;
-
-  SetAclManagerFuncAddr: MoveFunctionId;
-
-  SetAclAdminFuncAddr: MoveFunctionId;
-
-  SetPriceOracleSentinelFuncAddr: MoveFunctionId;
-
-  SetPoolDataProviderFuncAddr: MoveFunctionId;
+  getReserveDeficitFuncAddr: MoveFunctionId;
 
   /**
    * Constructs a new instance of the Pool class.
@@ -287,138 +304,152 @@ export class PoolContract {
 
     /**
      * -------------------------------------------------------------------------
-     * Pool
-     * -------------------------------------------------------------------------=
+     * Pool Collector
+     * -------------------------------------------------------------------------
      */
-    this.PoolMintToTreasuryFuncAddr = `${PoolManagerAccountAddress}::pool::mint_to_treasury`;
-    this.PoolResetIsolationModeTotalDebtFuncAddr = `${PoolManagerAccountAddress}::pool::reset_isolation_mode_total_debt`;
-    this.PoolRescueTokensFuncAddr = `${PoolManagerAccountAddress}::pool::rescue_tokens`;
-    this.PoolSetBridgeProtocolFeeFuncAddr = `${PoolManagerAccountAddress}::pool::set_bridge_protocol_fee`;
-    this.PoolSetFlashloanPremiumsFuncAddr = `${PoolManagerAccountAddress}::pool::set_flashloan_premiums`;
+    this.collectorGetCollectedFeesFuncAddr = `${PoolManagerAccountAddress}::collector::get_collected_fees`;
+    this.collectorAddressFeeFuncAddr = `${PoolManagerAccountAddress}::collector::collector_address`;
+    this.collectorIsFundsAdminFuncAddr = `${PoolManagerAccountAddress}::collector::is_funds_admin`;
+    this.collectorWithdrawFuncAddr = `${PoolManagerAccountAddress}::collector::withdraw`;
+
+    /**
+     * -------------------------------------------------------------------------
+     * Pool Fee Manager
+     * -------------------------------------------------------------------------
+     */
+    this.feeManagerSetAptFeeFuncAddr = `${PoolManagerAccountAddress}::fee_manager::set_apt_fee`;
+    this.feeManagerTransferAptFeeFuncAddr = `${PoolManagerAccountAddress}::fee_manager::transfer_apt_fee`;
+    this.feeManagerGetAptFeeFuncAddr = `${PoolManagerAccountAddress}::fee_manager::get_apt_fee`;
+    this.feeManagerGetFeeCollectorAddressFuncAddr = `${PoolManagerAccountAddress}::fee_manager::get_fee_collector_address`;
+    this.feeManagerGetFeeCollectorAptBalanceFuncAddr = `${PoolManagerAccountAddress}::fee_manager::get_fee_collector_apt_balance`;
+    this.feeManagerGetTotalFeesFuncAddr = `${PoolManagerAccountAddress}::fee_manager::get_total_fees`;
+    this.feeManagerGetFeeConfigObjectAddressFuncAddr = `${PoolManagerAccountAddress}::fee_manager::get_fee_config_object_address`;
+
+    /**
+     * -------------------------------------------------------------------------
+     * Pool Token Logic
+     * -------------------------------------------------------------------------
+     */
+    this.poolTokenLogicMintToTreasuryFuncAddr = `${PoolManagerAccountAddress}::pool_token_logic::mint_to_treasury`;
+    this.poolTokenLogicTransferFuncAddr = `${PoolManagerAccountAddress}::pool_token_logic::transfer`;
+    this.poolTokenLogicSetIncentivesControllerFuncAddr = `${PoolManagerAccountAddress}::pool_token_logic::set_incentives_controller`;
+
+    /**
+     * -------------------------------------------------------------------------
+     * Pool
+     * -------------------------------------------------------------------------
+     */
+    this.poolResetIsolationModeTotalDebtFuncAddr = `${PoolManagerAccountAddress}::pool::reset_isolation_mode_total_debt`;
+    this.poolRescueTokensFuncAddr = `${PoolManagerAccountAddress}::pool::rescue_tokens`;
+    this.poolSetBridgeProtocolFeeFuncAddr = `${PoolManagerAccountAddress}::pool::set_bridge_protocol_fee`;
+    this.poolSetFlashloanPremiumsFuncAddr = `${PoolManagerAccountAddress}::pool::set_flashloan_premiums`;
 
     /**
      * -------------------------------------------------------------------------
      * pool
      * -------------------------------------------------------------------------
      */
-    this.PoolGetRevisionFuncAddr = `${PoolManagerAccountAddress}::pool::get_revision`;
-    this.PoolGetReserveConfigurationFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_configuration`;
-    this.PoolGetReserveDataFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_data`;
-    this.GetReserveDataAndReservesCountFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_data_and_reserves_count`;
-    this.PoolGetReservesCountFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserves_count`;
-    this.PoolGetReservesListFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserves_list`;
-    this.PoolGetReserveAddressByIdFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_address_by_id`;
-    this.PoolGetReserveNormalizedVariableDebtFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_normalized_variable_debt`;
-    this.PoolGetReserveNormalizedIncomeFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_normalized_income`;
-    this.PoolGetUserConfigurationFuncAddr = `${PoolManagerAccountAddress}::pool::get_user_configuration`;
-    this.PoolGetBridgeProtocolFeeFuncAddr = `${PoolManagerAccountAddress}::pool::get_bridge_protocol_fee`;
-    this.PoolGetFlashloanPremiumTotalFuncAddr = `${PoolManagerAccountAddress}::pool::get_flashloan_premium_total`;
-    this.PoolGetFlashloanPremiumToProtocolFuncAddr = `${PoolManagerAccountAddress}::pool::get_flashloan_premium_to_protocol`;
-    this.PoolMaxNumberReservesFuncAddr = `${PoolManagerAccountAddress}::pool::max_number_reserves`;
-    this.PoolScaledATokenTotalSupplyFuncAddr = `${PoolManagerAccountAddress}::pool::scaled_a_token_total_supply`;
-    this.PoolScaledATokenBalanceOfFuncAddr = `${PoolManagerAccountAddress}::pool::scaled_a_token_balance_of`;
-    this.PoolScaledVariableTokenTotalSupplyFuncAddr = `${PoolManagerAccountAddress}::pool::scaled_variable_token_total_supply`;
-    this.PoolScaledVariableTokenBalanceOfFuncAddr = `${PoolManagerAccountAddress}::pool::scaled_variable_token_balance_of`;
-    this.PoolGetReserveLiquidityIndex = `${PoolManagerAccountAddress}::pool::get_reserve_liquidity_index`;
-    this.PoolGetReserveConfigurationByReserveData = `${PoolManagerAccountAddress}::pool::get_reserve_configuration_by_reserve_data`;
-    this.PoolGetReserveCurrentLiquidityRate = `${PoolManagerAccountAddress}::pool::get_reserve_current_liquidity_rate`;
-    this.PoolGetReserveVariableBorrowIndex = `${PoolManagerAccountAddress}::pool::get_reserve_variable_borrow_index`;
-    this.PoolGetReserveCurrentVariableBorrowRate = `${PoolManagerAccountAddress}::pool::get_reserve_current_variable_borrow_rate`;
-    this.PoolGetReserveLastUpdateTimestamp = `${PoolManagerAccountAddress}::pool::get_reserve_last_update_timestamp`;
-    this.PoolGetReserveId = `${PoolManagerAccountAddress}::pool::get_reserve_id`;
-    this.PoolGetReserveATokenAddress = `${PoolManagerAccountAddress}::pool::get_reserve_a_token_address`;
-    this.PoolGetReserveVariableDebtTokenAddress = `${PoolManagerAccountAddress}::pool::get_reserve_variable_debt_token_address`;
-    this.PoolGetReserveAccruedToTreasury = `${PoolManagerAccountAddress}::pool::get_reserve_accrued_to_treasury`;
-    this.PoolGetReserveUnbacked = `${PoolManagerAccountAddress}::pool::get_reserve_unbacked`;
-    this.PoolGetReserveIsolationModeTotalDebt = `${PoolManagerAccountAddress}::pool::get_reserve_isolation_mode_total_debt`;
+    this.poolGetReserveConfigurationFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_configuration`;
+    this.poolGetReserveDataFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_data`;
+    this.getReserveDataAndReservesCountFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_data_and_reserves_count`;
+    this.poolGetReservesCountFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserves_count`;
+    this.poolGetNormalizedDebtByReserveData = `${PoolManagerAccountAddress}::pool::get_normalized_debt_by_reserve_data`;
+    this.poolGetReservesListFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserves_list`;
+    this.poolGetReserveAddressByIdFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_address_by_id`;
+    this.poolGetReserveNormalizedVariableDebtFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_normalized_variable_debt`;
+    this.poolGetReserveNormalizedIncomeFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_normalized_income`;
+    this.poolGetUserConfigurationFuncAddr = `${PoolManagerAccountAddress}::pool::get_user_configuration`;
+    this.poolGetNumberOfActiveReservesFuncAddr = `${PoolManagerAccountAddress}::pool::number_of_active_reserves`;
+    this.poolGetNumberOfActiveAndDroppedReservesFuncAddr = `${PoolManagerAccountAddress}::pool::number_of_active_and_dropped_reserves`;
+    this.poolGetBridgeProtocolFeeFuncAddr = `${PoolManagerAccountAddress}::pool::get_bridge_protocol_fee`;
+    this.poolGetFlashloanPremiumTotalFuncAddr = `${PoolManagerAccountAddress}::pool::get_flashloan_premium_total`;
+    this.poolGetFlashloanPremiumToProtocolFuncAddr = `${PoolManagerAccountAddress}::pool::get_flashloan_premium_to_protocol`;
+    this.poolMaxNumberReservesFuncAddr = `${PoolManagerAccountAddress}::pool::max_number_reserves`;
+    this.poolScaledATokenTotalSupplyFuncAddr = `${PoolManagerAccountAddress}::pool::scaled_a_token_total_supply`;
+    this.poolScaledATokenBalanceOfFuncAddr = `${PoolManagerAccountAddress}::pool::scaled_a_token_balance_of`;
+    this.poolScaledVariableTokenTotalSupplyFuncAddr = `${PoolManagerAccountAddress}::pool::scaled_variable_token_total_supply`;
+    this.poolScaledVariableTokenBalanceOfFuncAddr = `${PoolManagerAccountAddress}::pool::scaled_variable_token_balance_of`;
+    this.poolGetReserveLiquidityIndex = `${PoolManagerAccountAddress}::pool::get_reserve_liquidity_index`;
+    this.poolGetReserveConfigurationByReserveData = `${PoolManagerAccountAddress}::pool::get_reserve_configuration_by_reserve_data`;
+    this.poolGetReserveCurrentLiquidityRate = `${PoolManagerAccountAddress}::pool::get_reserve_current_liquidity_rate`;
+    this.poolGetReserveVariableBorrowIndex = `${PoolManagerAccountAddress}::pool::get_reserve_variable_borrow_index`;
+    this.poolGetReserveCurrentVariableBorrowRate = `${PoolManagerAccountAddress}::pool::get_reserve_current_variable_borrow_rate`;
+    this.poolGetReserveLastUpdateTimestamp = `${PoolManagerAccountAddress}::pool::get_reserve_last_update_timestamp`;
+    this.poolGetReserveLiquidationGracePeriodUntil = `${PoolManagerAccountAddress}::pool::get_liquidation_grace_period`;
+    this.poolGetReserveVirtualUnderlyingBalance = `${PoolManagerAccountAddress}::pool::get_reserve_virtual_underlying_balance`;
+    this.poolGetReserveId = `${PoolManagerAccountAddress}::pool::get_reserve_id`;
+    this.poolGetReserveATokenAddress = `${PoolManagerAccountAddress}::pool::get_reserve_a_token_address`;
+    this.poolGetReserveVariableDebtTokenAddress = `${PoolManagerAccountAddress}::pool::get_reserve_variable_debt_token_address`;
+    this.poolGetReserveAccruedToTreasury = `${PoolManagerAccountAddress}::pool::get_reserve_accrued_to_treasury`;
+    this.poolGetReserveUnbacked = `${PoolManagerAccountAddress}::pool::get_reserve_unbacked`;
+    this.poolGetReserveIsolationModeTotalDebt = `${PoolManagerAccountAddress}::pool::get_reserve_isolation_mode_total_debt`;
+    this.poolGetReserveDeficitFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_deficit`;
 
     /**
      * -------------------------------------------------------------------------
      * Pool Configurator
-     * -------------------------------------------------------------------------=
+     * -------------------------------------------------------------------------
      */
-    this.PoolConfiguratorInitReservesFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::init_reserves`;
-    this.PoolConfiguratorDropReserveFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::drop_reserve`;
-    this.PoolConfiguratorSetAssetEmodeCategoryFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_asset_emode_category`;
-    this.PoolConfiguratorSetBorrowCapFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_borrow_cap`;
-    this.PoolConfiguratorSetBorrowableInIsolationFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_borrowable_in_isolation`;
-    this.PoolConfiguratorSetDebtCeilingFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_debt_ceiling`;
-    this.PoolConfiguratorSetEmodeCategoryFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_emode_category`;
-    this.PoolConfiguratorSetLiquidationProtocolFeeFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_liquidation_protocol_fee`;
-    this.PoolConfiguratorSetPoolPauseFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_pool_pause`;
-    this.PoolConfiguratorSetReserveActiveFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_reserve_active`;
-    this.PoolConfiguratorSetReserveBorrowingFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_reserve_borrowing`;
-    this.PoolConfiguratorConfigureReserveAsCollateralFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::configure_reserve_as_collateral`;
-    this.PoolConfiguratorSetReserveFactorFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_reserve_factor`;
-    this.PoolConfiguratorSetReserveFlashLoaningFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_reserve_flash_loaning`;
-    this.PoolConfiguratorSetReserveFreezeFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_reserve_freeze`;
-    this.PoolConfiguratorSetReservePauseFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_reserve_pause`;
-    this.PoolConfiguratorSetSiloedBorrowingFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_siloed_borrowing`;
-    this.PoolConfiguratorSetSupplyCapFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_supply_cap`;
-    this.PoolConfiguratorSetUnbackedMintCapFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_unbacked_mint_cap`;
-    this.PoolConfiguratorUpdateBridgeProtocolFeeFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::update_bridge_protocol_fee`;
-    this.PoolConfiguratorUpdateFlashloanPremiumToProtocolFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::update_flashloan_premium_to_protocol`;
-    this.PoolConfiguratorUpdateFlashloanPremiumTotalFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::update_flashloan_premium_total`;
+    this.poolConfiguratorInitReservesFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::init_reserves`;
+    this.poolConfiguratorDropReserveFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::drop_reserve`;
+    this.poolConfiguratorSetAssetEmodeCategoryFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_asset_emode_category`;
+    this.poolConfiguratorSetBorrowCapFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_borrow_cap`;
+    this.poolConfiguratorSetBorrowableInIsolationFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_borrowable_in_isolation`;
+    this.poolConfiguratorSetDebtCeilingFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_debt_ceiling`;
+    this.poolConfiguratorSetEmodeCategoryFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_emode_category`;
+    this.poolConfiguratorSetLiquidationProtocolFeeFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_liquidation_protocol_fee`;
+    this.poolConfiguratorSetPoolPauseFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_pool_pause`;
+    this.poolConfiguratorSetPoolPauseNoGracePeriodFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_pool_pause_no_grace_period`;
+    this.poolConfiguratorSetReserveActiveFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_reserve_active`;
+    this.poolConfiguratorSetReserveBorrowingFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_reserve_borrowing`;
+    this.poolConfiguratorConfigureReserveAsCollateralFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::configure_reserve_as_collateral`;
+    this.poolConfiguratorSetReserveFactorFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_reserve_factor`;
+    this.poolConfiguratorSetReserveFlashLoaningFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_reserve_flash_loaning`;
+    this.poolConfiguratorSetReserveFreezeFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_reserve_freeze`;
+    this.poolConfiguratorGetPendingLtvFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::get_pending_ltv`;
+    this.poolConfiguratorSetReservePauseFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_reserve_pause`;
+    this.poolConfiguratorSetReservePauseNoGracePeriodFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_reserve_pause_no_grace_period`;
+    this.poolConfiguratorDisableLiquidationGracePeriodFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::disable_liquidation_grace_period`;
+    this.poolConfiguratorSetSiloedBorrowingFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_siloed_borrowing`;
+    this.poolConfiguratorSetSupplyCapFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_supply_cap`;
+    this.poolConfiguratorUpdateFlashloanPremiumToProtocolFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::update_flashloan_premium_to_protocol`;
+    this.poolConfiguratorUpdateInterestRateStrategyFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::update_interest_rate_strategy`;
+    this.poolConfiguratorUpdateFlashloanPremiumTotalFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::update_flashloan_premium_total`;
 
     /**
      * -------------------------------------------------------------------------
      * E Mode Logic
-     * -------------------------------------------------------------------------=
+     * -------------------------------------------------------------------------
      */
-    this.PoolConfiguratorGetRevisionFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::get_revision`;
-    this.PoolSetUserEmodeFuncAddr = `${PoolManagerAccountAddress}::emode_logic::set_user_emode`;
-    this.PoolConfigureEmodeCategoryFuncAddr = `${PoolManagerAccountAddress}::emode_logic::configure_emode_category`;
-    this.PoolGetEmodeCategoryDataFuncAddr = `${PoolManagerAccountAddress}::emode_logic::get_emode_category_data`;
-    this.PoolGetUserEmodeFuncAddr = `${PoolManagerAccountAddress}::emode_logic::get_user_emode`;
+    this.poolSetUserEmodeFuncAddr = `${PoolManagerAccountAddress}::emode_logic::set_user_emode`;
+    this.poolGetEmodeCategoryDataFuncAddr = `${PoolManagerAccountAddress}::emode_logic::get_emode_category_data`;
+    this.poolGetUserEmodeFuncAddr = `${PoolManagerAccountAddress}::emode_logic::get_user_emode`;
+    this.poolGetEmodeEmodeLabelFuncAddr = `${PoolManagerAccountAddress}::emode_logic::get_emode_e_mode_label`;
+    this.poolGetEmodeEmodeLiquidationBonusFuncAddr = `${PoolManagerAccountAddress}::emode_logic::get_emode_e_mode_liquidation_bonus`;
+    this.poolIsInEmodeCategoryFuncAddr = `${PoolManagerAccountAddress}::emode_logic::is_in_emode_category`;
+    this.poolGetEmodeConfigurationFuncAddr = `${PoolManagerAccountAddress}::emode_logic::get_emode_configuration`;
 
     /**
      * -------------------------------------------------------------------------
      * pool data provider
-     * -------------------------------------------------------------------------=
-     */
-    this.GetAllReservesTokensFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_all_reserves_tokens`;
-    this.GetAllATokensFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_all_a_tokens`;
-    this.GetAllVariableTokensFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_all_var_tokens`;
-    this.GetReserveConfigurationDataFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_reserve_configuration_data`;
-    this.GetReserveEModeCategoryFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_reserve_emode_category`;
-    this.GetReserveCapsFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_reserve_caps`;
-    this.GetPausedFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_paused`;
-    this.GetSiloedBorrowingFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_siloed_borrowing`;
-    this.GetLiquidationProtocolFeeTokensFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_liquidation_protocol_fee`;
-    this.GetUnbackedMintCapFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_unbacked_mint_cap`;
-    this.GetDebtCeilingFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_debt_ceiling`;
-    this.GetDebtCeilingDecimalsFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_debt_ceiling_decimals`;
-    this.GetReserveDataFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_reserve_data`;
-    this.GetATokenTotalSupplyFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_a_token_total_supply`;
-    this.GetTotalDebtFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_total_debt`;
-    this.GetUserReserveDataFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_user_reserve_data`;
-    this.GetReserveTokensAddressesFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_reserve_tokens_addresses`;
-    this.GetFlashLoanEnabledFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_flash_loan_enabled`;
-
-    /**
-     * -------------------------------------------------------------------------
-     * pool addresses provider
      * -------------------------------------------------------------------------
      */
-    this.HasIdMappedAccountFuncAddr = `${PoolManagerAccountAddress}::pool_addresses_provider::has_id_mapped_account`;
-    this.GetMarketIdFuncAddr = `${PoolManagerAccountAddress}::pool_addresses_provider::get_market_id`;
-    this.GetAddressFuncAddr = `${PoolManagerAccountAddress}::pool_addresses_provider::get_address`;
-    this.GetPoolFuncAddr = `${PoolManagerAccountAddress}::pool_addresses_provider::get_pool`;
-    this.GetPoolConfiguratorFuncAddr = `${PoolManagerAccountAddress}::pool_addresses_provider::get_pool_configurator`;
-    this.GetPriceOracleFuncAddr = `${PoolManagerAccountAddress}::pool_addresses_provider::get_price_oracle`;
-    this.GetAclManagerFuncAddr = `${PoolManagerAccountAddress}::pool_addresses_provider::get_acl_manager`;
-    this.GetAclAdminFuncAddr = `${PoolManagerAccountAddress}::pool_addresses_provider::get_acl_admin`;
-    this.GetPriceOracleSentinelFuncAddr = `${PoolManagerAccountAddress}::pool_addresses_provider::get_price_oracle_sentinel`;
-    this.GetPoolDataProviderFuncAddr = `${PoolManagerAccountAddress}::pool_addresses_provider::get_pool_data_provider`;
-
-    this.SetMarketIdFuncAddr = `${PoolManagerAccountAddress}::pool_addresses_provider::set_market_id`;
-    this.SetAddressFuncAddr = `${PoolManagerAccountAddress}::pool_addresses_provider::set_address`;
-    this.SetPoolImplFuncAddr = `${PoolManagerAccountAddress}::pool_addresses_provider::set_pool_impl`;
-    this.SetPoolConfiguratorFuncAddr = `${PoolManagerAccountAddress}::pool_addresses_provider::set_pool_configurator`;
-    this.SetPriceOracleFuncAddr = `${PoolManagerAccountAddress}::pool_addresses_provider::set_price_oracle`;
-    this.SetAclManagerFuncAddr = `${PoolManagerAccountAddress}::pool_addresses_provider::set_acl_manager`;
-    this.SetAclAdminFuncAddr = `${PoolManagerAccountAddress}::pool_addresses_provider::set_acl_admin`;
-    this.SetPriceOracleSentinelFuncAddr = `${PoolManagerAccountAddress}::pool_addresses_provider::set_price_oracle_sentinel`;
-    this.SetPoolDataProviderFuncAddr = `${PoolManagerAccountAddress}::pool_addresses_provider::set_pool_data_provider`;
+    this.getAllReservesTokensFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_all_reserves_tokens`;
+    this.getAllATokensFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_all_a_tokens`;
+    this.getAllVariableTokensFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_all_var_tokens`;
+    this.getReserveConfigurationDataFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_reserve_configuration_data`;
+    this.getReserveEModeCategoryFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_reserve_emode_category`;
+    this.getReserveCapsFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_reserve_caps`;
+    this.getPausedFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_paused`;
+    this.getSiloedBorrowingFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_siloed_borrowing`;
+    this.getLiquidationProtocolFeeTokensFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_liquidation_protocol_fee`;
+    this.getDebtCeilingFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_debt_ceiling`;
+    this.getDebtCeilingDecimalsFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_debt_ceiling_decimals`;
+    this.getReserveDataFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_reserve_data`;
+    this.getATokenTotalSupplyFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_a_token_total_supply`;
+    this.getTotalDebtFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_total_debt`;
+    this.getUserReserveDataFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_user_reserve_data`;
+    this.getReserveTokensAddressesFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_reserve_tokens_addresses`;
+    this.getFlashLoanEnabledFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_flash_loan_enabled`;
   }
 }

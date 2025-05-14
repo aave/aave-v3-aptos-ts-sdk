@@ -97,6 +97,47 @@ export class AclClient extends AptosContractWrapperBaseClass {
   }
 
   /**
+   * Gets the default admin role.
+   * @returns A promise that resolves to the default admin role as a string.
+   */
+  public async getDefaultAdminRole(): Promise<string> {
+    const [resp] = await this.callViewMethod(
+      this.AclManagerContract.defaultAdminRole,
+      [],
+    );
+    return resp as string;
+  }
+
+  /**
+   * Gets the admin role for a specific role.
+   * @param role - The role to get the admin role for.
+   * @returns A promise that resolves to the admin role as a string.
+   */
+  public async getRoleAdmin(role: string): Promise<string> {
+    const [resp] = await this.callViewMethod(
+      this.AclManagerContract.getRoleAdmin,
+      [role],
+    );
+    return resp as string;
+  }
+
+  /**
+   * Sets the admin role for a specific role.
+   * @param role - The role to set the admin role for.
+   * @param adminRole - The admin role to set.
+   * @returns A promise that resolves to a CommittedTransactionResponse.
+   */
+  public async setRoleAdmin(
+    role: string,
+    adminRole: string,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(this.AclManagerContract.setRoleAdmin, [
+      role,
+      adminRole,
+    ]);
+  }
+
+  /**
    * Adds a pool admin.
    * @param user - The account address of the user.
    * @returns A promise that resolves to a CommittedTransactionResponse.
@@ -135,6 +176,18 @@ export class AclClient extends AptosContractWrapperBaseClass {
       [user],
     );
     return resp as boolean;
+  }
+
+  /**
+   * Gets the pool admin role.
+   * @returns A promise that resolves to the pool admin role as a string.
+   */
+  public async getPoolAdminRole(): Promise<string> {
+    const [resp] = await this.callViewMethod(
+      this.AclManagerContract.getPoolAdminRoleFuncAddr,
+      [],
+    );
+    return resp as string;
   }
 
   /**
@@ -179,6 +232,18 @@ export class AclClient extends AptosContractWrapperBaseClass {
   }
 
   /**
+   * Gets the emergency admin role.
+   * @returns A promise that resolves to the emergency admin role as a string.
+   */
+  public async getEmergencyAdminRole(): Promise<string> {
+    const [resp] = await this.callViewMethod(
+      this.AclManagerContract.getEmergencyAdminRoleFuncAddr,
+      [],
+    );
+    return resp as string;
+  }
+
+  /**
    * Adds a risk admin.
    * @param user - The account address of the user.
    * @returns A promise that resolves to a CommittedTransactionResponse.
@@ -217,6 +282,18 @@ export class AclClient extends AptosContractWrapperBaseClass {
       [user],
     );
     return resp as boolean;
+  }
+
+  /**
+   * Gets the risk admin role.
+   * @returns A promise that resolves to the risk admin role as a string.
+   */
+  public async getRiskAdminRole(): Promise<string> {
+    const [resp] = await this.callViewMethod(
+      this.AclManagerContract.getRiskAdminRoleFuncAddr,
+      [],
+    );
+    return resp as string;
   }
 
   /**
@@ -261,6 +338,18 @@ export class AclClient extends AptosContractWrapperBaseClass {
   }
 
   /**
+   * Gets the flash borrower role.
+   * @returns A promise that resolves to the flash borrower role as a string.
+   */
+  public async getFlashBorrowerRole(): Promise<string> {
+    const [resp] = await this.callViewMethod(
+      this.AclManagerContract.getFlashBorrowerRoleFuncAddr,
+      [],
+    );
+    return resp as string;
+  }
+
+  /**
    * Adds a bridge.
    * @param user - The account address of the user.
    * @returns A promise that resolves to a CommittedTransactionResponse.
@@ -299,6 +388,18 @@ export class AclClient extends AptosContractWrapperBaseClass {
       [user],
     );
     return resp as boolean;
+  }
+
+  /**
+   * Gets the bridge role.
+   * @returns A promise that resolves to the bridge role as a string.
+   */
+  public async getBridgeRole(): Promise<string> {
+    const [resp] = await this.callViewMethod(
+      this.AclManagerContract.getBridgeRoleFuncAddr,
+      [],
+    );
+    return resp as string;
   }
 
   /**
@@ -343,66 +444,6 @@ export class AclClient extends AptosContractWrapperBaseClass {
   }
 
   /**
-   * Gets the pool admin role.
-   * @returns A promise that resolves to the pool admin role as a string.
-   */
-  public async getPoolAdminRole(): Promise<string> {
-    const [resp] = await this.callViewMethod(
-      this.AclManagerContract.getPoolAdminRoleFuncAddr,
-      [],
-    );
-    return resp as string;
-  }
-
-  /**
-   * Gets the emergency admin role.
-   * @returns A promise that resolves to the emergency admin role as a string.
-   */
-  public async getEmergencyAdminRole(): Promise<string> {
-    const [resp] = await this.callViewMethod(
-      this.AclManagerContract.getEmergencyAdminRoleFuncAddr,
-      [],
-    );
-    return resp as string;
-  }
-
-  /**
-   * Gets the risk admin role.
-   * @returns A promise that resolves to the risk admin role as a string.
-   */
-  public async getRiskAdminRole(): Promise<string> {
-    const [resp] = await this.callViewMethod(
-      this.AclManagerContract.getRiskAdminRoleFuncAddr,
-      [],
-    );
-    return resp as string;
-  }
-
-  /**
-   * Gets the flash borrower role.
-   * @returns A promise that resolves to the flash borrower role as a string.
-   */
-  public async getFlashBorrowerRole(): Promise<string> {
-    const [resp] = await this.callViewMethod(
-      this.AclManagerContract.getFlashBorrowerRoleFuncAddr,
-      [],
-    );
-    return resp as string;
-  }
-
-  /**
-   * Gets the bridge role.
-   * @returns A promise that resolves to the bridge role as a string.
-   */
-  public async getBridgeRole(): Promise<string> {
-    const [resp] = await this.callViewMethod(
-      this.AclManagerContract.getBridgeRoleFuncAddr,
-      [],
-    );
-    return resp as string;
-  }
-
-  /**
    * Gets the asset listing admin role.
    * @returns A promise that resolves to the asset listing admin role as a string.
    */
@@ -415,43 +456,219 @@ export class AclClient extends AptosContractWrapperBaseClass {
   }
 
   /**
-   * Gets the default admin role.
-   * @returns A promise that resolves to the default admin role as a string.
+   * Adds a funds admin.
+   * @param user - The account address of the user.
+   * @returns A promise that resolves to a CommittedTransactionResponse.
    */
-  public async getDefaultAdminRole(): Promise<string> {
+  public async addFundsAdmin(
+    user: AccountAddress,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.AclManagerContract.addFundsAdminFuncAddr,
+      [user],
+    );
+  }
+
+  /**
+   * Removes a funds admin.
+   * @param user - The account address of the user.
+   * @returns A promise that resolves to a CommittedTransactionResponse.
+   */
+  public async removeFundsAdmin(
+    user: AccountAddress,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.AclManagerContract.removeFundsAdminFuncAddr,
+      [user],
+    );
+  }
+
+  /**
+   * Checks if a user is a funds admin.
+   * @param user - The account address of the user.
+   * @returns A promise that resolves to a boolean indicating if the user is a funds admin.
+   */
+  public async isFundsAdmin(user: AccountAddress): Promise<boolean> {
     const [resp] = await this.callViewMethod(
-      this.AclManagerContract.defaultAdminRole,
+      this.AclManagerContract.isFundsAdminFuncAddr,
+      [user],
+    );
+    return resp as boolean;
+  }
+
+  /**
+   * Gets the funds admin role.
+   * @returns A promise that resolves to the funds admin role as a string.
+   */
+  public async getFundsAdminRole(): Promise<string> {
+    const [resp] = await this.callViewMethod(
+      this.AclManagerContract.getFundsAdminRoleFuncAddr,
       [],
     );
     return resp as string;
   }
 
   /**
-   * Gets the admin role for a specific role.
-   * @param role - The role to get the admin role for.
-   * @returns A promise that resolves to the admin role as a string.
+   * Adds an emission admin.
+   * @param user - The account address of the user.
+   * @returns A promise that resolves to a CommittedTransactionResponse.
    */
-  public async getRoleAdmin(role: string): Promise<string> {
+  public async addEmissionAdmin(
+    user: AccountAddress,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.AclManagerContract.addEmissionAdminFuncAddr,
+      [user],
+    );
+  }
+
+  /**
+   * Removes an emissions admin.
+   * @param user - The account address of the user.
+   * @returns A promise that resolves to a CommittedTransactionResponse.
+   */
+  public async removeEmissionAdmin(
+    user: AccountAddress,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.AclManagerContract.removeEmissionAdminFuncAddr,
+      [user],
+    );
+  }
+
+  /**
+   * Checks if a user is an emission admin.
+   * @param user - The account address of the user.
+   * @returns A promise that resolves to a boolean indicating if the user is an emission admin.
+   */
+  public async isEmissionAdmin(user: AccountAddress): Promise<boolean> {
     const [resp] = await this.callViewMethod(
-      this.AclManagerContract.getRoleAdmin,
-      [role],
+      this.AclManagerContract.isEmissionAdminFuncAddr,
+      [user],
+    );
+    return resp as boolean;
+  }
+
+  /**
+   * Gets the emissions admin role.
+   * @returns A promise that resolves to the emissions admin role as a string.
+   */
+  public async getEmissionAdminRole(): Promise<string> {
+    const [resp] = await this.callViewMethod(
+      this.AclManagerContract.getEmissionAdminRoleFuncAddr,
+      [],
     );
     return resp as string;
   }
 
   /**
-   * Sets the admin role for a specific role.
-   * @param role - The role to set the admin role for.
-   * @param adminRole - The admin role to set.
+   * Adds an admin controlled ecosystem reserve admin.
+   * @param user - The account address of the user.
    * @returns A promise that resolves to a CommittedTransactionResponse.
    */
-  public async setRoleAdmin(
-    role: string,
-    adminRole: string,
+  public async addAdminControlledEcosystemReserveAdmin(
+    user: AccountAddress,
   ): Promise<CommittedTransactionResponse> {
-    return this.sendTxAndAwaitResponse(this.AclManagerContract.setRoleAdmin, [
-      role,
-      adminRole,
-    ]);
+    return this.sendTxAndAwaitResponse(
+      this.AclManagerContract.addAdminControlledEcosystemReserveAdminFuncAddr,
+      [user],
+    );
+  }
+
+  /**
+   * Removes an admin controlled ecosystem reserve admin.
+   * @param user - The account address of the user.
+   * @returns A promise that resolves to a CommittedTransactionResponse.
+   */
+  public async emoveAdminControlledEcosystemReserveAdmin(
+    user: AccountAddress,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.AclManagerContract
+        .removeAdminControlledEcosystemReserveAdminFuncAddr,
+      [user],
+    );
+  }
+
+  /**
+   * Checks if a user is an admin controlled ecosystem reserve admin.
+   * @param user - The account address of the user.
+   * @returns A promise that resolves to a boolean indicating if the user is an admin controlled ecosystem reserve admin.
+   */
+  public async isAdminControlledEcosystemReserveAdmin(
+    user: AccountAddress,
+  ): Promise<boolean> {
+    const [resp] = await this.callViewMethod(
+      this.AclManagerContract.isAdminControlledEcosystemReserveAdminFuncAddr,
+      [user],
+    );
+    return resp as boolean;
+  }
+
+  /**
+   * Gets the admin controlled ecosystem reserve admin role.
+   * @returns A promise that resolves to the admin controlled ecosystem reserve admin role as a string.
+   */
+  public async getAdminControlledEcosystemReserveAdmin(): Promise<string> {
+    const [resp] = await this.callViewMethod(
+      this.AclManagerContract.getAdminControlledEcosystemReserveAdminFuncAddr,
+      [],
+    );
+    return resp as string;
+  }
+
+  /**
+   * Adds a rewards controller admin.
+   * @param user - The account address of the user.
+   * @returns A promise that resolves to a CommittedTransactionResponse.
+   */
+  public async addRewardsControllerAdmin(
+    user: AccountAddress,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.AclManagerContract.addRewardsControllerAdminFuncAddr,
+      [user],
+    );
+  }
+
+  /**
+   * Removes a rewards controller admin.
+   * @param user - The account address of the user.
+   * @returns A promise that resolves to a CommittedTransactionResponse.
+   */
+  public async removeRewardsControllerAdmin(
+    user: AccountAddress,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.AclManagerContract.removeRewardsControllerAdminFuncAddr,
+      [user],
+    );
+  }
+
+  /**
+   * Checks if a user is a rewards controller admin.
+   * @param user - The account address of the user.
+   * @returns A promise that resolves to a boolean indicating if the user is a rewards controller admin.
+   */
+  public async isRewardsControllerAdminFunc(
+    user: AccountAddress,
+  ): Promise<boolean> {
+    const [resp] = await this.callViewMethod(
+      this.AclManagerContract.isRewardsControllerAdminFuncAddr,
+      [user],
+    );
+    return resp as boolean;
+  }
+
+  /**
+   * Gets the rewards controller role.
+   * @returns A promise that resolves to the rewards controller admin role as a string.
+   */
+  public async getRewardsControllerAdmin(): Promise<string> {
+    const [resp] = await this.callViewMethod(
+      this.AclManagerContract.getRewardsControllerAdminFuncAddr,
+      [],
+    );
+    return resp as string;
   }
 }

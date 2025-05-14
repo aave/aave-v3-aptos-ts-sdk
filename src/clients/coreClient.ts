@@ -6,7 +6,7 @@ import {
 } from "@aptos-labs/ts-sdk";
 import { AptosContractWrapperBaseClass } from "./baseClass";
 import { AptosProvider } from "./aptosProvider";
-import { SupplyBorrowContract } from "../contracts/supplyBborrow";
+import { SupplyBorrowContract } from "../contracts/supplyBorrow";
 import { mapToBigInt } from "../helpers/common";
 
 /**
@@ -58,7 +58,7 @@ export class CoreClient extends AptosContractWrapperBaseClass {
     referralCode: number,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.supplyBorrowContract.SupplyFuncAddr,
+      this.supplyBorrowContract.supplyFuncAddr,
       [asset, amount.toString(), onBehalfOf, referralCode],
     );
   }
@@ -80,7 +80,7 @@ export class CoreClient extends AptosContractWrapperBaseClass {
     onBehalfOf: AccountAddress,
     referralCode: number,
   ): Promise<SimpleTransaction> {
-    return this.buildTx(user, this.supplyBorrowContract.SupplyFuncAddr, [
+    return this.buildTx(user, this.supplyBorrowContract.supplyFuncAddr, [
       asset,
       amount.toString(),
       onBehalfOf,
@@ -102,7 +102,7 @@ export class CoreClient extends AptosContractWrapperBaseClass {
     to: AccountAddress,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.supplyBorrowContract.WithdrawFuncAddr,
+      this.supplyBorrowContract.withdrawFuncAddr,
       [asset, amount.toString(), to],
     );
   }
@@ -125,7 +125,7 @@ export class CoreClient extends AptosContractWrapperBaseClass {
     onBehalfOf: AccountAddress,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.supplyBorrowContract.BorrowFuncAddr,
+      this.supplyBorrowContract.borrowFuncAddr,
       [asset, amount.toString(), interestRateMode, referralCode, onBehalfOf],
     );
   }
@@ -146,7 +146,7 @@ export class CoreClient extends AptosContractWrapperBaseClass {
     onBehalfOf: AccountAddress,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.supplyBorrowContract.RepayFuncAddr,
+      this.supplyBorrowContract.repayFuncAddr,
       [asset, amount.toString(), interestRateMode, onBehalfOf],
     );
   }
@@ -165,41 +165,8 @@ export class CoreClient extends AptosContractWrapperBaseClass {
     interestRateMode: number,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.supplyBorrowContract.RepayWithATokensFuncAddr,
+      this.supplyBorrowContract.repayWithATokensFuncAddr,
       [asset, amount.toString(), interestRateMode],
-    );
-  }
-
-  /// User finalizes the transfer
-  /**
-   * Finalizes the transfer of an asset from one account to another.
-   *
-   * @param asset - The address of the asset being transferred.
-   * @param from - The address of the account sending the asset.
-   * @param to - The address of the account receiving the asset.
-   * @param amount - The amount of the asset being transferred.
-   * @param balanceFromBefore - The balance of the sender's account before the transfer.
-   * @param balanceToBefore - The balance of the receiver's account before the transfer.
-   * @returns A promise that resolves to the response of the committed transaction.
-   */
-  public async finalizeTransfer(
-    asset: AccountAddress,
-    from: AccountAddress,
-    to: AccountAddress,
-    amount: bigint,
-    balanceFromBefore: bigint,
-    balanceToBefore: bigint,
-  ): Promise<CommittedTransactionResponse> {
-    return this.sendTxAndAwaitResponse(
-      this.supplyBorrowContract.FinalizeTransferFuncAddr,
-      [
-        asset,
-        from,
-        to,
-        amount.toString(),
-        balanceFromBefore.toString(),
-        balanceToBefore.toString(),
-      ],
     );
   }
 
@@ -221,7 +188,7 @@ export class CoreClient extends AptosContractWrapperBaseClass {
     receiveAToken: boolean,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.supplyBorrowContract.LiquidationCallFuncAddr,
+      this.supplyBorrowContract.liquidationCallFuncAddr,
       [collateralAsset, debtAsset, user, debtToCover.toString(), receiveAToken],
     );
   }
@@ -238,7 +205,7 @@ export class CoreClient extends AptosContractWrapperBaseClass {
     useAsCollateral: boolean,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.supplyBorrowContract.SetUserUseReserveAsCollateralFuncAddr,
+      this.supplyBorrowContract.setUserUseReserveAsCollateralFuncAddr,
       [asset, useAsCollateral],
     );
   }
@@ -272,7 +239,7 @@ export class CoreClient extends AptosContractWrapperBaseClass {
       healthFactor,
     ] = (
       await this.callViewMethod(
-        this.supplyBorrowContract.GetUserAccountDataFuncAddr,
+        this.supplyBorrowContract.getUserAccountDataFuncAddr,
         [user],
       )
     ).map(mapToBigInt);

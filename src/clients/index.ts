@@ -20,10 +20,8 @@ export {
 } from "./poolClient";
 export { OracleClient } from "./oracleClient";
 export { UnderlyingTokensClient } from "./underlyingTokensClient";
-export { FlashloanClient } from "./flashloanClient";
-export { RateClient } from "./rateClient";
+export { InterestRateClient } from "./interestRateClient";
 export { VariableTokensClient } from "./variableTokensClient";
-export { PoolAddressesProviderClient } from "./poolAddressesProviderClient";
 export {
   AggregatedReserveIncentiveData,
   IncentiveData,

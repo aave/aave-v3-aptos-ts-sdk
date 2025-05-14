@@ -2,6 +2,7 @@ import {
   AccountAddress,
   CommittedTransactionResponse,
   Ed25519Account,
+  MoveOptionType,
 } from "@aptos-labs/ts-sdk";
 import { AptosContractWrapperBaseClass } from "./baseClass";
 import { OracleContract } from "../contracts/oracle";
@@ -54,6 +55,20 @@ export class OracleClient extends AptosContractWrapperBaseClass {
   }
 
   /**
+   * Returns if an asset price is capped or not.
+   *
+   * @param asset - The address of the asset for which we are checking if there is a cap.
+   * @returns A promise that resolves to a boolean.
+   */
+  public async isAssetPriceCapped(asset: AccountAddress): Promise<boolean> {
+    const [resp] = await this.callViewMethod(
+      this.oracleContract.isAssetPriceCappedFuncAddr,
+      [asset],
+    );
+    return resp as boolean;
+  }
+
+  /**
    * Retrieves the price of a specified asset.
    *
    * @param asset - The address of the asset for which the price is being requested.
@@ -61,10 +76,24 @@ export class OracleClient extends AptosContractWrapperBaseClass {
    */
   public async getAssetPrice(asset: AccountAddress): Promise<bigint> {
     const [resp] = (
-      await this.callViewMethod(this.oracleContract.GetAssetPriceFuncAddr, [
+      await this.callViewMethod(this.oracleContract.getAssetPriceFuncAddr, [
         asset,
       ])
     ).map(mapToBigInt);
+    return resp;
+  }
+
+  /**
+   * Retrieves the price cap of a specified asset.
+   *
+   * @param asset - The address of the asset for which the price cap is being requested.
+   * @returns A promise that resolves to the price cap of the asset as a bigint.
+   */
+  public async getPriceCap(asset: AccountAddress): Promise<MoveOptionType> {
+    const [resp] = await this.callViewMethod(
+      this.oracleContract.getPriceCapFuncAddr,
+      [asset],
+    );
     return resp;
   }
 
@@ -78,10 +107,70 @@ export class OracleClient extends AptosContractWrapperBaseClass {
     assets: Array<AccountAddress>,
   ): Promise<Array<bigint>> {
     return (
-      (await this.callViewMethod(this.oracleContract.GetAssetsPricesFuncAddr, [
+      (await this.callViewMethod(this.oracleContract.getAssetsPricesFuncAddr, [
         assets,
       ])) as Array<any>
     ).map((item) => mapToBigInt(item));
+  }
+
+  /**
+   * Retrieves the oracle address from the oracle contract.
+   *
+   * @returns {Promise<AccountAddress>} A promise that resolves to the oracle address.
+   */
+  public async getOracleAddress(): Promise<AccountAddress> {
+    const [resp] = (
+      await this.callViewMethod(
+        this.oracleContract.getOracleAddressFuncAddr,
+        [],
+      )
+    ).map((item) => AccountAddress.fromString(item as string));
+    return resp;
+  }
+
+  /**
+   * Retrieves the oracle asset price decimals.
+   *
+   * @returns {Promise<AccountAddress>} A promise that resolves to the asset price decimals of the oracle.
+   */
+  public async getAssetPriceDecimals(): Promise<number> {
+    const [resp] = await this.callViewMethod(
+      this.oracleContract.getAssetPriceDecimalsFuncAddr,
+      [],
+    );
+    return resp as number;
+  }
+
+  /**
+   * Sets a price cap stable adapter for a given asset.
+   *
+   * @param asset - The account address of the asset for which the stable price adapter is being set.
+   * @param priceCap - The price cap.
+   * @returns A promise that resolves to a CommittedTransactionResponse once the transaction is committed.
+   */
+  public async setPriceCapStableAdapter(
+    asset: AccountAddress,
+    priceCap: bigint,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.oracleContract.setPriceCapStableAdapter,
+      [asset, priceCap],
+    );
+  }
+
+  /**
+   * Removes a price cap stable adapter for a given asset.
+   *
+   * @param asset - The account address of the asset for which the stable price adapter is being remved.
+   * @returns A promise that resolves to a CommittedTransactionResponse once the transaction is committed.
+   */
+  public async removePriceCapStableAdapter(
+    asset: AccountAddress,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.oracleContract.removePriceCapStableAdapter,
+      [asset],
+    );
   }
 
   /**
@@ -96,42 +185,25 @@ export class OracleClient extends AptosContractWrapperBaseClass {
     feedId: Uint8Array,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.oracleContract.SetAssetFeedIdFuncAddr,
+      this.oracleContract.setAssetFeedIdFuncAddr,
       [asset, feedId],
     );
   }
 
   /**
-   * Sets a mock price for a given feed ID.
+   * Sets a custom price for a given asset.
    *
-   * @param price - The mock price to be set, represented as a bigint.
-   * @param feedId - The feed ID for which the mock price is to be set, represented as a Uint8Array.
+   * @param asset - The account address of the asset for which the feed ID is being set.
+   * @param customPrice - The custom price of the asset.
    * @returns A promise that resolves to a CommittedTransactionResponse once the transaction is committed.
    */
-  public async setMockPrice(
-    price: bigint,
-    feedId: Uint8Array,
-  ): Promise<CommittedTransactionResponse> {
-    return this.sendTxAndAwaitResponse(
-      this.oracleContract.SetMockPriceFuncAddr,
-      [price, feedId],
-    );
-  }
-
-  /**
-   * Sets a mock feed ID for a given asset.
-   *
-   * @param asset - The account address of the asset.
-   * @param feedId - The feed ID to be set as a mock, represented as a Uint8Array.
-   * @returns A promise that resolves to a CommittedTransactionResponse once the transaction is committed.
-   */
-  public async setMockFeed(
+  public async setAssetCustomPrice(
     asset: AccountAddress,
-    feedId: Uint8Array,
+    customPrice: bigint,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.oracleContract.SetMockFeedIdFuncAddr,
-      [asset, feedId],
+      this.oracleContract.setAssetCustomPriceFuncAddr,
+      [asset, customPrice],
     );
   }
 
@@ -147,8 +219,25 @@ export class OracleClient extends AptosContractWrapperBaseClass {
     feedIds: Array<Uint8Array>,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.oracleContract.BatchSetAssetFeedIdsFuncAddr,
+      this.oracleContract.batchSetAssetFeedIdsFuncAddr,
       [assets, feedIds],
+    );
+  }
+
+  /**
+   * Sets the custom prices for a batch of assets in the oracle contract.
+   *
+   * @param assets - An array of account addresses representing the assets.
+   * @param customPrices - An array of bigints representing the custom prices of the assets.
+   * @returns A promise that resolves to a CommittedTransactionResponse.
+   */
+  public async batchSetAssetCustomPrices(
+    assets: Array<AccountAddress>,
+    customPrices: Array<bigint>,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.oracleContract.batchSetAssetCustomPricesFuncAddr,
+      [assets, customPrices],
     );
   }
 
@@ -162,7 +251,7 @@ export class OracleClient extends AptosContractWrapperBaseClass {
     asset: AccountAddress,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.oracleContract.RemoveAssetFeedIdFuncAddr,
+      this.oracleContract.removeAssetFeedIdFuncAddr,
       [asset],
     );
   }
@@ -177,41 +266,38 @@ export class OracleClient extends AptosContractWrapperBaseClass {
     assets: Array<AccountAddress>,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.oracleContract.RemoveAssetFeedIdsFuncAddr,
+      this.oracleContract.removeAssetFeedIdsFuncAddr,
       [assets],
     );
   }
 
   /**
-   * Retrieves the Oracle Resource Account address.
+   * Removes the custom price associated with a given asset.
    *
-   * This method calls the view method on the oracle contract to get the Oracle Resource Account address,
-   * and then maps the response to an `AccountAddress` object.
-   *
-   * @returns {Promise<AccountAddress>} A promise that resolves to the `AccountAddress` of the Oracle Resource Account.
+   * @param asset - The address of the asset for which the custom price should be removed.
+   * @returns A promise that resolves to the response of the committed transaction.
    */
-  public async getOracleResourceAccount(): Promise<AccountAddress> {
-    const [resp] = (
-      await this.callViewMethod(
-        this.oracleContract.GetOracleResourceAccountFuncAddr,
-        [],
-      )
-    ).map((item) => AccountAddress.fromString(item as string));
-    return resp;
+  public async removeAssetCustomPrice(
+    asset: AccountAddress,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.oracleContract.removeAssetCustomPriceFuncAddr,
+      [asset],
+    );
   }
 
   /**
-   * Retrieves the oracle address from the oracle contract.
+   * Removes the custom prices for a batch of assets from the oracle contract.
    *
-   * @returns {Promise<AccountAddress>} A promise that resolves to the oracle address.
+   * @param assets - An array of account addresses representing the assets whose custom prices are to be removed.
+   * @returns A promise that resolves to a `CommittedTransactionResponse` indicating the result of the transaction.
    */
-  public async getOracleAddress(): Promise<AccountAddress> {
-    const [resp] = (
-      await this.callViewMethod(
-        this.oracleContract.GetOracleAddressFuncAddr,
-        [],
-      )
-    ).map((item) => AccountAddress.fromString(item as string));
-    return resp;
+  public async batchRemoveAssetCustomPrices(
+    assets: Array<AccountAddress>,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.oracleContract.batchRemoveAssetCustomPricesFuncAddr,
+      [assets],
+    );
   }
 }

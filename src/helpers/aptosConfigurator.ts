@@ -4,6 +4,7 @@ import {
   CommittedTransactionResponse,
   Ed25519Account,
   Ed25519PrivateKey,
+  MoveOption,
   PrivateKey,
   PrivateKeyVariants,
 } from "@aptos-labs/ts-sdk";
@@ -13,7 +14,7 @@ import { AptosProvider, AptosProviderConfig } from "../clients/aptosProvider";
 import { OracleClient } from "../clients/oracleClient";
 import { priceFeeds } from "./priceFeeds";
 import { ONE_OCTA } from "./constants";
-import { RateClient } from "../clients";
+import { InterestRateClient } from "../clients";
 
 /**
  * Interface representing the configuration of a reserve in the Aave protocol.
@@ -168,7 +169,7 @@ type WithAccountAddress<T> = T & { address: AccountAddress };
 export class AptosConfigurator {
   provider: AptosProvider;
   poolClient: PoolClient;
-  rateClient: RateClient;
+  interestRateClient: InterestRateClient;
   oracleClient: OracleClient;
   underlyingTokenClient: UnderlyingTokensClient;
   mnemonic?: string;
@@ -224,7 +225,7 @@ export class AptosConfigurator {
     );
     this.poolClient = new PoolClient(this.provider, poolSigner);
     this.oracleClient = new OracleClient(this.provider, oracleSigner);
-    this.rateClient = new RateClient(this.provider, rateSigner);
+    this.interestRateClient = new InterestRateClient(this.provider, rateSigner);
     this.mnemonic = mnemonic;
   }
 
@@ -270,7 +271,6 @@ export class AptosConfigurator {
       eMode.ltv,
       eMode.liquidationThreshold,
       eMode.liquidationBonus,
-      eMode.oracle,
       eMode.label,
     );
     console.log(
@@ -303,13 +303,14 @@ export class AptosConfigurator {
   async setReserveInterestRateStrategy(
     strategy: ReserveStrategyConfig,
   ): Promise<CommittedTransactionResponse> {
-    const receipt = await this.rateClient.setReserveInterestRateStrategy(
-      strategy.address,
-      strategy.optimalUsageRatio,
-      strategy.baseVariableBorrowRate,
-      strategy.variableRateSlope1,
-      strategy.variableRateSlope2,
-    );
+    const receipt =
+      await this.interestRateClient.setReserveInterestRateStrategy(
+        strategy.address,
+        strategy.optimalUsageRatio,
+        strategy.baseVariableBorrowRate,
+        strategy.variableRateSlope1,
+        strategy.variableRateSlope2,
+      );
     console.log(
       `Strategy for asset ${strategy.symbol} was setup, tx ${receipt.hash}`,
     );
@@ -742,20 +743,25 @@ export class AptosConfigurator {
     reservesConfig: WithAccountAddress<ReserveConfig>[],
   ): Promise<CommittedTransactionResponse | undefined> {
     const reservesToInit = {
-      assets: [] as Array<AccountAddress>,
+      underlyingAsset: [] as Array<AccountAddress>,
       decimals: [] as Array<number>,
       treasury: [] as Array<AccountAddress>,
       aTokenName: [] as Array<string>,
       aTokenSymbol: [] as Array<string>,
       variableDebtTokenName: [] as Array<string>,
       variableDebtTokenSymbol: [] as Array<string>,
+      incentivesController: [] as Array<MoveOption<AccountAddress>>,
+      baseVariableBorrowRate: [] as Array<bigint>,
+      variableRateSlope1: [] as Array<bigint>,
+      variableRateSlope2: [] as Array<bigint>,
+      optimalUsageRatio: [] as Array<bigint>,
     };
 
     const currentReserves = await this.poolClient.getReservesList();
 
     reservesConfig.forEach((reserve) => {
       if (!currentReserves.find((elem) => elem.equals(reserve.address))) {
-        reservesToInit.assets.push(reserve.address);
+        reservesToInit.underlyingAsset.push(reserve.address);
         reservesToInit.decimals.push(reserve.decimals);
         reservesToInit.treasury.push(reserve.treasury);
         reservesToInit.aTokenName.push(reserve.aTokenName);
@@ -766,19 +772,33 @@ export class AptosConfigurator {
         reservesToInit.variableDebtTokenSymbol.push(
           reserve.variableDebtTokenSymbol,
         );
+        reservesToInit.incentivesController.push(
+          new MoveOption<AccountAddress>(AccountAddress.ZERO),
+        );
+        reservesToInit.baseVariableBorrowRate.push(
+          reserve.baseVariableBorrowRate,
+        );
+        reservesToInit.variableRateSlope1.push(reserve.variableRateSlope1);
+        reservesToInit.variableRateSlope2.push(reserve.variableRateSlope2);
+        reservesToInit.optimalUsageRatio.push(reserve.optimalUsageRatio);
       } else {
         console.log(`RESERVE ${reserve.symbol} already was initialized`);
       }
     });
 
-    if (reservesToInit.assets.length > 0) {
+    if (reservesToInit.underlyingAsset.length > 0) {
       const receipt = await this.poolClient.initReserves(
-        reservesToInit.assets,
+        reservesToInit.underlyingAsset,
         reservesToInit.treasury,
         reservesToInit.aTokenName,
         reservesToInit.aTokenSymbol,
         reservesToInit.variableDebtTokenName,
         reservesToInit.variableDebtTokenSymbol,
+        reservesToInit.incentivesController,
+        reservesToInit.optimalUsageRatio,
+        reservesToInit.baseVariableBorrowRate,
+        reservesToInit.variableRateSlope1,
+        reservesToInit.variableRateSlope2,
       );
       console.log(
         `RESERVES ${reservesToInit.aTokenSymbol} were initialized, tx ${receipt.hash}`,

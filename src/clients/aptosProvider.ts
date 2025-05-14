@@ -25,20 +25,18 @@ import YAML from "yaml";
  * @property {string} addresses.AAVE_CONFIG - The address for AAVE configuration.
  * @property {string} addresses.AAVE_ORACLE - The address for AAVE oracle.
  * @property {string} addresses.AAVE_POOL - The address for AAVE pool.
- * @property {string} addresses.AAVE_RATE - The address for AAVE rate.
  * @property {string} addresses.AAVE_DATA - The address for AAVE data.
  */
 export interface AptosProviderConfig {
   network: Network;
   addresses: {
     A_TOKENS: string;
-    UNDERLYING_TOKENS: string;
+    AAVE_MOCK_UNDERLYINGS: string;
     VARIABLE_TOKENS: string;
     AAVE_ACL: string;
     AAVE_CONFIG: string;
     AAVE_ORACLE: string;
     AAVE_POOL: string;
-    AAVE_RATE: string;
     AAVE_DATA: string;
     AAVE_MATH: string;
   };
@@ -67,13 +65,12 @@ export interface AptosAccountConfig {
 
 export enum AAVE_PROFILES {
   A_TOKENS = "a_tokens",
-  UNDERLYING_TOKENS = "underlying_tokens",
+  AAVE_MOCK_UNDERLYINGS = "aave_mock_underlyings",
   VARIABLE_TOKENS = "variable_tokens",
   AAVE_ACL = "aave_acl",
   AAVE_CONFIG = "aave_config",
   AAVE_ORACLE = "aave_oracle",
   AAVE_POOL = "aave_pool",
-  AAVE_RATE = "aave_rate",
   AAVE_LARGE_PACKAGES = "aave_large_packages",
   AAVE_MATH = "aave_math",
   AAVE_DATA = "aave_data",
@@ -154,7 +151,7 @@ export class AptosProvider {
    *   network: 'mainnet',
    *   addresses: {
    *     A_TOKENS: '0x...',
-   *     UNDERLYING_TOKENS: '0x...',
+   *     AAVE_MOCK_UNDERLYINGS: '0x...',
    *     VARIABLE_TOKENS: '0x...',
    *     AAVE_ACL: '0x...',
    *     AAVE_CONFIG: '0x...',
@@ -175,8 +172,8 @@ export class AptosProvider {
       AccountAddress.fromString(config.addresses.A_TOKENS),
     );
     aptosProvider.addProfileAddress(
-      AAVE_PROFILES.UNDERLYING_TOKENS,
-      AccountAddress.fromString(config.addresses.UNDERLYING_TOKENS),
+      AAVE_PROFILES.AAVE_MOCK_UNDERLYINGS,
+      AccountAddress.fromString(config.addresses.AAVE_MOCK_UNDERLYINGS),
     );
     aptosProvider.addProfileAddress(
       AAVE_PROFILES.VARIABLE_TOKENS,
@@ -197,10 +194,6 @@ export class AptosProvider {
     aptosProvider.addProfileAddress(
       AAVE_PROFILES.AAVE_POOL,
       AccountAddress.fromString(config.addresses.AAVE_POOL),
-    );
-    aptosProvider.addProfileAddress(
-      AAVE_PROFILES.AAVE_RATE,
-      AccountAddress.fromString(config.addresses.AAVE_RATE),
     );
     aptosProvider.addProfileAddress(
       AAVE_PROFILES.AAVE_MATH,
@@ -227,13 +220,12 @@ export class AptosProvider {
    * Environment Variables:
    * - `APTOS_NETWORK`: The network to connect to (testnet, devnet, mainnet, local).
    * - `A_TOKENS_PRIVATE_KEY`: Private key for A_TOKENS profile.
-   * - `UNDERLYING_TOKENS_PRIVATE_KEY`: Private key for UNDERLYING_TOKENS profile.
+   * - `AAVE_MOCK_UNDERLYING_TOKENS_PRIVATE_KEY`: Private key for UNDERLYING_TOKENS profile.
    * - `VARIABLE_TOKENS_PRIVATE_KEY`: Private key for VARIABLE_TOKENS profile.
    * - `AAVE_ACL_PRIVATE_KEY`: Private key for AAVE_ACL profile.
    * - `AAVE_CONFIG_PRIVATE_KEY`: Private key for AAVE_CONFIG profile.
    * - `AAVE_ORACLE_PRIVATE_KEY`: Private key for AAVE_ORACLE profile.
    * - `AAVE_POOL_PRIVATE_KEY`: Private key for AAVE_POOL profile.
-   * - `AAVE_RATE_PRIVATE_KEY`: Private key for AAVE_RATE profile.
    * - `AAVE_LARGE_PACKAGES_PRIVATE_KEY`: Private key for AAVE_LARGE_PACKAGES profile.
    * - `AAVE_MATH_PRIVATE_KEY`: Private key for AAVE_MATH profile.
    * - `AAVE_DATA_PRIVATE_KEY`: Private key for AAVE_DATA profile.
@@ -284,15 +276,15 @@ export class AptosProvider {
       process.env.A_TOKENS_PRIVATE_KEY,
     );
 
-    if (!process.env.UNDERLYING_TOKENS_PRIVATE_KEY) {
+    if (!process.env.AAVE_MOCK_UNDERLYING_TOKENS_PRIVATE_KEY) {
       throw new Error(
-        "Env variable UNDERLYING_TOKENS_PRIVATE_KEY does not exist",
+        "Env variable AAVE_MOCK_UNDERLYING_TOKENS_PRIVATE_KEY does not exist",
       );
     }
     addProfilePkey(
       aptosProvider,
-      AAVE_PROFILES.UNDERLYING_TOKENS,
-      process.env.UNDERLYING_TOKENS_PRIVATE_KEY,
+      AAVE_PROFILES.AAVE_MOCK_UNDERLYINGS,
+      process.env.AAVE_MOCK_UNDERLYING_TOKENS_PRIVATE_KEY,
     );
 
     if (!process.env.VARIABLE_TOKENS_PRIVATE_KEY) {
@@ -340,15 +332,6 @@ export class AptosProvider {
       aptosProvider,
       AAVE_PROFILES.AAVE_POOL,
       process.env.AAVE_POOL_PRIVATE_KEY,
-    );
-
-    if (!process.env.AAVE_RATE_PRIVATE_KEY) {
-      throw new Error("Env variable AAVE_RATE_PRIVATE_KEY does not exist");
-    }
-    addProfilePkey(
-      aptosProvider,
-      AAVE_PROFILES.AAVE_RATE,
-      process.env.AAVE_RATE_PRIVATE_KEY,
     );
 
     if (!process.env.AAVE_LARGE_PACKAGES_PRIVATE_KEY) {
@@ -606,7 +589,7 @@ export class AptosProvider {
    * @returns {Ed25519Account} The profile account for underlying tokens.
    */
   public getUnderlyingTokensProfileAccount(): Ed25519Account {
-    return this.getProfileAccountByName(AAVE_PROFILES.UNDERLYING_TOKENS);
+    return this.getProfileAccountByName(AAVE_PROFILES.AAVE_MOCK_UNDERLYINGS);
   }
 
   /**
@@ -634,15 +617,6 @@ export class AptosProvider {
    */
   public getDataProfileAccount(): Ed25519Account {
     return this.getProfileAccountByName(AAVE_PROFILES.AAVE_DATA);
-  }
-
-  /**
-   * Retrieves the data profile account associated with the AAVE_RATE profile.
-   *
-   * @returns {Ed25519Account} The Ed25519 account corresponding to the AAVE_RATE profile.
-   */
-  public getRateProfileAccount(): Ed25519Account {
-    return this.getProfileAccountByName(AAVE_PROFILES.AAVE_RATE);
   }
 
   /**

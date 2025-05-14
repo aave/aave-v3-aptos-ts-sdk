@@ -18,53 +18,55 @@ import { AAVE_PROFILES, AptosProvider } from "../clients";
  *
  * @param provider - The AptosProvider instance used to interact with the Aptos blockchain.
  */
-export class RateContract {
+export class InterestRateContract {
   // Resource Func Addr
 
   /**
    * -------------------------------------------------------------------------
    * default_reserve_interest_rate_strategy
-   * -------------------------------------------------------------------------=
+   * -------------------------------------------------------------------------
    */
   // Entry
-  SetReserveInterestRateStrategyFuncAddr: MoveFunctionId;
+  setReserveInterestRateStrategyFuncAddr: MoveFunctionId;
 
   // View
-  GetGetOptimalUsageRatioFuncAddr: MoveFunctionId;
+  getReserveInterestRateStrategyFuncAddr: MoveFunctionId;
 
-  GetGetMaxExcessUsageRatioFuncAddr: MoveFunctionId;
+  getReserveInterestRateStrategyBspFuncAddr: MoveFunctionId;
 
-  GetVariableRateSlope1FuncAddr: MoveFunctionId;
+  getGetOptimalUsageRatioFuncAddr: MoveFunctionId;
 
-  GetVariableRateSlope2FuncAddr: MoveFunctionId;
+  getGetMaxExcessUsageRatioFuncAddr: MoveFunctionId;
 
-  GetBaseVariableBorrowRateFuncAddr: MoveFunctionId;
+  getVariableRateSlope1FuncAddr: MoveFunctionId;
 
-  GetMaxVariableBorrowRateFuncAddr: MoveFunctionId;
+  getVariableRateSlope2FuncAddr: MoveFunctionId;
 
-  CalculateInterestRatesFuncAddr: MoveFunctionId;
+  getBaseVariableBorrowRateFuncAddr: MoveFunctionId;
 
-  AssetInterestRateExists: MoveFunctionId;
+  getMaxVariableBorrowRateFuncAddr: MoveFunctionId;
+
+  calculateInterestRatesFuncAddr: MoveFunctionId;
 
   constructor(provider: AptosProvider) {
-    const RateManager = provider.getProfileAddressByName(
-      AAVE_PROFILES.AAVE_RATE,
+    const PoolManager = provider.getProfileAddressByName(
+      AAVE_PROFILES.AAVE_POOL,
     );
-    const RateManagerAccountAddress = RateManager.toString();
-
+    const PoolManagerAccountAddress = PoolManager.toString();
     /**
      * -------------------------------------------------------------------------
      * default_reserve_interest_rate_strategy
      * -------------------------------------------------------------------------
      */
-    this.SetReserveInterestRateStrategyFuncAddr = `${RateManagerAccountAddress}::default_reserve_interest_rate_strategy::set_reserve_interest_rate_strategy`;
-    this.AssetInterestRateExists = `${RateManagerAccountAddress}::interest_rate_strategy::asset_interest_rate_exists`;
-    this.GetGetOptimalUsageRatioFuncAddr = `${RateManagerAccountAddress}::interest_rate_strategy::get_optimal_usage_ratio`;
-    this.GetVariableRateSlope1FuncAddr = `${RateManagerAccountAddress}::interest_rate_strategy::get_variable_rate_slope1`;
-    this.GetVariableRateSlope2FuncAddr = `${RateManagerAccountAddress}::interest_rate_strategy::get_variable_rate_slope2`;
-    this.GetBaseVariableBorrowRateFuncAddr = `${RateManagerAccountAddress}::interest_rate_strategy::get_base_variable_borrow_rate`;
-    this.GetMaxVariableBorrowRateFuncAddr = `${RateManagerAccountAddress}::interest_rate_strategy::get_max_variable_borrow_rate`;
-    this.GetGetMaxExcessUsageRatioFuncAddr = `${RateManagerAccountAddress}::interest_rate_strategy::get_max_excess_usage_ratio`;
-    this.CalculateInterestRatesFuncAddr = `${RateManagerAccountAddress}::interest_rate_strategy::calculate_interest_rates`;
+    this.setReserveInterestRateStrategyFuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::set_reserve_interest_rate_strategy`;
+    this.getReserveInterestRateStrategyFuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::get_reserve_interest_rate_strategy`;
+    this.getReserveInterestRateStrategyBspFuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::get_reserve_interest_rate_strategy_bsp`;
+    this.getGetOptimalUsageRatioFuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::get_optimal_usage_ratio`;
+    this.getVariableRateSlope1FuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::get_variable_rate_slope1`;
+    this.getVariableRateSlope2FuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::get_variable_rate_slope2`;
+    this.getBaseVariableBorrowRateFuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::get_base_variable_borrow_rate`;
+    this.getMaxVariableBorrowRateFuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::get_max_variable_borrow_rate`;
+    this.getGetMaxExcessUsageRatioFuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::get_max_excess_usage_ratio`;
+    this.calculateInterestRatesFuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::calculate_interest_rates`;
   }
 }

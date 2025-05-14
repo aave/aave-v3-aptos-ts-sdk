@@ -2,6 +2,7 @@ import {
   AccountAddress,
   CommittedTransactionResponse,
   Ed25519Account,
+  MoveOption,
 } from "@aptos-labs/ts-sdk";
 import { AptosContractWrapperBaseClass } from "./baseClass";
 import { AptosProvider } from "./aptosProvider";
@@ -83,6 +84,12 @@ export type ReserveData = {
   currentVariableBorrowRate: bigint;
 
   /**
+   * The current deficit, expressed in ray.
+   * @type {bigint}
+   */
+  deficit: bigint;
+
+  /**
    * The timestamp of the last update.
    * @type {number}
    */
@@ -93,6 +100,12 @@ export type ReserveData = {
    * @type {number}
    */
   id: number;
+
+  /**
+   * Timestamp until when liquidations are not allowed on the reserve, if set to past liquidations will be allowed (u40 -> u64).
+   * @type {number}
+   */
+  liquidationGracePeriodUntil: number;
 
   /**
    * The address of the aToken.
@@ -113,16 +126,16 @@ export type ReserveData = {
   accruedToTreasury: bigint;
 
   /**
-   * The outstanding unbacked aTokens minted through the bridging feature.
-   * @type {bigint}
-   */
-  unbacked: bigint;
-
-  /**
    * The outstanding debt borrowed against this asset in isolation mode.
    * @type {bigint}
    */
   isolationModeTotalDebt: bigint;
+
+  /**
+   * The amount of underlying accounted for by the protocol.
+   * @type {bigint}
+   */
+  virtualUnderlyingBalance: bigint;
 };
 
 /**
@@ -197,7 +210,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   }
 
   /**
-   * Mints assets to the treasury.
+   * Mints the assets accrued through the reserve factor to the treasury in the form of aTokens.
    *
    * @param assets - An array of account addresses representing the assets to be minted to the treasury.
    * @returns A promise that resolves to a `CommittedTransactionResponse` object.
@@ -206,8 +219,44 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     assets: Array<AccountAddress>,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolMintToTreasuryFuncAddr,
+      this.poolContract.poolTokenLogicMintToTreasuryFuncAddr,
       [assets],
+    );
+  }
+
+  /**
+   * Transfers aTokens from the user to the recipient.
+   *
+   * @param recipient The recipient of the aTokens
+   * @param amount The amount of aTokens to transfer
+   * @param aTokenAddress The Metadata of the aToken
+   * @returns A promise that resolves to a `CommittedTransactionResponse` object.
+   */
+  public async transfer(
+    recipient: AccountAddress,
+    amount: bigint,
+    aTokenAddress: AccountAddress,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.poolContract.poolTokenLogicTransferFuncAddr,
+      [recipient, amount, aTokenAddress],
+    );
+  }
+
+  /**
+   * Sets the incentives controllers.
+   *
+   * @param underlyingAssets - An array of account addresses representing the assets on which to set incentives controllers.
+    @param incentivesControllers - An array of account addresses representing the addresses of the incentives controllers.
+   * @returns A promise that resolves to a `CommittedTransactionResponse` object.
+   */
+  public async setIncentivesControllers(
+    underlyingAssets: Array<AccountAddress>,
+    incentivesControllers: Array<MoveOption<AccountAddress>>,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.poolContract.poolTokenLogicSetIncentivesControllerFuncAddr,
+      [underlyingAssets, incentivesControllers],
     );
   }
 
@@ -221,7 +270,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     asset: AccountAddress,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolResetIsolationModeTotalDebtFuncAddr,
+      this.poolContract.poolResetIsolationModeTotalDebtFuncAddr,
       [asset],
     );
   }
@@ -240,7 +289,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     amount: bigint,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolRescueTokensFuncAddr,
+      this.poolContract.poolRescueTokensFuncAddr,
       [token, to, amount.toString()],
     );
   }
@@ -255,7 +304,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     protocolFee: bigint,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolSetBridgeProtocolFeeFuncAddr,
+      this.poolContract.poolSetBridgeProtocolFeeFuncAddr,
       [protocolFee.toString()],
     );
   }
@@ -272,22 +321,9 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     flashloanPremiumToProtocol: bigint,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolSetFlashloanPremiumsFuncAddr,
+      this.poolContract.poolSetFlashloanPremiumsFuncAddr,
       [flashloanPremiumTotal.toString(), flashloanPremiumToProtocol.toString()],
     );
-  }
-
-  /**
-   * Retrieves the revision number of the pool contract.
-   *
-   * @returns {Promise<number>} A promise that resolves to the revision number of the pool contract.
-   */
-  public async getRevision(): Promise<number> {
-    const [resp] = await this.callViewMethod(
-      this.poolContract.PoolGetRevisionFuncAddr,
-      [],
-    );
-    return resp as number;
   }
 
   /**
@@ -300,7 +336,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     asset: AccountAddress,
   ): Promise<ReserveConfigurationMap> {
     const [resp] = await this.callViewMethod(
-      this.poolContract.PoolGetReserveConfigurationFuncAddr,
+      this.poolContract.poolGetReserveConfigurationFuncAddr,
       [asset],
     );
     return resp as ReserveConfigurationMap;
@@ -314,11 +350,10 @@ export class PoolClient extends AptosContractWrapperBaseClass {
    */
   public async getReserveData(asset: AccountAddress): Promise<ReserveData> {
     const [resp] = await this.callViewMethod(
-      this.poolContract.PoolGetReserveDataFuncAddr,
+      this.poolContract.poolGetReserveDataFuncAddr,
       [asset],
     );
     const object = AccountAddress.fromString((resp as Object).inner);
-
     return {
       configuration: await this.getReserveConfigurationByReserveData(object),
       liquidityIndex: await this.getReserveLiquidityIndex(object),
@@ -326,13 +361,16 @@ export class PoolClient extends AptosContractWrapperBaseClass {
       variableBorrowIndex: await this.getReserveVariableBorrowIndex(object),
       currentVariableBorrowRate:
         await this.getReserveCurrentVariableBorrowRate(object),
+      deficit: await this.getReserveDeficit(object),
       lastUpdateTimestamp: await this.getReserveLastUpdateTimestamp(object),
       id: await this.getReserveId(object),
+      liquidationGracePeriodUntil:
+        await this.getLiquidationGracePeriodUntil(object),
       aTokenAddress: await this.getReserveATokenAddress(object),
       variableDebtTokenAddress:
         await this.getReserveVariableDebtTokenAddress(object),
+      virtualUnderlyingBalance: await this.getVirtualUnderlyingBalance(object),
       accruedToTreasury: await this.getReserveAccruedToTreasury(object),
-      unbacked: await this.getReserveUnbacked(object),
       isolationModeTotalDebt:
         await this.getReserveIsolationModeTotalDebt(object),
     } as ReserveData;
@@ -342,7 +380,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     object: AccountAddress,
   ): Promise<ReserveConfigurationMap> {
     const [resp] = await this.callViewMethod(
-      this.poolContract.PoolGetReserveConfigurationByReserveData,
+      this.poolContract.poolGetReserveConfigurationByReserveData,
       [object],
     );
     return resp as ReserveConfigurationMap;
@@ -352,7 +390,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     object: AccountAddress,
   ): Promise<bigint> {
     const [resp] = await this.callViewMethod(
-      this.poolContract.PoolGetReserveLiquidityIndex,
+      this.poolContract.poolGetReserveLiquidityIndex,
       [object],
     );
     return BigInt(resp.toString());
@@ -362,7 +400,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     object: AccountAddress,
   ): Promise<bigint> {
     const [resp] = await this.callViewMethod(
-      this.poolContract.PoolGetReserveCurrentLiquidityRate,
+      this.poolContract.poolGetReserveCurrentLiquidityRate,
       [object],
     );
     return BigInt(resp.toString());
@@ -372,7 +410,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     object: AccountAddress,
   ): Promise<bigint> {
     const [resp] = await this.callViewMethod(
-      this.poolContract.PoolGetReserveVariableBorrowIndex,
+      this.poolContract.poolGetReserveVariableBorrowIndex,
       [object],
     );
     return BigInt(resp.toString());
@@ -382,7 +420,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     object: AccountAddress,
   ): Promise<bigint> {
     const [resp] = await this.callViewMethod(
-      this.poolContract.PoolGetReserveCurrentVariableBorrowRate,
+      this.poolContract.poolGetReserveCurrentVariableBorrowRate,
       [object],
     );
     return BigInt(resp.toString());
@@ -392,15 +430,35 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     object: AccountAddress,
   ): Promise<number> {
     const [resp] = await this.callViewMethod(
-      this.poolContract.PoolGetReserveLastUpdateTimestamp,
+      this.poolContract.poolGetReserveLastUpdateTimestamp,
       [object],
     );
     return resp as number;
   }
 
+  public async getLiquidationGracePeriodUntil(
+    object: AccountAddress,
+  ): Promise<number> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.poolGetReserveLiquidationGracePeriodUntil,
+      [object],
+    );
+    return resp as number;
+  }
+
+  public async getVirtualUnderlyingBalance(
+    object: AccountAddress,
+  ): Promise<bigint> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.poolGetReserveVirtualUnderlyingBalance,
+      [object],
+    );
+    return BigInt(resp.toString());
+  }
+
   public async getReserveId(object: AccountAddress): Promise<number> {
     const [resp] = await this.callViewMethod(
-      this.poolContract.PoolGetReserveId,
+      this.poolContract.poolGetReserveId,
       [object],
     );
     return resp as number;
@@ -410,7 +468,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     object: AccountAddress,
   ): Promise<AccountAddress> {
     const [resp] = await this.callViewMethod(
-      this.poolContract.PoolGetReserveATokenAddress,
+      this.poolContract.poolGetReserveATokenAddress,
       [object],
     );
     return AccountAddress.fromString(resp as string);
@@ -420,7 +478,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     object: AccountAddress,
   ): Promise<AccountAddress> {
     const [resp] = await this.callViewMethod(
-      this.poolContract.PoolGetReserveVariableDebtTokenAddress,
+      this.poolContract.poolGetReserveVariableDebtTokenAddress,
       [object],
     );
     return AccountAddress.fromString(resp as string);
@@ -430,15 +488,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     object: AccountAddress,
   ): Promise<bigint> {
     const [resp] = await this.callViewMethod(
-      this.poolContract.PoolGetReserveAccruedToTreasury,
-      [object],
-    );
-    return BigInt(resp.toString());
-  }
-
-  public async getReserveUnbacked(object: AccountAddress): Promise<bigint> {
-    const [resp] = await this.callViewMethod(
-      this.poolContract.PoolGetReserveUnbacked,
+      this.poolContract.poolGetReserveAccruedToTreasury,
       [object],
     );
     return BigInt(resp.toString());
@@ -448,7 +498,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     object: AccountAddress,
   ): Promise<bigint> {
     const [resp] = await this.callViewMethod(
-      this.poolContract.PoolGetReserveIsolationModeTotalDebt,
+      this.poolContract.poolGetReserveIsolationModeTotalDebt,
       [object],
     );
     return BigInt(resp.toString());
@@ -465,7 +515,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     asset: AccountAddress,
   ): Promise<{ reserveData: ReserveData; count: number }> {
     const resp = await this.callViewMethod(
-      this.poolContract.GetReserveDataAndReservesCountFuncAddr,
+      this.poolContract.getReserveDataAndReservesCountFuncAddr,
       [asset],
     );
     const respRaw = resp.at(0) as any;
@@ -477,15 +527,23 @@ export class PoolClient extends AptosContractWrapperBaseClass {
       currentVariableBorrowRate: BigInt(
         respRaw.current_variable_borrow_rate.toString(),
       ),
+      deficit: BigInt(respRaw.deficit.toString()),
       lastUpdateTimestamp: respRaw.last_update_timestamp as number,
       id: respRaw.id as number,
+      liquidationGracePeriodUntil:
+        respRaw.liquidation_grace_period_until as number,
+      aTokenAddress: AccountAddress.fromString(
+        respRaw.a_token_address as string,
+      ),
       variableDebtTokenAddress: AccountAddress.fromString(
         respRaw.variable_debt_token_address as string,
       ),
       accruedToTreasury: BigInt(respRaw.accrued_to_treasury.toString()),
-      unbacked: BigInt(respRaw.unbacked.toString()),
       isolationModeTotalDebt: BigInt(
         respRaw.isolation_mode_total_debt.toString(),
+      ),
+      virtualUnderlyingBalance: BigInt(
+        respRaw.virtual_underlying_balance.toString(),
       ),
     } as ReserveData;
 
@@ -500,7 +558,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   public async getReservesCount(): Promise<bigint> {
     const [resp] = (
       await this.callViewMethod(
-        this.poolContract.PoolGetReservesCountFuncAddr,
+        this.poolContract.poolGetReservesCountFuncAddr,
         [],
       )
     ).map(mapToBigInt);
@@ -516,7 +574,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     const resp = (
       (
         await this.callViewMethod(
-          this.poolContract.PoolGetReservesListFuncAddr,
+          this.poolContract.poolGetReservesListFuncAddr,
           [],
         )
       ).at(0) as Array<unknown>
@@ -532,7 +590,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
    */
   public async getReserveAddressById(id: number): Promise<AccountAddress> {
     const [resp] = await this.callViewMethod(
-      this.poolContract.PoolGetReserveAddressByIdFuncAddr,
+      this.poolContract.poolGetReserveAddressByIdFuncAddr,
       [id],
     );
     return AccountAddress.fromString(resp as string);
@@ -549,8 +607,26 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   ): Promise<bigint> {
     const [resp] = (
       await this.callViewMethod(
-        this.poolContract.PoolGetReserveNormalizedVariableDebtFuncAddr,
+        this.poolContract.poolGetReserveNormalizedVariableDebtFuncAddr,
         [asset],
+      )
+    ).map(mapToBigInt);
+    return resp;
+  }
+
+  /**
+   * Retrieves the normalized debt by reserve data.
+   *
+   * @param reserveData - The address of the reserve data.
+   * @returns A promise that resolves to the normalized debt as a bigint.
+   */
+  public async getNormalizedDebtByReserveData(
+    reserveData: AccountAddress,
+  ): Promise<bigint> {
+    const [resp] = (
+      await this.callViewMethod(
+        this.poolContract.poolGetNormalizedDebtByReserveData,
+        [reserveData],
       )
     ).map(mapToBigInt);
     return resp;
@@ -567,7 +643,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   ): Promise<bigint> {
     const [resp] = (
       await this.callViewMethod(
-        this.poolContract.PoolGetReserveNormalizedIncomeFuncAddr,
+        this.poolContract.poolGetReserveNormalizedIncomeFuncAddr,
         [asset],
       )
     ).map(mapToBigInt);
@@ -584,10 +660,36 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     account: AccountAddress,
   ): Promise<UserConfigurationMap> {
     const [resp] = await this.callViewMethod(
-      this.poolContract.PoolGetUserConfigurationFuncAddr,
+      this.poolContract.poolGetUserConfigurationFuncAddr,
       [account],
     );
     return resp as UserConfigurationMap;
+  }
+
+  /**
+   * Retrieves the number of active reserves.
+   *
+   * @returns A promise that resolves to the number of active reserves.
+   */
+  public async numberOfActiveReserves(): Promise<number> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.poolGetNumberOfActiveReservesFuncAddr,
+      [],
+    );
+    return resp as number;
+  }
+
+  /**
+   * Retrieves the number of active and dropped reserves.
+   *
+   * @returns A promise that resolves to the number of active and dropped reserves.
+   */
+  public async numberOfActiveAndDroppedReserves(): Promise<number> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.poolGetNumberOfActiveAndDroppedReservesFuncAddr,
+      [],
+    );
+    return resp as number;
   }
 
   /**
@@ -598,7 +700,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   public async getBridgeProtocolFee(): Promise<bigint> {
     const [resp] = (
       await this.callViewMethod(
-        this.poolContract.PoolGetBridgeProtocolFeeFuncAddr,
+        this.poolContract.poolGetBridgeProtocolFeeFuncAddr,
         [],
       )
     ).map(mapToBigInt);
@@ -616,7 +718,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   public async getFlashloanPremiumTotal(): Promise<bigint> {
     const [resp] = (
       await this.callViewMethod(
-        this.poolContract.PoolGetFlashloanPremiumTotalFuncAddr,
+        this.poolContract.poolGetFlashloanPremiumTotalFuncAddr,
         [],
       )
     ).map(mapToBigInt);
@@ -634,7 +736,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   public async getFlashloanPremiumToProtocol(): Promise<bigint> {
     const [resp] = (
       await this.callViewMethod(
-        this.poolContract.PoolGetFlashloanPremiumToProtocolFuncAddr,
+        this.poolContract.poolGetFlashloanPremiumToProtocolFuncAddr,
         [],
       )
     ).map(mapToBigInt);
@@ -649,7 +751,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   public async getMaxNumberReserves(): Promise<bigint> {
     const [resp] = (
       await this.callViewMethod(
-        this.poolContract.PoolMaxNumberReservesFuncAddr,
+        this.poolContract.poolMaxNumberReservesFuncAddr,
         [],
       )
     ).map(mapToBigInt);
@@ -665,6 +767,11 @@ export class PoolClient extends AptosContractWrapperBaseClass {
    * @param aTokenSymbol - An array of strings representing the symbols of the aTokens.
    * @param variableDebtTokenName - An array of strings representing the names of the variable debt tokens.
    * @param variableDebtTokenSymbol - An array of strings representing the symbols of the variable debt tokens.
+   * @param incentivesController - An array of addresses representing the incentives controllers.
+   * @param optimalUsageRatio - An array of numbers representing the optimal usage ratios.
+   * @param baseVariableBorrowRate - An array of numbers representing the base variable borrow rates.
+   * @param variableRateSlope1 - An array of numbers representing the variable rate slopes 1.
+   * @param variableRateSlope2 - An array of numbers representing the variable rate slopes 2.
    * @returns A promise that resolves to a CommittedTransactionResponse.
    */
   public async initReserves(
@@ -674,9 +781,14 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     aTokenSymbol: Array<string>,
     variableDebtTokenName: Array<string>,
     variableDebtTokenSymbol: Array<string>,
+    incentivesController: Array<MoveOption<AccountAddress>>,
+    optimalUsageRatio: Array<bigint>,
+    baseVariableBorrowRate: Array<bigint>,
+    variableRateSlope1: Array<bigint>,
+    variableRateSlope2: Array<bigint>,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfiguratorInitReservesFuncAddr,
+      this.poolContract.poolConfiguratorInitReservesFuncAddr,
       [
         underlyingAsset,
         treasury,
@@ -684,6 +796,11 @@ export class PoolClient extends AptosContractWrapperBaseClass {
         aTokenSymbol,
         variableDebtTokenName,
         variableDebtTokenSymbol,
+        incentivesController,
+        optimalUsageRatio,
+        baseVariableBorrowRate,
+        variableRateSlope1,
+        variableRateSlope2,
       ],
     );
   }
@@ -698,7 +815,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     asset: AccountAddress,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfiguratorDropReserveFuncAddr,
+      this.poolContract.poolConfiguratorDropReserveFuncAddr,
       [asset],
     );
   }
@@ -715,7 +832,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     newCategoryId: number,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfiguratorSetAssetEmodeCategoryFuncAddr,
+      this.poolContract.poolConfiguratorSetAssetEmodeCategoryFuncAddr,
       [asset, newCategoryId],
     );
   }
@@ -732,7 +849,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     newBorrowCap: bigint,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfiguratorSetBorrowCapFuncAddr,
+      this.poolContract.poolConfiguratorSetBorrowCapFuncAddr,
       [asset, newBorrowCap.toString()],
     );
   }
@@ -749,7 +866,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     borrowable: boolean,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfiguratorSetBorrowableInIsolationFuncAddr,
+      this.poolContract.poolConfiguratorSetBorrowableInIsolationFuncAddr,
       [asset, borrowable],
     );
   }
@@ -761,7 +878,6 @@ export class PoolClient extends AptosContractWrapperBaseClass {
    * @param ltv - The loan-to-value ratio for the category.
    * @param liquidationThreshold - The liquidation threshold for the category.
    * @param liquidationBonus - The liquidation bonus for the category.
-   * @param oracle - The oracle account address.
    * @param label - The label for the eMode category.
    * @returns A promise that resolves to the committed transaction response.
    */
@@ -770,12 +886,11 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     ltv: number,
     liquidationThreshold: number,
     liquidationBonus: number,
-    oracle: AccountAddress,
     label: string,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfiguratorSetEmodeCategoryFuncAddr,
-      [categoryId, ltv, liquidationThreshold, liquidationBonus, oracle, label],
+      this.poolContract.poolConfiguratorSetEmodeCategoryFuncAddr,
+      [categoryId, ltv, liquidationThreshold, liquidationBonus, label],
     );
   }
 
@@ -791,7 +906,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     newFee: bigint,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfiguratorSetLiquidationProtocolFeeFuncAddr,
+      this.poolContract.poolConfiguratorSetLiquidationProtocolFeeFuncAddr,
       [asset, newFee.toString()],
     );
   }
@@ -800,6 +915,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
    * Pauses or unpauses the pool.
    *
    * @param paused - A boolean indicating whether to pause (true) or unpause (false) the pool.
+   * @param gracePeriod - The grace period the pause is applied for.
    * @returns A promise that resolves to a `CommittedTransactionResponse` object.
    */
   public async setPoolPause(
@@ -807,8 +923,23 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     gracePeriod: bigint,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfiguratorSetPoolPauseFuncAddr,
+      this.poolContract.poolConfiguratorSetPoolPauseFuncAddr,
       [paused, gracePeriod],
+    );
+  }
+
+  /**
+   * Pauses or unpauses the pool without setting any grace period.
+   *
+   * @param paused - A boolean indicating whether to pause (true) or unpause (false) the pool.
+   * @returns A promise that resolves to a `CommittedTransactionResponse` object.
+   */
+  public async setPoolPauseNoGracePeriod(
+    paused: boolean,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.poolContract.poolConfiguratorSetPoolPauseNoGracePeriodFuncAddr,
+      [paused],
     );
   }
 
@@ -824,7 +955,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     active: boolean,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfiguratorSetReserveActiveFuncAddr,
+      this.poolContract.poolConfiguratorSetReserveActiveFuncAddr,
       [asset, active],
     );
   }
@@ -841,7 +972,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     enabled: boolean,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfiguratorSetReserveBorrowingFuncAddr,
+      this.poolContract.poolConfiguratorSetReserveBorrowingFuncAddr,
       [asset, enabled],
     );
   }
@@ -858,7 +989,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     newDebtCeiling: bigint,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfiguratorSetDebtCeilingFuncAddr,
+      this.poolContract.poolConfiguratorSetDebtCeilingFuncAddr,
       [asset, newDebtCeiling.toString()],
     );
   }
@@ -880,7 +1011,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     liquidationBonus: bigint,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfiguratorConfigureReserveAsCollateralFuncAddr,
+      this.poolContract.poolConfiguratorConfigureReserveAsCollateralFuncAddr,
       [
         asset,
         ltv.toString(),
@@ -902,9 +1033,24 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     newReserveFactor: bigint,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfiguratorSetReserveFactorFuncAddr,
+      this.poolContract.poolConfiguratorSetReserveFactorFuncAddr,
       [asset, newReserveFactor.toString()],
     );
+  }
+
+  /**
+   * Retrieves the pending ltv for an asset from the pool contract.
+   *
+   * @returns {Promise<bigint>} A promise that resolves to the pending ltv as a bigint.
+   */
+  public async getPendingLtv(asset: AccountAddress): Promise<bigint> {
+    const [resp] = (
+      await this.callViewMethod(
+        this.poolContract.poolConfiguratorGetPendingLtvFuncAddr,
+        [asset],
+      )
+    ).map(mapToBigInt);
+    return resp;
   }
 
   /**
@@ -919,7 +1065,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     enabled: boolean,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfiguratorSetReserveFlashLoaningFuncAddr,
+      this.poolContract.poolConfiguratorSetReserveFlashLoaningFuncAddr,
       [asset, enabled],
     );
   }
@@ -936,16 +1082,17 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     freeze: boolean,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfiguratorSetReserveFreezeFuncAddr,
+      this.poolContract.poolConfiguratorSetReserveFreezeFuncAddr,
       [asset, freeze],
     );
   }
 
   /**
-   * Sets the paused state of a reserve.
+   * Sets the paused state of a reserve with a grace period.
    *
    * @param asset - The address of the asset to be paused or unpaused.
    * @param paused - A boolean indicating whether to pause (true) or unpause (false) the reserve.
+   * @param gracePeriod - A number indicationg the grace period.
    * @returns A promise that resolves to a `CommittedTransactionResponse` object.
    */
   public async setReservePaused(
@@ -954,8 +1101,40 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     gracePeriod: bigint = 0n,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfiguratorSetReservePauseFuncAddr,
+      this.poolContract.poolConfiguratorSetReservePauseFuncAddr,
       [asset, paused, gracePeriod],
+    );
+  }
+
+  /**
+   * Sets the paused state of a reserve without a grace period.
+   *
+   * @param asset - The address of the asset to be paused or unpaused.
+   * @param paused - A boolean indicating whether to pause (true) or unpause (false) the reserve.
+   * @returns A promise that resolves to a `CommittedTransactionResponse` object.
+   */
+  public async setReservePausedNoGracePeriod(
+    asset: AccountAddress,
+    paused: boolean,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.poolContract.poolConfiguratorSetReservePauseNoGracePeriodFuncAddr,
+      [asset, paused],
+    );
+  }
+
+  /**
+   * Disables the liquidation with no grace period.
+   *
+   * @param asset - The address of the asset.
+   * @returns A promise that resolves to a `CommittedTransactionResponse` object.
+   */
+  public async disableLiquidationdNoGracePeriod(
+    asset: AccountAddress,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.poolContract.poolConfiguratorDisableLiquidationGracePeriodFuncAddr,
+      [asset],
     );
   }
 
@@ -971,7 +1150,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     newSiloed: boolean,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfiguratorSetSiloedBorrowingFuncAddr,
+      this.poolContract.poolConfiguratorSetSiloedBorrowingFuncAddr,
       [asset, newSiloed],
     );
   }
@@ -988,40 +1167,37 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     newSupplyCap: bigint,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfiguratorSetSupplyCapFuncAddr,
+      this.poolContract.poolConfiguratorSetSupplyCapFuncAddr,
       [asset, newSupplyCap.toString()],
     );
   }
 
   /**
-   * Sets the unbacked mint cap for a specific asset.
+   * Updates the interest rate strategy.
    *
-   * @param asset - The address of the asset for which the unbacked mint cap is being set.
-   * @param newUnbackedMintCap - The new unbacked mint cap value to be set.
-   * @returns A promise that resolves to the response of the committed transaction.
+   * @param asset - The account address of the asset for which the interest rate strategy is to be applied.
+   * @param optimalUsageRatio - The optimal usage ratio of the interest rate strategy which is to be applied.
+   * @param baseVariableBorrowRate - The base variable borrow rate for which the interest rate strategy is to be applied.
+   * @param variableRateSlope1 - The variable rate slope 1 of the interest rate strategy which is to be applied.
+   * @param variableRateSlope2 -  The variable rate slope 2 of the interest rate strategy which is to be applied.
+   * @returns A promise that resolves to a CommittedTransactionResponse.
    */
-  public async setUnbackedMintCap(
+  public async updateInterestRateStrategy(
     asset: AccountAddress,
-    newUnbackedMintCap: bigint,
+    optimalUsageRatio: bigint,
+    baseVariableBorrowRate: bigint,
+    variableRateSlope1: bigint,
+    variableRateSlope2: bigint,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfiguratorSetUnbackedMintCapFuncAddr,
-      [asset, newUnbackedMintCap.toString()],
-    );
-  }
-
-  /**
-   * Updates the bridge protocol fee in the pool contract.
-   *
-   * @param newBridgeProtocolFee - The new bridge protocol fee to be set, represented as a bigint.
-   * @returns A promise that resolves to a CommittedTransactionResponse once the transaction is sent and the response is received.
-   */
-  public async updateBridgeProtocolFee(
-    newBridgeProtocolFee: bigint,
-  ): Promise<CommittedTransactionResponse> {
-    return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfiguratorUpdateBridgeProtocolFeeFuncAddr,
-      [newBridgeProtocolFee.toString()],
+      this.poolContract.poolConfiguratorUpdateInterestRateStrategyFuncAddr,
+      [
+        asset,
+        optimalUsageRatio,
+        baseVariableBorrowRate,
+        variableRateSlope1,
+        variableRateSlope2,
+      ],
     );
   }
 
@@ -1036,7 +1212,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
       this.poolContract
-        .PoolConfiguratorUpdateFlashloanPremiumToProtocolFuncAddr,
+        .poolConfiguratorUpdateFlashloanPremiumToProtocolFuncAddr,
       [newFlashloanPremiumToProtocol.toString()],
     );
   }
@@ -1051,27 +1227,9 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     newFlashloanPremiumTotal: bigint,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfiguratorUpdateFlashloanPremiumTotalFuncAddr,
+      this.poolContract.poolConfiguratorUpdateFlashloanPremiumTotalFuncAddr,
       [newFlashloanPremiumTotal.toString()],
     );
-  }
-
-  /**
-   * Retrieves the revision number of the pool configurator.
-   *
-   * This method calls the `PoolConfiguratorGetRevisionFuncAddr` function on the pool contract
-   * and maps the response to a bigint.
-   *
-   * @returns {Promise<bigint>} A promise that resolves to the revision number of the pool configurator.
-   */
-  public async getPoolConfiguratorRevision(): Promise<bigint> {
-    const [resp] = (
-      await this.callViewMethod(
-        this.poolContract.PoolConfiguratorGetRevisionFuncAddr,
-        [],
-      )
-    ).map(mapToBigInt);
-    return resp;
   }
 
   /**
@@ -1084,31 +1242,8 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     categoryId: number,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolSetUserEmodeFuncAddr,
+      this.poolContract.poolSetUserEmodeFuncAddr,
       [categoryId],
-    );
-  }
-
-  /**
-   * Configures an eMode category with the specified parameters.
-   *
-   * @param ltv - The loan-to-value ratio for the eMode category.
-   * @param liquidationThreshold - The liquidation threshold for the eMode category.
-   * @param liquidationBonus - The liquidation bonus for the eMode category.
-   * @param priceSource - The account address that serves as the price source for the eMode category.
-   * @param label - A label for the eMode category.
-   * @returns A promise that resolves to a `CommittedTransactionResponse` object.
-   */
-  public async configureEmodeCategory(
-    ltv: number,
-    liquidationThreshold: bigint,
-    liquidationBonus: bigint,
-    priceSource: AccountAddress,
-    label: string,
-  ): Promise<CommittedTransactionResponse> {
-    return this.sendTxAndAwaitResponse(
-      this.poolContract.PoolConfigureEmodeCategoryFuncAddr,
-      [ltv, liquidationThreshold, liquidationBonus, priceSource, label],
     );
   }
 
@@ -1120,7 +1255,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
    */
   public async getEmodeCategoryData(id: number): Promise<number> {
     const [resp] = await this.callViewMethod(
-      this.poolContract.PoolGetEmodeCategoryDataFuncAddr,
+      this.poolContract.poolGetEmodeCategoryDataFuncAddr,
       [id],
     );
     return resp as number;
@@ -1134,10 +1269,80 @@ export class PoolClient extends AptosContractWrapperBaseClass {
    */
   public async getUserEmode(user: AccountAddress): Promise<number> {
     const [resp] = await this.callViewMethod(
-      this.poolContract.PoolGetUserEmodeFuncAddr,
+      this.poolContract.poolGetUserEmodeFuncAddr,
       [user],
     );
     return resp as number;
+  }
+
+  /**
+   * Retrieves the eMode (efficiency mode) label from the pool contract.
+   *
+   * @param emodeCategory - The emode cateogory number.
+   * @returns A promise that resolves to the emode label as a sting.
+   */
+  public async getEmodeEmodeLabel(emodeCategory: number): Promise<string> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.poolGetEmodeEmodeLabelFuncAddr,
+      [emodeCategory],
+    );
+    return resp as string;
+  }
+
+  /**
+   * Retrieves the eMode (efficiency mode) liquidation bonus from the pool contract.
+   *
+   * @param userEmodeCategory - The emode cateogory of the user.
+   * @returns A promise that resolves to the emode liquidation bonus as a number.
+   */
+  public async getEmodeEmodeLiquidationBonus(
+    userEmodeCategory: number,
+  ): Promise<number> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.poolGetEmodeEmodeLiquidationBonusFuncAddr,
+      [userEmodeCategory],
+    );
+    return resp as number;
+  }
+
+  /**
+   * Checks if the combination user and asset categories are an emode or not.
+   *
+   * @param emodeUserCategory - The emode cateogory of the user.
+   * @param emodeAssetCategory - The emode cateogory of the asset.
+   * @returns A promise that resolves to a boolean.
+   */
+  public async isInEmodeCategory(
+    emodeUserCategory: number,
+    emodeAssetCategory: number,
+  ): Promise<boolean> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.poolIsInEmodeCategoryFuncAddr,
+      [emodeUserCategory, emodeAssetCategory],
+    );
+    return resp as boolean;
+  }
+
+  /**
+   * Retrieves the user account data by user emode category from the pool contract.
+   *
+   * @param userEmodeCategory - The emode cateogory of the user.
+   * @returns A promise that resolves to the emode ltv and liquidation threshold as a number.
+   */
+  public async getUserAccountData(userEmodeCategory: number): Promise<{
+    ltv: bigint;
+    liquidationThreshold: bigint;
+  }> {
+    const [ltv, liquidationThreshold] = (
+      await this.callViewMethod(
+        this.poolContract.poolGetEmodeConfigurationFuncAddr,
+        [userEmodeCategory],
+      )
+    ).map(mapToBigInt);
+    return {
+      ltv,
+      liquidationThreshold,
+    };
   }
 
   /**
@@ -1151,7 +1356,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     const resp = (
       (
         await this.callViewMethod(
-          this.poolContract.GetAllReservesTokensFuncAddr,
+          this.poolContract.getAllReservesTokensFuncAddr,
           [],
         )
       ).at(0) as Array<any>
@@ -1177,7 +1382,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   public async getAllATokens(): Promise<Array<TokenData>> {
     const resp = (
       (
-        await this.callViewMethod(this.poolContract.GetAllATokensFuncAddr, [])
+        await this.callViewMethod(this.poolContract.getAllATokensFuncAddr, [])
       ).at(0) as Array<any>
     ).map(
       (item) =>
@@ -1209,7 +1414,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     const resp = (
       (
         await this.callViewMethod(
-          this.poolContract.GetAllVariableTokensFuncAddr,
+          this.poolContract.getAllVariableTokensFuncAddr,
           [],
         )
       ).at(0) as Array<any>
@@ -1254,7 +1459,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
       isActive,
       isFrozen,
     ] = await this.callViewMethod(
-      this.poolContract.GetReserveConfigurationDataFuncAddr,
+      this.poolContract.getReserveConfigurationDataFuncAddr,
       [asset],
     );
     return {
@@ -1278,7 +1483,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
    */
   public async getReserveEmodeCategory(asset: AccountAddress): Promise<number> {
     const [emodeCategory] = await this.callViewMethod(
-      this.poolContract.GetReserveEModeCategoryFuncAddr,
+      this.poolContract.getReserveEModeCategoryFuncAddr,
       [asset],
     );
     return emodeCategory as number;
@@ -1295,7 +1500,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
     supplyCap: bigint;
   }> {
     const [borrowCap, supplyCap] = await this.callViewMethod(
-      this.poolContract.GetReserveCapsFuncAddr,
+      this.poolContract.getReserveCapsFuncAddr,
       [asset],
     );
     return {
@@ -1312,7 +1517,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
    */
   public async getPaused(asset: AccountAddress): Promise<boolean> {
     const [isSiloedBorrowing] = await this.callViewMethod(
-      this.poolContract.GetPausedFuncAddr,
+      this.poolContract.getPausedFuncAddr,
       [asset],
     );
     return isSiloedBorrowing as boolean;
@@ -1326,7 +1531,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
    */
   public async getSiloedBorrowing(asset: AccountAddress): Promise<boolean> {
     const [isSiloedBorrowing] = await this.callViewMethod(
-      this.poolContract.GetSiloedBorrowingFuncAddr,
+      this.poolContract.getSiloedBorrowingFuncAddr,
       [asset],
     );
     return isSiloedBorrowing as boolean;
@@ -1343,26 +1548,11 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   ): Promise<bigint> {
     const [isSiloedBorrowing] = (
       await this.callViewMethod(
-        this.poolContract.GetLiquidationProtocolFeeTokensFuncAddr,
+        this.poolContract.getLiquidationProtocolFeeTokensFuncAddr,
         [asset],
       )
     ).map(mapToBigInt);
     return isSiloedBorrowing;
-  }
-
-  /**
-   * Retrieves the unbacked mint cap for a given asset.
-   *
-   * @param asset - The account address of the asset.
-   * @returns A promise that resolves to the unbacked mint cap as a bigint.
-   */
-  public async getUnbackedMintCap(asset: AccountAddress): Promise<bigint> {
-    const [unbackedMintCap] = (
-      await this.callViewMethod(this.poolContract.GetUnbackedMintCapFuncAddr, [
-        asset,
-      ])
-    ).map(mapToBigInt);
-    return unbackedMintCap;
   }
 
   /**
@@ -1373,7 +1563,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
    */
   public async getDebtCeiling(asset: AccountAddress): Promise<bigint> {
     const [debtCeiling] = (
-      await this.callViewMethod(this.poolContract.GetDebtCeilingFuncAddr, [
+      await this.callViewMethod(this.poolContract.getDebtCeilingFuncAddr, [
         asset,
       ])
     ).map(mapToBigInt);
@@ -1388,7 +1578,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   public async getDebtCeilingDecimals(): Promise<bigint> {
     const [debtCeiling] = (
       await this.callViewMethod(
-        this.poolContract.GetDebtCeilingDecimalsFuncAddr,
+        this.poolContract.getDebtCeilingDecimalsFuncAddr,
         [],
       )
     ).map(mapToBigInt);
@@ -1414,7 +1604,6 @@ export class PoolClient extends AptosContractWrapperBaseClass {
    */
   public async getReserveData2(asset: AccountAddress): Promise<ReserveData2> {
     const [
-      reserveUnbacked,
       reserveAccruedToTreasury,
       aTokenSupply,
       varTokenSupply,
@@ -1424,11 +1613,10 @@ export class PoolClient extends AptosContractWrapperBaseClass {
       reserveVarBorrowIndex,
       reserveLastUpdateTimestamp,
     ] = await this.callViewMethod(
-      this.poolContract.GetReserveEModeCategoryFuncAddr,
+      this.poolContract.getReserveEModeCategoryFuncAddr,
       [asset],
     );
     return {
-      reserveUnbacked: BigInt(reserveUnbacked.toString()),
       reserveAccruedToTreasury: BigInt(reserveAccruedToTreasury.toString()),
       aTokenSupply: BigInt(aTokenSupply.toString()),
       varTokenSupply: BigInt(varTokenSupply.toString()),
@@ -1453,7 +1641,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   public async getATokenTotalSupply(asset: AccountAddress): Promise<bigint> {
     const [totalSupply] = (
       await this.callViewMethod(
-        this.poolContract.GetATokenTotalSupplyFuncAddr,
+        this.poolContract.getATokenTotalSupplyFuncAddr,
         [asset],
       )
     ).map(mapToBigInt);
@@ -1468,7 +1656,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
    */
   public async getTotalDebt(asset: AccountAddress): Promise<bigint> {
     const [totalDebt] = (
-      await this.callViewMethod(this.poolContract.GetTotalDebtFuncAddr, [asset])
+      await this.callViewMethod(this.poolContract.getTotalDebtFuncAddr, [asset])
     ).map(mapToBigInt);
     return totalDebt;
   }
@@ -1498,7 +1686,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
       liquidityRate,
       usageAsCollateralEnabled,
     ] = await this.callViewMethod(
-      this.poolContract.GetUserReserveDataFuncAddr,
+      this.poolContract.getUserReserveDataFuncAddr,
       [asset, user],
     );
     return {
@@ -1522,7 +1710,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   }> {
     const [reserveATokenAddress, reserveVariableDebtTokenAddress] =
       await this.callViewMethod(
-        this.poolContract.GetReserveTokensAddressesFuncAddr,
+        this.poolContract.getReserveTokensAddressesFuncAddr,
         [asset],
       );
     return {
@@ -1543,10 +1731,26 @@ export class PoolClient extends AptosContractWrapperBaseClass {
    */
   public async getFlashloanEnabled(asset: AccountAddress): Promise<boolean> {
     const [isFlashloanEnabled] = await this.callViewMethod(
-      this.poolContract.GetFlashLoanEnabledFuncAddr,
+      this.poolContract.getFlashLoanEnabledFuncAddr,
       [asset],
     );
     return isFlashloanEnabled as boolean;
+  }
+
+  /**
+   * Retrieves the reserve deficit for a given asset.
+   *
+   * @param asset - The address of the asset to check.
+   * @returns A promise that resolves to a bigint.
+   */
+  public async getReserveDeficit(asset: AccountAddress): Promise<bigint> {
+    const [reserveDeficit] = (
+      await this.callViewMethod(
+        this.poolContract.poolGetReserveDeficitFuncAddr,
+        [asset],
+      )
+    ).map(mapToBigInt);
+    return reserveDeficit;
   }
 
   /**
@@ -1560,7 +1764,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   ): Promise<bigint> {
     const [totalSupply] = (
       await this.callViewMethod(
-        this.poolContract.PoolScaledATokenTotalSupplyFuncAddr,
+        this.poolContract.poolScaledATokenTotalSupplyFuncAddr,
         [aTokenAddress],
       )
     ).map(mapToBigInt);
@@ -1580,7 +1784,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   ): Promise<bigint> {
     const [balance] = (
       await this.callViewMethod(
-        this.poolContract.PoolScaledATokenBalanceOfFuncAddr,
+        this.poolContract.poolScaledATokenBalanceOfFuncAddr,
         [owner, aTokenAddress],
       )
     ).map(mapToBigInt);
@@ -1598,7 +1802,7 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   ): Promise<bigint> {
     const [totalSupply] = (
       await this.callViewMethod(
-        this.poolContract.PoolScaledVariableTokenTotalSupplyFuncAddr,
+        this.poolContract.poolScaledVariableTokenTotalSupplyFuncAddr,
         [aTokenAddress],
       )
     ).map(mapToBigInt);
@@ -1618,10 +1822,175 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   ): Promise<bigint> {
     const [balance] = (
       await this.callViewMethod(
-        this.poolContract.PoolScaledVariableTokenBalanceOfFuncAddr,
+        this.poolContract.poolScaledVariableTokenBalanceOfFuncAddr,
         [owner, varTokenAddress],
       )
     ).map(mapToBigInt);
     return balance;
+  }
+
+  /**
+   * Sets a new apt fee to the fee manager.
+   *
+   * @param newAptFee - The new apt fee to apply.
+   * @returns A promise that resolves to a CommittedTransactionResponse.
+   */
+  public async feeManagerSetAptFee(
+    newAptFee: bigint,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.poolContract.feeManagerSetAptFeeFuncAddr,
+      [newAptFee],
+    );
+  }
+
+  /**
+   * Transfers the collected fees by the fee manager to a given account.
+   *
+   * @param to - The account address to whom to transfer the collected fees.
+   * @param amount - The collected fee amount to transfer.
+   * @returns A promise that resolves to a CommittedTransactionResponse.
+   */
+  public async feeManagerTransferAptFee(
+    to: AccountAddress,
+    amount: bigint,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.poolContract.feeManagerTransferAptFeeFuncAddr,
+      [to, amount],
+    );
+  }
+
+  /**
+   * Retrieves the apt fee of the manager.
+   *
+   * @returns A promise that resolves to the apt fee as a bigint.
+   */
+  public async getFeeManagerGetAptFee(): Promise<bigint> {
+    const [resp] = (
+      await this.callViewMethod(
+        this.poolContract.feeManagerGetAptFeeFuncAddr,
+        [],
+      )
+    ).map(mapToBigInt);
+    return resp;
+  }
+
+  /**
+   * Retrieves the fee collector address.
+   *
+   * @returns A promise that resolves to the fee collector address.
+   */
+  public async getFeeManagerCollectorAddress(): Promise<AccountAddress> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.feeManagerGetFeeCollectorAddressFuncAddr,
+      [],
+    );
+    return AccountAddress.fromString(resp as string);
+  }
+
+  /**
+   * Retrieves the fee collector apt balance.
+   *
+   * @returns A promise that resolves to the fee collector apt balance.
+   */
+  public async getFeeManagerCollectorAptBalance(): Promise<bigint> {
+    const [resp] = (
+      await this.callViewMethod(
+        this.poolContract.feeManagerGetFeeCollectorAptBalanceFuncAddr,
+        [],
+      )
+    ).map(mapToBigInt);
+    return resp;
+  }
+
+  /**
+   * Retrieves the total fees collected by the fee manager.
+   *
+   * @returns A promise that resolves to the fee collector total collected fees.
+   */
+  public async getFeeManagerTotalFees(): Promise<bigint> {
+    const [resp] = (
+      await this.callViewMethod(
+        this.poolContract.feeManagerGetTotalFeesFuncAddr,
+        [],
+      )
+    ).map(mapToBigInt);
+    return resp;
+  }
+
+  /**
+   * Retrieves the fee manager object address.
+   *
+   * @returns A promise that resolves to the fee manager object address.
+   */
+  public async getFeeManagerGetFeeConfigObjectAddress(): Promise<AccountAddress> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.feeManagerGetFeeConfigObjectAddressFuncAddr,
+      [],
+    );
+    return AccountAddress.fromString(resp as string);
+  }
+
+  /**
+   * Returns if the address is the funds admin of the collector.
+   *
+   * @returns A promise that resolves to a boolean.
+   */
+  public async getCollectorIsFundsAdmin(
+    account: AccountAddress,
+  ): Promise<boolean> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.collectorIsFundsAdminFuncAddr,
+      [account],
+    );
+    return resp as boolean;
+  }
+
+  /**
+   * Transfers the collected fees by the collector to a given account.
+   *
+   * @param asset - The asset address.
+   * @param receiver - The account address to whom to transfer the collected fees.
+   * @param amount - The collected fee amount to transfer.
+   * @returns A promise that resolves to a CommittedTransactionResponse.
+   */
+  public async collectorWithdraw(
+    asset: AccountAddress,
+    receiver: AccountAddress,
+    amount: bigint,
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.poolContract.collectorWithdrawFuncAddr,
+      [asset, receiver, amount],
+    );
+  }
+
+  /**
+   * Retrieves the collector address.
+   *
+   * @returns A promise that resolves to the collector address.
+   */
+  public async getCollectorAddress(): Promise<AccountAddress> {
+    const [resp] = await this.callViewMethod(
+      this.poolContract.collectorAddressFeeFuncAddr,
+      [],
+    );
+    return AccountAddress.fromString(resp as string);
+  }
+
+  /**
+   * Retrieves the total fees collected by the collector.
+   *
+   * @returns A promise that resolves to the fee collector total collected fees.
+   */
+  public async getCollectorCollectedFees(): Promise<bigint> {
+    const [resp] = (
+      await this.callViewMethod(
+        this.poolContract.collectorGetCollectedFeesFuncAddr,
+        [],
+      )
+    ).map(mapToBigInt);
+    return resp;
   }
 }

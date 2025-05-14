@@ -65,73 +65,24 @@ export class ATokensClient extends AptosContractWrapperBaseClass {
   }
 
   /**
-   * Creates a new token with the specified parameters.
-   *
-   * @param maximumSupply - The maximum supply of the token.
-   * @param name - The name of the token.
-   * @param symbol - The symbol of the token.
-   * @param decimals - The number of decimal places the token uses.
-   * @param iconUri - The URI of the token's icon.
-   * @param projectUri - The URI of the project's website or information page.
-   * @param underlyingAsset - The account address of the underlying asset.
-   * @param treasuryAddress - The account address of the treasury.
-   * @returns A promise that resolves to a `CommittedTransactionResponse` object.
-   */
-  public async createToken(
-    maximumSupply: bigint,
-    name: string,
-    symbol: string,
-    decimals: number,
-    iconUri: string,
-    projectUri: string,
-    underlyingAsset: AccountAddress,
-    treasuryAddress: AccountAddress,
-  ): Promise<CommittedTransactionResponse> {
-    return this.sendTxAndAwaitResponse(
-      this.tokensContract.ATokenCreateTokenFuncAddr,
-      [
-        maximumSupply,
-        name,
-        symbol,
-        decimals,
-        iconUri,
-        projectUri,
-        underlyingAsset,
-        treasuryAddress,
-      ],
-    );
-  }
-
-  /**
    * Rescues tokens from the contract and sends them to a specified address.
    *
    * @param token - The address of the token to be rescued.
    * @param to - The address to which the rescued tokens will be sent.
    * @param amount - The amount of tokens to be rescued.
+   * @param metadataAddress - The address of the metadata associated with the token.
    * @returns A promise that resolves to the response of the committed transaction.
    */
   public async rescueTokens(
     token: AccountAddress,
     to: AccountAddress,
     amount: bigint,
+    metadataAddress: AccountAddress,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(
-      this.tokensContract.ATokenRescueTokensFuncAddr,
-      [token, to, amount.toString()],
+      this.tokensContract.aTokenRescueTokensFuncAddr,
+      [token, to, amount.toString(), metadataAddress],
     );
-  }
-
-  /**
-   * Retrieves the revision number of the AToken contract.
-   *
-   * @returns {Promise<number>} A promise that resolves to the revision number of the AToken contract.
-   */
-  public async getRevision(): Promise<number> {
-    const [resp] = await this.callViewMethod(
-      this.tokensContract.ATokenGetRevisionFuncAddr,
-      [],
-    );
-    return resp as number;
   }
 
   /**
@@ -146,7 +97,7 @@ export class ATokensClient extends AptosContractWrapperBaseClass {
     symbol: string,
   ): Promise<AccountAddress> {
     const [resp] = await this.callViewMethod(
-      this.tokensContract.ATokenGetMetadataBySymbolFuncAddr,
+      this.tokensContract.aTokenGetMetadataBySymbolFuncAddr,
       [owner, symbol],
     );
     return AccountAddress.fromString((resp as Metadata).inner);
@@ -162,7 +113,7 @@ export class ATokensClient extends AptosContractWrapperBaseClass {
     metadataAddress: AccountAddress,
   ): Promise<AccountAddress> {
     const [resp] = await this.callViewMethod(
-      this.tokensContract.ATokenGetTokenAccountAddressFuncAddr,
+      this.tokensContract.aTokenGetTokenAccountAddressFuncAddr,
       [metadataAddress],
     );
     return AccountAddress.fromString(resp as string);
@@ -172,16 +123,12 @@ export class ATokensClient extends AptosContractWrapperBaseClass {
    * Retrieves the token address for a given owner and token symbol.
    *
    * @param owner - The account address of the token owner.
-   * @param symbol - The symbol of the token.
    * @returns A promise that resolves to the account address of the token.
    */
-  public async getTokenAddress(
-    owner: AccountAddress,
-    symbol: string,
-  ): Promise<AccountAddress> {
+  public async getTokenAddress(symbol: string): Promise<AccountAddress> {
     const [resp] = await this.callViewMethod(
-      this.tokensContract.ATokenTokenAddressFuncAddr,
-      [owner, symbol],
+      this.tokensContract.aTokenTokenAddressFuncAddr,
+      [symbol],
     );
     return AccountAddress.fromString(resp as string);
   }
@@ -189,17 +136,13 @@ export class ATokensClient extends AptosContractWrapperBaseClass {
   /**
    * Retrieves the metadata of a specific asset for a given owner and symbol.
    *
-   * @param owner - The account address of the asset owner.
    * @param symbol - The symbol of the asset.
    * @returns A promise that resolves to the account address containing the asset metadata.
    */
-  public async assetMetadata(
-    owner: AccountAddress,
-    symbol: string,
-  ): Promise<AccountAddress> {
+  public async assetMetadata(symbol: string): Promise<AccountAddress> {
     const [resp] = await this.callViewMethod(
-      this.tokensContract.ATokenAssetMetadataFuncAddr,
-      [owner, symbol],
+      this.tokensContract.aTokenAssetMetadataFuncAddr,
+      [symbol],
     );
     return AccountAddress.fromString((resp as Metadata).inner);
   }
@@ -214,7 +157,7 @@ export class ATokensClient extends AptosContractWrapperBaseClass {
     metadataAddress: AccountAddress,
   ): Promise<AccountAddress> {
     const [resp] = await this.callViewMethod(
-      this.tokensContract.ATokenGetReserveTreasuryAddressFuncAddr,
+      this.tokensContract.aTokenGetReserveTreasuryAddressFuncAddr,
       [metadataAddress],
     );
     return AccountAddress.fromString(resp as string);
@@ -230,7 +173,7 @@ export class ATokensClient extends AptosContractWrapperBaseClass {
     metadataAddress: AccountAddress,
   ): Promise<AccountAddress> {
     const [resp] = await this.callViewMethod(
-      this.tokensContract.ATokenGetUnderlyingAssetAddressFuncAddr,
+      this.tokensContract.aTokenGetUnderlyingAssetAddressFuncAddr,
       [metadataAddress],
     );
     return AccountAddress.fromString(resp as string);
@@ -249,7 +192,7 @@ export class ATokensClient extends AptosContractWrapperBaseClass {
   ): Promise<bigint> {
     const [resp] = (
       await this.callViewMethod(
-        this.tokensContract.ATokenScaledBalanceOfFuncAddr,
+        this.tokensContract.aTokenScaledBalanceOfFuncAddr,
         [owner, metadataAddress],
       )
     ).map(mapToBigInt);
@@ -268,7 +211,7 @@ export class ATokensClient extends AptosContractWrapperBaseClass {
     metadataAddress: AccountAddress,
   ): Promise<bigint> {
     const [resp] = (
-      await this.callViewMethod(this.tokensContract.ATokenBalanceOfFuncAddr, [
+      await this.callViewMethod(this.tokensContract.aTokenBalanceOfFuncAddr, [
         owner,
         metadataAddress,
       ])
@@ -287,7 +230,7 @@ export class ATokensClient extends AptosContractWrapperBaseClass {
   ): Promise<bigint> {
     const [resp] = (
       await this.callViewMethod(
-        this.tokensContract.ATokenScaledTotalSupplyFuncAddr,
+        this.tokensContract.aTokenScaledTotalSupplyFuncAddr,
         [metadataAddress],
       )
     ).map(mapToBigInt);
@@ -302,7 +245,7 @@ export class ATokensClient extends AptosContractWrapperBaseClass {
    */
   public async totalSupply(metadataAddress: AccountAddress): Promise<bigint> {
     const [resp] = (
-      await this.callViewMethod(this.tokensContract.ATokenTotalSupplyFuncAddr, [
+      await this.callViewMethod(this.tokensContract.aTokenTotalSupplyFuncAddr, [
         metadataAddress,
       ])
     ).map(mapToBigInt);
@@ -322,7 +265,7 @@ export class ATokensClient extends AptosContractWrapperBaseClass {
   ): Promise<bigint> {
     const [resp] = (
       await this.callViewMethod(
-        this.tokensContract.ATokenGetGetPreviousIndexFuncAddr,
+        this.tokensContract.aTokenGetGetPreviousIndexFuncAddr,
         [user, metadataAddress],
       )
     ).map(mapToBigInt);
@@ -342,7 +285,7 @@ export class ATokensClient extends AptosContractWrapperBaseClass {
   ): Promise<{ scaledUserBalance: bigint; supply: bigint }> {
     const [scaledUserBalance, supply] = (
       await this.callViewMethod(
-        this.tokensContract.ATokenGetScaledUserBalanceAndSupplyFuncAddr,
+        this.tokensContract.aTokenGetScaledUserBalanceAndSupplyFuncAddr,
         [owner, metadataAddress],
       )
     ).map(mapToBigInt);
@@ -357,7 +300,7 @@ export class ATokensClient extends AptosContractWrapperBaseClass {
    */
   public async name(metadataAddress: AccountAddress): Promise<string> {
     const [resp] = await this.callViewMethod(
-      this.tokensContract.ATokenNameFuncAddr,
+      this.tokensContract.aTokenNameFuncAddr,
       [metadataAddress],
     );
     return resp as string;
@@ -371,7 +314,7 @@ export class ATokensClient extends AptosContractWrapperBaseClass {
    */
   public async symbol(metadataAddress: AccountAddress): Promise<string> {
     const [resp] = await this.callViewMethod(
-      this.tokensContract.ATokenSymbolFuncAddr,
+      this.tokensContract.aTokenSymbolFuncAddr,
       [metadataAddress],
     );
     return resp as string;
@@ -385,7 +328,7 @@ export class ATokensClient extends AptosContractWrapperBaseClass {
    */
   public async decimals(metadataAddress: AccountAddress): Promise<bigint> {
     const [resp] = (
-      await this.callViewMethod(this.tokensContract.ATokenDecimalsFuncAddr, [
+      await this.callViewMethod(this.tokensContract.aTokenDecimalsFuncAddr, [
         metadataAddress,
       ])
     ).map(mapToBigInt);

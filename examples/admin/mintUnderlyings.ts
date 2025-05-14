@@ -9,51 +9,88 @@ import { UnderlyingTokensClient } from "../../src/clients/underlyingTokensClient
 import { PoolClient } from "../../src/clients/poolClient";
 import { AptosProvider } from "../../src/clients";
 import { DEFAULT_TESTNET_CONFIG } from "../../src/configs/testnet";
+import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
 
-const UNDERLYING_MANAGER_PRIVATE_KEY = "0x0";
-const ADDRESSES_TO_FUND = ["0x0"].map((addr) =>
-  AccountAddress.fromString(addr),
-);
-const fundAmount = BigInt(1000);
+const main = async () => {
+  const argv = await yargs(hideBin(process.argv))
+    .option("privateKey", {
+      alias: "k",
+      type: "string",
+      description: "Private key of the underlying token manager",
+      demandOption: true,
+    })
+    .option("recipients", {
+      alias: "r",
+      type: "string",
+      array: true,
+      description: "One or more Aptos addresses to fund",
+      demandOption: true,
+    })
+    .option("amount", {
+      alias: "a",
+      type: "number",
+      description: "Amount to mint for each token and recipient (as u64)",
+      demandOption: true,
+    })
+    .example(
+      "pnpm run fund-underlying -k 0xabc123... -r 0xaddr1 0xaddr2 -a 1000",
+      "Mint 1000 of all reserve tokens to both recipients",
+    )
+    .help()
+    .parse();
 
-(async () => {
-  // global aptos provider
+  const privateKey = argv.privateKey.startsWith("0x")
+    ? argv.privateKey
+    : "0x" + argv.privateKey;
+  const recipients = argv.recipients.map((addr) =>
+    AccountAddress.fromString(addr),
+  );
+  const fundAmount = BigInt(argv.amount);
+
   const aptosProvider = AptosProvider.fromConfig(DEFAULT_TESTNET_CONFIG);
-  // all underlying-tokens-related operations client
   const underlyingTokensClient = new UnderlyingTokensClient(aptosProvider);
-  // all pool-related operations client
   const poolClient = new PoolClient(aptosProvider);
 
   try {
-    // get all reserve underlying tokens
     const allReserveUnderlyingTokens = await poolClient.getAllReservesTokens();
+    console.log(`📦 Found ${allReserveUnderlyingTokens.length} reserve tokens`);
+    console.log(
+      `👥 Funding ${recipients.length} recipient(s) with ${fundAmount} each\n`,
+    );
 
-    // set the tx sender
-    const underlyingManagerAccount = Account.fromPrivateKey({
+    const signer = Account.fromPrivateKey({
       privateKey: new Ed25519PrivateKey(
-        PrivateKey.formatPrivateKey(
-          UNDERLYING_MANAGER_PRIVATE_KEY,
-          PrivateKeyVariants.Ed25519,
-        ),
+        PrivateKey.formatPrivateKey(privateKey, PrivateKeyVariants.Ed25519),
       ),
     });
-    underlyingTokensClient.setSigner(underlyingManagerAccount);
+    underlyingTokensClient.setSigner(signer);
 
-    // get details for each underlying token
-    for (const reserveUnderlyingToken of allReserveUnderlyingTokens) {
-      for (const addressToFund of ADDRESSES_TO_FUND) {
+    for (const token of allReserveUnderlyingTokens) {
+      console.log(
+        `🔹 Token: ${token.symbol} (${token.tokenAddress.toString()})`,
+      );
+
+      for (const recipient of recipients) {
         const txReceipt = await underlyingTokensClient.mint(
-          addressToFund,
+          recipient,
           fundAmount,
-          reserveUnderlyingToken.tokenAddress,
+          token.tokenAddress,
         );
-        console.log(`User addresses ${addressToFund.toString()} funded with ${fundAmount.toString()} ${
-          reserveUnderlyingToken.symbol
-        }
-        Tx Hash = ${txReceipt.hash}`);
+
+        console.log(
+          `   ✅ Funded ${recipient.toString()} with ${fundAmount} ${token.symbol}`,
+        );
+        console.log(`   🔗 Tx Hash: ${txReceipt.hash}`);
       }
+
+      console.log(""); // separator
     }
+
+    console.log("🎉 All recipients funded with all underlying reserve tokens.");
   } catch (ex) {
-    console.error("Expection = ", ex);
+    console.error("❌ Exception:", ex);
   }
-})();
+};
+
+main();

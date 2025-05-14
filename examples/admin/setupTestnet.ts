@@ -320,7 +320,7 @@ const reserves: ReserveConfig[] = [
     DEFAULT_TESTNET_CONFIG,
     process.env.POOL_PRIVATE_KEY || "",
     process.env.MOCK_ORACLE_PRIVATE_KEY || "",
-    process.env.UNDERLYING_TOKENS_PRIVATE_KEY || "",
+    process.env.AAVE_MOCK_UNDERLYING_TOKENS_PRIVATE_KEY || "",
     process.env.MNEMONIC || "",
   );
   await aptosConfigurator.setupProtocol(reserves, eModes);
