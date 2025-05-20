@@ -97,9 +97,9 @@ export interface ReserveConfig {
  */
 interface EModeConfig {
   categoryId: number;
-  ltv: number;
-  liquidationThreshold: number;
-  liquidationBonus: number;
+  ltv: bigint;
+  liquidationThreshold: bigint;
+  liquidationBonus: bigint;
   oracle: AccountAddress;
   label: string;
 }
