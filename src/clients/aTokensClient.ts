@@ -88,17 +88,13 @@ export class ATokensClient extends AptosContractWrapperBaseClass {
   /**
    * Retrieves the metadata of an AToken by its symbol for a given account owner.
    *
-   * @param owner - The account address of the owner.
    * @param symbol - The symbol of the AToken.
    * @returns A promise that resolves to the account address containing the metadata.
    */
-  public async getMetadataBySymbol(
-    owner: AccountAddress,
-    symbol: string,
-  ): Promise<AccountAddress> {
+  public async getMetadataBySymbol(symbol: string): Promise<AccountAddress> {
     const [resp] = await this.callViewMethod(
       this.tokensContract.aTokenGetMetadataBySymbolFuncAddr,
-      [owner, symbol],
+      [symbol],
     );
     return AccountAddress.fromString((resp as Metadata).inner);
   }
