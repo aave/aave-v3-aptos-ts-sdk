@@ -69,19 +69,15 @@ export class VariableTokensClient extends AptosContractWrapperBaseClass {
   /**
    * Retrieves the metadata associated with a given token symbol for a specific account.
    *
-   * @param owner - The account address of the token owner.
    * @param symbol - The symbol of the token for which metadata is being requested.
    * @returns A promise that resolves to the account address containing the metadata.
    *
    * @throws Will throw an error if the call to the view method fails.
    */
-  public async getMetadataBySymbol(
-    owner: AccountAddress,
-    symbol: string,
-  ): Promise<AccountAddress> {
+  public async getMetadataBySymbol(symbol: string): Promise<AccountAddress> {
     const [resp] = await this.callViewMethod(
       this.tokensContract.variableGetMetadataBySymbolFuncAddr,
-      [owner, symbol],
+      [symbol],
     );
     return AccountAddress.fromString((resp as Metadata).inner);
   }
