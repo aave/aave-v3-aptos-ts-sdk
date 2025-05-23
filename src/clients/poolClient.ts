@@ -883,9 +883,9 @@ export class PoolClient extends AptosContractWrapperBaseClass {
    */
   public async setEmodeCategory(
     categoryId: number,
-    ltv: bigint,
-    liquidationThreshold: bigint,
-    liquidationBonus: bigint,
+    ltv: number,
+    liquidationThreshold: number,
+    liquidationBonus: number,
     label: string,
   ): Promise<CommittedTransactionResponse> {
     return this.sendTxAndAwaitResponse(

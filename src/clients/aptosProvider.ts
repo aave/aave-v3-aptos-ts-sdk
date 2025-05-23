@@ -17,6 +17,7 @@ import YAML from "yaml";
  * @interface AptosProviderConfig
  *
  * @property {Network} network - The network configuration for the AptosProvider.
+ * @property {string} aptosApiKey - The aptos api key.
  * @property {Object} addresses - The contract addresses used by the AptosProvider.
  * @property {string} addresses.A_TOKENS - The address for A tokens.
  * @property {string} addresses.UNDERLYING_TOKENS - The address for underlying tokens.
@@ -29,6 +30,7 @@ import YAML from "yaml";
  */
 export interface AptosProviderConfig {
   network: Network;
+  aptosApiKey?: string;
   addresses: {
     A_TOKENS: string;
     AAVE_MOCK_UNDERLYINGS: string;
@@ -205,6 +207,11 @@ export class AptosProvider {
     );
     const aptosConfig = new AptosConfig({
       network: aptosProvider.getNetwork(),
+      clientConfig: {
+        ...(process.env.APTOS_API_KEY && {
+          API_KEY: process.env.APTOS_API_KEY,
+        }),
+      },
     });
     aptosProvider.setAptos(aptosConfig);
     return aptosProvider;
@@ -428,6 +435,11 @@ export class AptosProvider {
 
     const aptosConfig = new AptosConfig({
       network: aptosProvider.getNetwork(),
+      clientConfig: {
+        ...(process.env.APTOS_API_KEY && {
+          API_KEY: process.env.APTOS_API_KEY,
+        }),
+      },
     });
     aptosProvider.setAptos(aptosConfig);
     return aptosProvider;
