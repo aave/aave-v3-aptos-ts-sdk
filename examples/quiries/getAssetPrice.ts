@@ -11,6 +11,7 @@ const main = async () => {
       alias: "a",
       type: "string",
       description: "Asset address to fetch the oracle price for",
+      choices: ["APT", "USDT", "USDC", "sUSDe"],
       demandOption: true,
     })
     .example(

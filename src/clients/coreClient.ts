@@ -2,7 +2,6 @@ import {
   AccountAddress,
   CommittedTransactionResponse,
   Ed25519Account,
-  SimpleTransaction,
 } from "@aptos-labs/ts-sdk";
 import { AptosContractWrapperBaseClass } from "./baseClass";
 import { AptosProvider } from "./aptosProvider";
@@ -45,8 +44,8 @@ export class CoreClient extends AptosContractWrapperBaseClass {
   /**
    * Supplies a specified amount of an asset on behalf of a given account.
    *
-   * @param asset - The address of the asset to supply.
-   * @param amount - The amount of the asset to supply, represented as a bigint.
+   * @param asset - The address of the fungible asset to supply.
+   * @param amount - The amount of the fungible asset to supply, represented as a bigint.
    * @param onBehalfOf - The address of the account on whose behalf the asset is being supplied.
    * @param referralCode - A referral code for tracking referrals.
    * @returns A promise that resolves to a CommittedTransactionResponse.
@@ -64,28 +63,25 @@ export class CoreClient extends AptosContractWrapperBaseClass {
   }
 
   /**
-   * Builds a supply transaction.
+   * Supplies a specified amount of a coin on behalf of a given account.
    *
-   * @param user - The account address of the user initiating the supply.
-   * @param asset - The account address of the asset to be supplied.
-   * @param amount - The amount of the asset to be supplied, represented as a bigint.
-   * @param onBehalfOf - The account address on whose behalf the supply is being made.
-   * @param referralCode - The referral code for the transaction.
-   * @returns A promise that resolves to a SimpleTransaction object.
+   * @param coinType - The type of the coin to supply.
+   * @param amount - The amount of the coin to supply, represented as a bigint.
+   * @param onBehalfOf - The address of the account on whose behalf the asset is being supplied.
+   * @param referralCode - A referral code for tracking referrals.
+   * @returns A promise that resolves to a CommittedTransactionResponse.
    */
-  public async buildSupply(
-    user: AccountAddress,
-    asset: AccountAddress,
+  public async supplyCoin(
+    coinType: string,
     amount: bigint,
     onBehalfOf: AccountAddress,
     referralCode: number,
-  ): Promise<SimpleTransaction> {
-    return this.buildTx(user, this.supplyBorrowContract.supplyFuncAddr, [
-      asset,
-      amount.toString(),
-      onBehalfOf,
-      referralCode,
-    ]);
+  ): Promise<CommittedTransactionResponse> {
+    return this.sendTxAndAwaitResponse(
+      this.supplyBorrowContract.supplyCoinFuncAddr,
+      [amount.toString(), onBehalfOf, referralCode],
+      [coinType],
+    );
   }
 
   /**
