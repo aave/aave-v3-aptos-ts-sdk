@@ -6,6 +6,7 @@ import {
 import { AptosContractWrapperBaseClass } from "./baseClass";
 import { CoinMigratorContract } from "../contracts/coinMigrator";
 import { AptosProvider } from "./aptosProvider";
+import { mapToBigInt } from "../helpers/common";
 
 /**
  * The `CoinMigratorClient` class provides methods to interact with the Coin Migrator contract on the Aptos blockchain.
@@ -105,6 +106,28 @@ export class CoinMigratorClient extends AptosContractWrapperBaseClass {
         [coinType],
       )
     ).map((item) => AccountAddress.fromString(item as string));
+    return resp;
+  }
+
+  /**
+   * Retrieves the FA (Fungible Address) balance associated with the coin migrator contract.
+   *
+   * @param coinType - The coin type generic over CoinType e.g. "0x1::aptos_coin::AptosCoin".
+   * This method calls the `getFaBalanceFuncAddr` view method on the coin migrator contract
+   * and maps the response to bigint.
+   * @returns {Promise<AccountAddress>} A promise that resolves to the FA balance as a bigint.
+   */
+  public async getFaBalance(
+    coinType: string,
+    owner: AccountAddress,
+  ): Promise<bigint> {
+    const [resp] = (
+      await this.callViewMethod(
+        this.coinMigratorContract.getFaBalanceFuncAddr,
+        [owner],
+        [coinType],
+      )
+    ).map(mapToBigInt);
     return resp;
   }
 

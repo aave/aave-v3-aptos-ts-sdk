@@ -30,6 +30,8 @@ import { AAVE_PROFILES, AptosProvider } from "../clients/aptosProvider";
 export class SupplyBorrowContract {
   supplyFuncAddr: MoveFunctionId;
 
+  supplyCoinFuncAddr: MoveFunctionId;
+
   withdrawFuncAddr: MoveFunctionId;
 
   setUserUseReserveAsCollateralFuncAddr: MoveFunctionId;
@@ -53,7 +55,8 @@ export class SupplyBorrowContract {
    * by retrieving the profile address associated with AAVE_POOL from the provider.
    *
    * The following function addresses are set:
-   * - `supplyFuncAddr`: Address for the supply logic.
+   * - `supplyFuncAddr`: Address for the supply of fungible assets logic.
+   * - `supplyCoinFuncAddr`: Address for the supply of coins logic.
    * - `withdrawFuncAddr`: Address for the withdraw logic.
    * - `setUserUseReserveAsCollateralFuncAddr`: Address for setting user reserve as collateral.
    * - `borrowFuncAddr`: Address for the borrow logic.
@@ -68,6 +71,7 @@ export class SupplyBorrowContract {
     );
     const SupplyBorrowManagerAccountAddress = SupplyBorrowManager.toString();
     this.supplyFuncAddr = `${SupplyBorrowManagerAccountAddress}::supply_logic::supply`;
+    this.supplyCoinFuncAddr = `${SupplyBorrowManagerAccountAddress}::supply_logic::supply_coin`;
     this.withdrawFuncAddr = `${SupplyBorrowManagerAccountAddress}::supply_logic::withdraw`;
     this.setUserUseReserveAsCollateralFuncAddr = `${SupplyBorrowManagerAccountAddress}::supply_logic::set_user_use_reserve_as_collateral`;
     this.borrowFuncAddr = `${SupplyBorrowManagerAccountAddress}::borrow_logic::borrow`;

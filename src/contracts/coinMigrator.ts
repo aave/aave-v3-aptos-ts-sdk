@@ -20,6 +20,7 @@ export class CoinMigratorContract {
   // Resource Func Addr
   coinToFaFuncAddr: MoveFunctionId;
   getFaAddrFuncAddr: MoveFunctionId;
+  getFaBalanceFuncAddr: MoveFunctionId;
 
   /**
    * Constructs a new instance of the CoinMigrator class.
@@ -29,6 +30,7 @@ export class CoinMigratorContract {
    * Initializes the following properties:
    * - `coinToFaFuncAddr`: The address of the function to migrate coins to FA.
    * - `getFaAddrFuncAddr`: The address of the function to get the FA address.
+   * - `getFaBalanceFuncAddr`: The address of the function to get the FA balance.
    */
   constructor(provider: AptosProvider) {
     const CoinMigratorManager = provider.getProfileAddressByName(
@@ -37,5 +39,6 @@ export class CoinMigratorContract {
     const CoinMigratorAccountAddress = CoinMigratorManager.toString();
     this.coinToFaFuncAddr = `${CoinMigratorAccountAddress}::coin_migrator::coin_to_fa`;
     this.getFaAddrFuncAddr = `${CoinMigratorAccountAddress}::coin_migrator::get_fa_address`;
+    this.getFaBalanceFuncAddr = `${CoinMigratorAccountAddress}::coin_migrator::get_fa_balance`;
   }
 }
