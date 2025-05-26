@@ -85,22 +85,6 @@ export class InterestRateClient extends AptosContractWrapperBaseClass {
   }
 
   /**
-   * Retrieves the maximum excess usage ratio for a given asset.
-   *
-   * @param asset - The account address of the asset.
-   * @returns A promise that resolves to a bigint representing the maximum excess usage ratio.
-   */
-  public async getMaxExcessUsageRatio(asset: AccountAddress): Promise<bigint> {
-    const [resp] = (
-      await this.callViewMethod(
-        this.interestRateContract.getGetMaxExcessUsageRatioFuncAddr,
-        [asset],
-      )
-    ).map(mapToBigInt);
-    return resp;
-  }
-
-  /**
    * Retrieves the variable rate slope 1 for a given asset.
    *
    * @param asset - The address of the asset for which to get the variable rate slope 1.

@@ -36,8 +36,6 @@ export class InterestRateContract {
 
   getGetOptimalUsageRatioFuncAddr: MoveFunctionId;
 
-  getGetMaxExcessUsageRatioFuncAddr: MoveFunctionId;
-
   getVariableRateSlope1FuncAddr: MoveFunctionId;
 
   getVariableRateSlope2FuncAddr: MoveFunctionId;
@@ -66,7 +64,6 @@ export class InterestRateContract {
     this.getVariableRateSlope2FuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::get_variable_rate_slope2`;
     this.getBaseVariableBorrowRateFuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::get_base_variable_borrow_rate`;
     this.getMaxVariableBorrowRateFuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::get_max_variable_borrow_rate`;
-    this.getGetMaxExcessUsageRatioFuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::get_max_excess_usage_ratio`;
     this.calculateInterestRatesFuncAddr = `${PoolManagerAccountAddress}::default_reserve_interest_rate_strategy::calculate_interest_rates`;
   }
 }
