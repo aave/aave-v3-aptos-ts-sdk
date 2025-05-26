@@ -35,7 +35,9 @@ export const DEFAULT_MAINNET_CONFIG: AptosProviderConfig = {
     AAVE_MATH: AccountAddress.fromString("0x0"),
   },
   assets: {
-    APT: AccountAddress.fromString("0x1a"),
+    APT: AccountAddress.fromString(
+      "0x000000000000000000000000000000000000000000000000000000000000001a",
+    ),
     USDC: AccountAddress.fromString(
       "0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b",
     ),

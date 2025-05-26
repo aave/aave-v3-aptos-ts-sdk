@@ -53,7 +53,9 @@ export const DEFAULT_TESTNET_CONFIG: AptosProviderConfig = {
     ),
   },
   assets: {
-    APT: AccountAddress.fromString("0x1a"),
+    APT: AccountAddress.fromString(
+      "0x000000000000000000000000000000000000000000000000000000000000001a",
+    ),
     USDC: AccountAddress.fromString(
       "0x69091fbab5f7d635ee7ac5098cf0c1efbe31d68fec0f2cd565e8d168daf52832",
     ),
