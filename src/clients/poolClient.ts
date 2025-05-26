@@ -1516,11 +1516,11 @@ export class PoolClient extends AptosContractWrapperBaseClass {
    * @returns A promise that resolves to a boolean indicating whether the asset is paused.
    */
   public async getPaused(asset: AccountAddress): Promise<boolean> {
-    const [isSiloedBorrowing] = await this.callViewMethod(
+    const [isPaused] = await this.callViewMethod(
       this.poolContract.getPausedFuncAddr,
       [asset],
     );
-    return isSiloedBorrowing as boolean;
+    return isPaused as boolean;
   }
 
   /**
@@ -1546,13 +1546,13 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   public async getLiquidationProtocolFee(
     asset: AccountAddress,
   ): Promise<bigint> {
-    const [isSiloedBorrowing] = (
+    const [liquidationProtocolFee] = (
       await this.callViewMethod(
         this.poolContract.getLiquidationProtocolFeeTokensFuncAddr,
         [asset],
       )
     ).map(mapToBigInt);
-    return isSiloedBorrowing;
+    return liquidationProtocolFee;
   }
 
   /**
