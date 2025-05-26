@@ -27,20 +27,27 @@ import YAML from "yaml";
  * @property {string} addresses.AAVE_ORACLE - The address for AAVE oracle.
  * @property {string} addresses.AAVE_POOL - The address for AAVE pool.
  * @property {string} addresses.AAVE_DATA - The address for AAVE data.
+ * @property {string} addresses.AAVE_MATH - The address for AAVE math.
  */
 export interface AptosProviderConfig {
   network: Network;
   aptosApiKey?: string;
   addresses: {
-    A_TOKENS: string;
-    AAVE_MOCK_UNDERLYINGS: string;
-    VARIABLE_TOKENS: string;
-    AAVE_ACL: string;
-    AAVE_CONFIG: string;
-    AAVE_ORACLE: string;
-    AAVE_POOL: string;
-    AAVE_DATA: string;
-    AAVE_MATH: string;
+    A_TOKENS: AccountAddress;
+    AAVE_MOCK_UNDERLYINGS: AccountAddress;
+    VARIABLE_TOKENS: AccountAddress;
+    AAVE_ACL: AccountAddress;
+    AAVE_CONFIG: AccountAddress;
+    AAVE_ORACLE: AccountAddress;
+    AAVE_POOL: AccountAddress;
+    AAVE_DATA: AccountAddress;
+    AAVE_MATH: AccountAddress;
+  };
+  assets?: {
+    APT: AccountAddress;
+    USDC: AccountAddress;
+    USDT: AccountAddress;
+    sUSDe: AccountAddress;
   };
 }
 
@@ -171,39 +178,39 @@ export class AptosProvider {
 
     aptosProvider.addProfileAddress(
       AAVE_PROFILES.A_TOKENS,
-      AccountAddress.fromString(config.addresses.A_TOKENS),
+      config.addresses.A_TOKENS,
     );
     aptosProvider.addProfileAddress(
       AAVE_PROFILES.AAVE_MOCK_UNDERLYINGS,
-      AccountAddress.fromString(config.addresses.AAVE_MOCK_UNDERLYINGS),
+      config.addresses.AAVE_MOCK_UNDERLYINGS,
     );
     aptosProvider.addProfileAddress(
       AAVE_PROFILES.VARIABLE_TOKENS,
-      AccountAddress.fromString(config.addresses.VARIABLE_TOKENS),
+      config.addresses.VARIABLE_TOKENS,
     );
     aptosProvider.addProfileAddress(
       AAVE_PROFILES.AAVE_ACL,
-      AccountAddress.fromString(config.addresses.AAVE_ACL),
+      config.addresses.AAVE_ACL,
     );
     aptosProvider.addProfileAddress(
       AAVE_PROFILES.AAVE_CONFIG,
-      AccountAddress.fromString(config.addresses.AAVE_CONFIG),
+      config.addresses.AAVE_CONFIG,
     );
     aptosProvider.addProfileAddress(
       AAVE_PROFILES.AAVE_ORACLE,
-      AccountAddress.fromString(config.addresses.AAVE_ORACLE),
+      config.addresses.AAVE_ORACLE,
     );
     aptosProvider.addProfileAddress(
       AAVE_PROFILES.AAVE_POOL,
-      AccountAddress.fromString(config.addresses.AAVE_POOL),
+      config.addresses.AAVE_POOL,
     );
     aptosProvider.addProfileAddress(
       AAVE_PROFILES.AAVE_MATH,
-      AccountAddress.fromString(config.addresses.AAVE_MATH),
+      config.addresses.AAVE_MATH,
     );
     aptosProvider.addProfileAddress(
       AAVE_PROFILES.AAVE_DATA,
-      AccountAddress.fromString(config.addresses.AAVE_DATA),
+      config.addresses.AAVE_DATA,
     );
     const aptosConfig = new AptosConfig({
       network: aptosProvider.getNetwork(),
