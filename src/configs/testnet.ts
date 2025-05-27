@@ -25,31 +25,31 @@ export const DEFAULT_TESTNET_CONFIG: AptosProviderConfig = {
   network: Network.TESTNET,
   addresses: {
     A_TOKENS: AccountAddress.fromString(
-      "013d0ea11f0fc34c7015f1165ffedfab30bfbbff2339b751ca4647b5ef86355e",
+      "0bf5f9e3d51772ce7aee905ebbc7128a134b017c261ebd17ec24eb8b8f3e3aa2",
     ),
     AAVE_MOCK_UNDERLYINGS: AccountAddress.fromString(
-      "e648d33e904826379289bbdb9822420df694e16899209204ccbba31f75261362",
+      "b00d6bcf3a364911272a68a88cdac1f65f8edac70d130aa9ac3f5102dbbbc191",
     ),
     VARIABLE_TOKENS: AccountAddress.fromString(
-      "85eb6f334001962d33f9ea5bf6aff5d0fa5822e4addc28a41528868bd8b871a9",
+      "74c50024aee2160614d8a9799562936b89197645cd5abdde57876fd4822f70e4",
     ),
     AAVE_ACL: AccountAddress.fromString(
-      "6d55c5b6576849cc6f0b90697c42dfbf9e6d3e025d51a41c2f0432d2d65c9824",
+      "568f29f6f6b7c98a3dd01f6a8aedb78d8762bab680cc86eb71dfd9ae36da9be2",
     ),
     AAVE_CONFIG: AccountAddress.fromString(
-      "cc1b69d99e947aff535b23adbbb7fbfa16d5f5030f8e6f0f02c4eea07ba07b86",
+      "25caba811383306e7ea3e71e5509e5f7eaebecb1eaa9e3d92886a6d4b257e807",
     ),
     AAVE_ORACLE: AccountAddress.fromString(
-      "f94c9646439f038a0dfe35811783e1940adbb7392169d540b0cba8d72f5f273b",
+      "2fde62d8da9c2d84d57f05c6001234978b576aa08dad812f174678ed038f7b42",
     ),
     AAVE_POOL: AccountAddress.fromString(
-      "592c08420009a731eaddc0dc28e74dfc026d26afc540bd5add4353142b4b1468",
+      "1620b721b1bc9e78f0a625b96eedb7180f9002d239e8c1495a892abb59364b0a",
     ),
     AAVE_DATA: AccountAddress.fromString(
-      "a206e35d14b6bb800e4b513374db7c81d4b2453a85831e4f211e9d7b251a1e70",
+      "8947b37ff5127ae48182a8edab19d888f6a6c7b4cd76424461505ece250c37b2",
     ),
     AAVE_MATH: AccountAddress.fromString(
-      "533eb45236c1dd3d868cc498a9cd0bd503fabd33565d1f627c26f62ce216e3d6",
+      "843039cec95dcc3e9da8cd6dc1abbfb636a011290b43152daf7223e49c312d50",
     ),
   },
   assets: {
