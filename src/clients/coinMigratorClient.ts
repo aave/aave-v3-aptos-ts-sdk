@@ -52,10 +52,10 @@ export class CoinMigratorClient extends AptosContractWrapperBaseClass {
   }
 
   /**
-   * Creates an instance of `CoinMigratorClient` using the default signer.
+   * Creates an instance of CoinMigratorClient using the default signer from the provided AptosProvider.
    *
-   * @param provider - The `AptosProvider` instance to be used for creating the client.
-   * @returns A new instance of `CoinMigratorClient` initialized with the provided `AptosProvider`.
+   * @param provider - The AptosProvider instance to use for creating the CoinMigratorClient.
+   * @returns A new instance of CoinMigratorClient.
    */
   public static buildWithDefaultSigner(
     provider: AptosProvider,

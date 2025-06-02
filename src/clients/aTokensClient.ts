@@ -54,10 +54,10 @@ export class ATokensClient extends AptosContractWrapperBaseClass {
   }
 
   /**
-   * Creates an instance of ATokensClient using the ATokens profile account from the provider.
+   * Creates an instance of ATokensClient using the default signer from the provided AptosProvider.
    *
    * @param provider - The AptosProvider instance to use for creating the ATokensClient.
-   * @returns A new instance of ATokensClient configured with the provider's ATokens profile account.
+   * @returns A new instance of ATokensClient.
    */
   public static buildWithDefaultSigner(provider: AptosProvider): ATokensClient {
     const client = new ATokensClient(

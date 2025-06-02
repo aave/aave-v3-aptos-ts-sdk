@@ -52,10 +52,10 @@ export class CoreClient extends AptosContractWrapperBaseClass {
   }
 
   /**
-   * Creates an instance of CoreClient using the pool profile account from the provider.
+   * Creates an instance of CoreClient using the default signer from the provided AptosProvider.
    *
    * @param provider - The AptosProvider instance to use for creating the CoreClient.
-   * @returns A new instance of CoreClient configured with the provider's pool profile account.
+   * @returns A new instance of CoreClient.
    */
   public static buildWithDefaultSigner(provider: AptosProvider): CoreClient {
     const client = new CoreClient(provider, provider.getPoolProfileAccount());

@@ -52,8 +52,9 @@ export class AclClient extends AptosContractWrapperBaseClass {
   }
 
   /**
-   * Builds an AclClient instance with the default signer.
-   * @param provider - The AptosProvider instance.
+   * Creates an instance of AclClient using the default signer from the provided AptosProvider.
+   *
+   * @param provider - The AptosProvider instance to use for creating the AclClient.
    * @returns A new instance of AclClient.
    */
   public static buildWithDefaultSigner(provider: AptosProvider): AclClient {
