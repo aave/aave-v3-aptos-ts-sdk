@@ -15,6 +15,36 @@ export type InterestRateDataRay = {
   variableRateSlope2: bigint;
 };
 
+/**
+ * The `InterestRateClient` class provides methods to interact with the interest rate management system
+ * of the Aave protocol on the Aptos blockchain. It extends the `AptosContractWrapperBaseClass` and
+ * includes functionalities for configuring and calculating interest rates, managing rate strategies,
+ * and retrieving rate parameters for assets.
+ *
+ * @remarks
+ * This client is designed to work with the interest rate contracts and provides a high-level API
+ * for interest rate operations. The client can be instantiated in two ways:
+ * 1. Using the constructor directly with a provider and optional signer
+ * 2. Using the static buildWithDefaultSigner method which automatically configures the client with the provider's pool profile account
+ *
+ * @example
+ * ```typescript
+ * // Using buildWithDefaultSigner
+ * const provider = new AptosProvider();
+ * const client = InterestRateClient.buildWithDefaultSigner(provider);
+ *
+ * // Using constructor directly
+ * const provider = new AptosProvider();
+ * const signer = provider.getPoolProfileAccount();
+ * const client = new InterestRateClient(provider, signer);
+ *
+ * // Get interest rate strategy for a reserve
+ * const strategy = await client.getReserveInterestRateStrategy(reserveAddress);
+ * ```
+ *
+ * @param provider - The AptosProvider instance used to interact with the Aptos blockchain.
+ * @param signer - Optional Ed25519Account signer for transaction signing.
+ */
 export class InterestRateClient extends AptosContractWrapperBaseClass {
   interestRateContract: InterestRateContract;
 

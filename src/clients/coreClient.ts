@@ -13,6 +13,27 @@ import { mapToBigInt } from "../helpers/common";
  * It extends the `AptosContractWrapperBaseClass` and includes functionalities for supplying, borrowing,
  * repaying, and managing assets within the Aave protocol.
  *
+ * @remarks
+ * This client is designed to work with the core Aave protocol contracts and provides a high-level API for
+ * supply, borrow, and liquidation operations. The client can be instantiated in two ways:
+ * 1. Using the constructor directly with a provider and optional signer
+ * 2. Using the static buildWithDefaultSigner method which automatically configures the client with the provider's pool profile account
+ *
+ * @example
+ * ```typescript
+ * // Using buildWithDefaultSigner
+ * const provider = new AptosProvider();
+ * const client = CoreClient.buildWithDefaultSigner(provider);
+ *
+ * // Using constructor directly
+ * const provider = new AptosProvider();
+ * const signer = provider.getPoolProfileAccount();
+ * const client = new CoreClient(provider, signer);
+ *
+ * // Supply assets to the protocol
+ * const tx = await client.supply(assetAddress, 1000n, userAddress, 0);
+ * ```
+ *
  * @class
  * @extends {AptosContractWrapperBaseClass}
  */
@@ -31,10 +52,10 @@ export class CoreClient extends AptosContractWrapperBaseClass {
   }
 
   /**
-   * Creates an instance of `CoreClient` using the provided `AptosProvider` and its default signer.
+   * Creates an instance of CoreClient using the pool profile account from the provider.
    *
-   * @param provider - The `AptosProvider` instance used to initialize the `CoreClient`.
-   * @returns A new instance of `CoreClient` initialized with the provided `AptosProvider` and its default signer.
+   * @param provider - The AptosProvider instance to use for creating the CoreClient.
+   * @returns A new instance of CoreClient configured with the provider's pool profile account.
    */
   public static buildWithDefaultSigner(provider: AptosProvider): CoreClient {
     const client = new CoreClient(provider, provider.getPoolProfileAccount());

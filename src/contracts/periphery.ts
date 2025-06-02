@@ -1,104 +1,128 @@
 import { MoveFunctionId } from "@aptos-labs/ts-sdk";
 import { AAVE_PROFILES, AptosProvider } from "../clients/aptosProvider";
 
+/**
+ * Represents the PeripheryContract interface which defines the function addresses for periphery operations
+ * within the AAVE protocol on the Aptos blockchain.
+ *
+ * @remarks
+ * This interface is used by the corresponding client classes to make actual calls to the blockchain.
+ * The constructor initializes all function addresses by combining:
+ * - The periphery manager's account address from the provider
+ * - The module name (emission_manager, rewards_controller, transfer_strategy)
+ * - The specific function name
+ *
+ * @example
+ * ```typescript
+ * const provider = new AptosProvider();
+ * const periphery = new PeripheryContract(provider);
+ * ```
+ *
+ * @param provider - The AptosProvider instance used to interact with the Aptos blockchain.
+ */
 export class PeripheryContract {
   // emission manager
-  EmissionManagerAddress: MoveFunctionId;
-  EmissionManagerObject: MoveFunctionId;
-  ConfigureAssets: MoveFunctionId;
-  SetPullRewardsTransferStrategy: MoveFunctionId;
-  SetDistributionEnd: MoveFunctionId;
-  SetEmissionPerSecond: MoveFunctionId;
-  SetClaimer: MoveFunctionId;
-  SetEmissionAdmin: MoveFunctionId;
-  SetRewardsController: MoveFunctionId;
-  GetEmissionAdmin: MoveFunctionId;
+  emissionManagerAddressFuncAddr: MoveFunctionId;
+  emissionManagerObjectFuncAddr: MoveFunctionId;
+  configureAssetsFuncAddr: MoveFunctionId;
+  setPullRewardsTransferStrategyFuncAddr: MoveFunctionId;
+  setDistributionEndFuncAddr: MoveFunctionId;
+  setEmissionPerSecondFuncAddr: MoveFunctionId;
+  setClaimerFuncAddr: MoveFunctionId;
+  setEmissionAdminFuncAddr: MoveFunctionId;
+  setRewardsControllerFuncAddr: MoveFunctionId;
+  getEmissionAdminFuncAddr: MoveFunctionId;
+  getRewardsControllerFuncAddr: MoveFunctionId;
+
+  // rewards distribution
+  claimRewardsFuncAddr: MoveFunctionId;
+  claimRewardsOnBehalfFuncAddr: MoveFunctionId;
+  claimRewardsToSelfFuncAddr: MoveFunctionId;
+  claimAllRewardsFuncAddr: MoveFunctionId;
+  claimAllRewardsOnBehalfFuncAddr: MoveFunctionId;
+  claimAllRewardsToSelfFuncAddr: MoveFunctionId;
 
   // rewards controller
-  RewardsControllerAddress: MoveFunctionId;
-  RewardsControllerObject: MoveFunctionId;
-  GetClaimer: MoveFunctionId;
-  GetRewardOracle: MoveFunctionId;
-  GetPullRewardsTransferStrategy: MoveFunctionId;
-  ClaimRewards: MoveFunctionId;
-  ClaimRewardsOnBehalf: MoveFunctionId;
-  ClaimRewardsToSelf: MoveFunctionId;
-  ClaimAllRewards: MoveFunctionId;
-  ClaimAllRewardsOnBehalf: MoveFunctionId;
-  ClaimAllRewardsToSelf: MoveFunctionId;
-  LookupAssetData: MoveFunctionId;
-  LookupRewardsData: MoveFunctionId;
-  LookupUserData: MoveFunctionId;
-  GetRewardsData: MoveFunctionId;
-  GetUserData: MoveFunctionId;
-  GetAssetIndex: MoveFunctionId;
-  GetDistributionEnd: MoveFunctionId;
-  GetRewardsByAsset: MoveFunctionId;
-  GetRewardsList: MoveFunctionId;
-  GetUserAssetIndex: MoveFunctionId;
-  GetUserAccruedRewards: MoveFunctionId;
-  GetUserRewards: MoveFunctionId;
-  GetAllUserRewards: MoveFunctionId;
-  GetAssetDecimals: MoveFunctionId;
+  rewardsControllerAddressFuncAddr: MoveFunctionId;
+  rewardsControllerObjectFuncAddr: MoveFunctionId;
+  getClaimerFuncAddr: MoveFunctionId;
+  getRewardOracleFuncAddr: MoveFunctionId;
+  getPullRewardsTransferStrategyFuncAddr: MoveFunctionId;
+  lookupAssetDataFuncAddr: MoveFunctionId;
+  lookupRewardsDataFuncAddr: MoveFunctionId;
+  lookupUserDataFuncAddr: MoveFunctionId;
+  getRewardsDataFuncAddr: MoveFunctionId;
+  getUserDataFuncAddr: MoveFunctionId;
+  getAssetIndexFuncAddr: MoveFunctionId;
+  getDistributionEndFuncAddr: MoveFunctionId;
+  getRewardsByAssetFuncAddr: MoveFunctionId;
+  getRewardsListFuncAddr: MoveFunctionId;
+  getUserAssetIndexFuncAddr: MoveFunctionId;
+  getUserAccruedRewardsFuncAddr: MoveFunctionId;
+  getUserRewardsFuncAddr: MoveFunctionId;
+  getAllUserRewardsFuncAddr: MoveFunctionId;
+  getAssetDecimalsFuncAddr: MoveFunctionId;
 
   // transfer strategy
-  CreatePullRewardsTransferStrategy: MoveFunctionId;
-  PullRewardsTransferStrategyEmergencyWithdrawal: MoveFunctionId;
-  PullRewardsTransferStrategyGetIncentivesController: MoveFunctionId;
-  PullRewardsTransferStrategyGetRewardsAdmin: MoveFunctionId;
-  PullRewardsTransferStrategyGetRewardsVault: MoveFunctionId;
+  createPullRewardsTransferStrategyFuncAddr: MoveFunctionId;
+  pullRewardsTransferStrategyEmergencyWithdrawalFuncAddr: MoveFunctionId;
+  pullRewardsTransferStrategyGetIncentivesControllerFuncAddr: MoveFunctionId;
+  pullRewardsTransferStrategyGetRewardsAdminFuncAddr: MoveFunctionId;
+  pullRewardsTransferStrategyGetRewardsVaultFuncAddr: MoveFunctionId;
 
   constructor(provider: AptosProvider) {
     const PeripheryManager = provider.getProfileAddressByName(
       AAVE_PROFILES.AAVE_POOL,
     );
-    // admin controlled ecosystem reserve
     const PeripheryManagerAccountAddress = PeripheryManager.toString();
 
     // emission manager
-    this.EmissionManagerAddress = `${PeripheryManagerAccountAddress}::emission_manager::emission_manager_address`;
-    this.EmissionManagerObject = `${PeripheryManagerAccountAddress}::emission_manager::emission_manager_object`;
-    this.ConfigureAssets = `${PeripheryManagerAccountAddress}::emission_manager::configure_assets`;
-    this.SetPullRewardsTransferStrategy = `${PeripheryManagerAccountAddress}::emission_manager::set_pull_rewards_transfer_strategy`;
-    this.SetDistributionEnd = `${PeripheryManagerAccountAddress}::emission_manager::set_distribution_end`;
-    this.SetEmissionPerSecond = `${PeripheryManagerAccountAddress}::emission_manager::set_emission_per_second`;
-    this.SetClaimer = `${PeripheryManagerAccountAddress}::emission_manager::set_claimer`;
-    this.SetEmissionAdmin = `${PeripheryManagerAccountAddress}::emission_manager::set_emission_admin`;
-    this.SetRewardsController = `${PeripheryManagerAccountAddress}::emission_manager::set_rewards_controller`;
-    this.GetEmissionAdmin = `${PeripheryManagerAccountAddress}::emission_manager::get_emission_admin`;
+    this.emissionManagerAddressFuncAddr = `${PeripheryManagerAccountAddress}::emission_manager::emission_manager_address`;
+    this.emissionManagerObjectFuncAddr = `${PeripheryManagerAccountAddress}::emission_manager::emission_manager_object`;
+    this.configureAssetsFuncAddr = `${PeripheryManagerAccountAddress}::emission_manager::configure_assets`;
+    this.setPullRewardsTransferStrategyFuncAddr = `${PeripheryManagerAccountAddress}::emission_manager::set_pull_rewards_transfer_strategy`;
+    this.setDistributionEndFuncAddr = `${PeripheryManagerAccountAddress}::emission_manager::set_distribution_end`;
+    this.setEmissionPerSecondFuncAddr = `${PeripheryManagerAccountAddress}::emission_manager::set_emission_per_second`;
+    this.setClaimerFuncAddr = `${PeripheryManagerAccountAddress}::emission_manager::set_claimer`;
+    this.setEmissionAdminFuncAddr = `${PeripheryManagerAccountAddress}::emission_manager::set_emission_admin`;
+    this.setRewardsControllerFuncAddr = `${PeripheryManagerAccountAddress}::emission_manager::set_rewards_controller`;
+    this.getEmissionAdminFuncAddr = `${PeripheryManagerAccountAddress}::emission_manager::get_emission_admin`;
+    this.getRewardsControllerFuncAddr = `${PeripheryManagerAccountAddress}::emission_manager::get_rewards_controller`;
+
+    // rewards distribution
+    this.claimRewardsFuncAddr = `${PeripheryManagerAccountAddress}::emission_manager::claim_rewards`;
+    this.claimRewardsOnBehalfFuncAddr = `${PeripheryManagerAccountAddress}::emission_manager::claim_rewards_on_behalf`;
+    this.claimRewardsToSelfFuncAddr = `${PeripheryManagerAccountAddress}::emission_manager::claim_rewards_to_self`;
+    this.claimAllRewardsFuncAddr = `${PeripheryManagerAccountAddress}::emission_manager::claim_all_rewards`;
+    this.claimAllRewardsOnBehalfFuncAddr = `${PeripheryManagerAccountAddress}::emission_manager::claim_all_rewards_on_behalf`;
+    this.claimAllRewardsToSelfFuncAddr = `${PeripheryManagerAccountAddress}::emission_manager::claim_all_rewards_to_self`;
 
     // rewards controller
-    this.RewardsControllerAddress = `${PeripheryManagerAccountAddress}::rewards_controller::rewards_controller_address`;
-    this.RewardsControllerObject = `${PeripheryManagerAccountAddress}::rewards_controller::rewards_controller_object`;
-    this.GetClaimer = `${PeripheryManagerAccountAddress}::rewards_controller::get_claimer`;
-    this.GetRewardOracle = `${PeripheryManagerAccountAddress}::rewards_controller::get_reward_oracle`;
-    this.GetPullRewardsTransferStrategy = `${PeripheryManagerAccountAddress}::rewards_controller::get_pull_rewards_transfer_strategy`;
-    this.ClaimRewards = `${PeripheryManagerAccountAddress}::rewards_controller::claim_rewards`;
-    this.ClaimRewardsOnBehalf = `${PeripheryManagerAccountAddress}::rewards_controller::claim_rewards_on_behalf`;
-    this.ClaimRewardsToSelf = `${PeripheryManagerAccountAddress}::rewards_controller::claim_rewards_to_self`;
-    this.ClaimAllRewards = `${PeripheryManagerAccountAddress}::rewards_controller::claim_all_rewards`;
-    this.ClaimAllRewardsOnBehalf = `${PeripheryManagerAccountAddress}::rewards_controller::claim_all_rewards_on_behalf`;
-    this.ClaimAllRewardsToSelf = `${PeripheryManagerAccountAddress}::rewards_controller::claim_all_rewards_to_self`;
-    this.LookupAssetData = `${PeripheryManagerAccountAddress}::rewards_controller::lookup_asset_data`;
-    this.LookupRewardsData = `${PeripheryManagerAccountAddress}::rewards_controller::lookup_rewards_data`;
-    this.LookupUserData = `${PeripheryManagerAccountAddress}::rewards_controller::lookup_user_data`;
-    this.GetRewardsData = `${PeripheryManagerAccountAddress}::rewards_controller::get_rewards_data`;
-    this.GetUserData = `${PeripheryManagerAccountAddress}::rewards_controller::get_user_data`;
-    this.GetAssetIndex = `${PeripheryManagerAccountAddress}::rewards_controller::get_asset_index`;
-    this.GetDistributionEnd = `${PeripheryManagerAccountAddress}::rewards_controller::get_distribution_end`;
-    this.GetRewardsByAsset = `${PeripheryManagerAccountAddress}::rewards_controller::get_rewards_by_asset`;
-    this.GetRewardsList = `${PeripheryManagerAccountAddress}::rewards_controller::get_rewards_list`;
-    this.GetUserAssetIndex = `${PeripheryManagerAccountAddress}::rewards_controller::get_user_asset_index`;
-    this.GetUserAccruedRewards = `${PeripheryManagerAccountAddress}::rewards_controller::get_user_accrued_rewards`;
-    this.GetUserRewards = `${PeripheryManagerAccountAddress}::rewards_controller::get_user_rewards`;
-    this.GetAllUserRewards = `${PeripheryManagerAccountAddress}::rewards_controller::get_all_user_rewards`;
-    this.GetAssetDecimals = `${PeripheryManagerAccountAddress}::rewards_controller::get_asset_decimals`;
+    this.rewardsControllerAddressFuncAddr = `${PeripheryManagerAccountAddress}::rewards_controller::rewards_controller_address`;
+    this.rewardsControllerObjectFuncAddr = `${PeripheryManagerAccountAddress}::rewards_controller::rewards_controller_object`;
+    this.getClaimerFuncAddr = `${PeripheryManagerAccountAddress}::rewards_controller::get_claimer`;
+    this.getRewardOracleFuncAddr = `${PeripheryManagerAccountAddress}::rewards_controller::get_reward_oracle`;
+    this.getPullRewardsTransferStrategyFuncAddr = `${PeripheryManagerAccountAddress}::rewards_controller::get_pull_rewards_transfer_strategy`;
+    this.lookupAssetDataFuncAddr = `${PeripheryManagerAccountAddress}::rewards_controller::lookup_asset_data`;
+    this.lookupRewardsDataFuncAddr = `${PeripheryManagerAccountAddress}::rewards_controller::lookup_rewards_data`;
+    this.lookupUserDataFuncAddr = `${PeripheryManagerAccountAddress}::rewards_controller::lookup_user_data`;
+    this.getRewardsDataFuncAddr = `${PeripheryManagerAccountAddress}::rewards_controller::get_rewards_data`;
+    this.getUserDataFuncAddr = `${PeripheryManagerAccountAddress}::rewards_controller::get_user_data`;
+    this.getAssetIndexFuncAddr = `${PeripheryManagerAccountAddress}::rewards_controller::get_asset_index`;
+    this.getDistributionEndFuncAddr = `${PeripheryManagerAccountAddress}::rewards_controller::get_distribution_end`;
+    this.getRewardsByAssetFuncAddr = `${PeripheryManagerAccountAddress}::rewards_controller::get_rewards_by_asset`;
+    this.getRewardsListFuncAddr = `${PeripheryManagerAccountAddress}::rewards_controller::get_rewards_list`;
+    this.getUserAssetIndexFuncAddr = `${PeripheryManagerAccountAddress}::rewards_controller::get_user_asset_index`;
+    this.getUserAccruedRewardsFuncAddr = `${PeripheryManagerAccountAddress}::rewards_controller::get_user_accrued_rewards`;
+    this.getUserRewardsFuncAddr = `${PeripheryManagerAccountAddress}::rewards_controller::get_user_rewards`;
+    this.getAllUserRewardsFuncAddr = `${PeripheryManagerAccountAddress}::rewards_controller::get_all_user_rewards`;
+    this.getAssetDecimalsFuncAddr = `${PeripheryManagerAccountAddress}::rewards_controller::get_asset_decimals`;
 
     // transfer strategy
-    this.CreatePullRewardsTransferStrategy = `${PeripheryManagerAccountAddress}::transfer_strategy::create_pull_rewards_transfer_strategy`;
-    this.PullRewardsTransferStrategyEmergencyWithdrawal = `${PeripheryManagerAccountAddress}::transfer_strategy::pull_rewards_transfer_strategy_emergency_withdrawal`;
-    this.PullRewardsTransferStrategyGetIncentivesController = `${PeripheryManagerAccountAddress}::transfer_strategy::pull_rewards_transfer_strategy_get_incentives_controller`;
-    this.PullRewardsTransferStrategyGetRewardsAdmin = `${PeripheryManagerAccountAddress}::transfer_strategy::pull_rewards_transfer_strategy_get_rewards_admin`;
-    this.PullRewardsTransferStrategyGetRewardsVault = `${PeripheryManagerAccountAddress}::transfer_strategy::pull_rewards_transfer_strategy_get_rewards_vault`;
+    this.createPullRewardsTransferStrategyFuncAddr = `${PeripheryManagerAccountAddress}::transfer_strategy::create_pull_rewards_transfer_strategy`;
+    this.pullRewardsTransferStrategyEmergencyWithdrawalFuncAddr = `${PeripheryManagerAccountAddress}::transfer_strategy::pull_rewards_transfer_strategy_emergency_withdrawal`;
+    this.pullRewardsTransferStrategyGetIncentivesControllerFuncAddr = `${PeripheryManagerAccountAddress}::transfer_strategy::pull_rewards_transfer_strategy_get_incentives_controller`;
+    this.pullRewardsTransferStrategyGetRewardsAdminFuncAddr = `${PeripheryManagerAccountAddress}::transfer_strategy::pull_rewards_transfer_strategy_get_rewards_admin`;
+    this.pullRewardsTransferStrategyGetRewardsVaultFuncAddr = `${PeripheryManagerAccountAddress}::transfer_strategy::pull_rewards_transfer_strategy_get_rewards_vault`;
   }
 }

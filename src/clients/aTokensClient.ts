@@ -17,24 +17,27 @@ import { mapToBigInt } from "../helpers/common";
  *
  * @remarks
  * This client is designed to work with the AToken contracts and provides a high-level API for common operations.
+ * The client can be instantiated in two ways:
+ * 1. Using the constructor directly with a provider and optional signer
+ * 2. Using the static buildWithDefaultSigner method which automatically configures the client with the provider's ATokens profile account
  *
  * @example
  * ```typescript
+ * // Using buildWithDefaultSigner
  * const provider = new AptosProvider();
- * const client = new ATokensClient(provider);
- * const tokenAddress = await client.createToken(
- *   1000000n,
- *   "MyToken",
- *   "MTK",
- *   18,
- *   "https://example.com/icon.png",
- *   "https://example.com",
- *   "0x1",
- *   "0x2"
- * );
+ * const client = ATokensClient.buildWithDefaultSigner(provider);
+ *
+ * // Using constructor directly
+ * const provider = new AptosProvider();
+ * const signer = provider.getATokensProfileAccount();
+ * const client = new ATokensClient(provider, signer);
+ *
+ * // Get token balance
+ * const balance = await client.balanceOf(ownerAddress, metadataAddress);
  * ```
  *
- * @public
+ * @param provider - The AptosProvider instance used to interact with the Aptos blockchain.
+ * @param signer - Optional Ed25519Account signer for transaction signing.
  */
 export class ATokensClient extends AptosContractWrapperBaseClass {
   tokensContract: TokensContract;
@@ -51,10 +54,10 @@ export class ATokensClient extends AptosContractWrapperBaseClass {
   }
 
   /**
-   * Creates an instance of ATokensClient using the default signer provided by the AptosProvider.
+   * Creates an instance of ATokensClient using the ATokens profile account from the provider.
    *
    * @param provider - The AptosProvider instance to use for creating the ATokensClient.
-   * @returns A new instance of ATokensClient configured with the default signer.
+   * @returns A new instance of ATokensClient configured with the provider's ATokens profile account.
    */
   public static buildWithDefaultSigner(provider: AptosProvider): ATokensClient {
     const client = new ATokensClient(

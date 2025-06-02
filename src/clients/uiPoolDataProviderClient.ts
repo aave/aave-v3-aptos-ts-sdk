@@ -161,38 +161,35 @@ export type UserReservesData = {
 
 /**
  * The `UiPoolDataProviderClient` class provides methods to interact with the UI Pool Data Provider contract on the Aptos blockchain.
- * It extends the `AptosContractWrapperBaseClass` and includes methods to fetch various data related to reserves and user reserves.
+ * It extends the `AptosContractWrapperBaseClass` and includes functionalities for retrieving pool-related data in a format
+ * suitable for UI applications, including reserve data, user reserve data, and base currency information within the AAVE protocol.
  *
- * @class UiPoolDataProviderClient
- * @extends {AptosContractWrapperBaseClass}
+ * @remarks
+ * This client is designed to work with the UI Pool Data Provider contract and provides a high-level API for accessing
+ * pool-related data in a format optimized for user interfaces. The client can be instantiated in two ways:
+ * 1. Using the constructor directly with a provider and optional signer
+ * 2. Using the static buildWithDefaultSigner method which automatically configures the client with the provider's pool profile account
  *
- * @property {UiPoolDataProviderContract} uiPoolDataProviderContract - An instance of the UI Pool Data Provider contract.
+ * @example
+ * ```typescript
+ * // Using buildWithDefaultSigner
+ * const provider = new AptosProvider();
+ * const client = UiPoolDataProviderClient.buildWithDefaultSigner(provider);
  *
- * @constructor
- * @param {AptosProvider} provider - The `AptosProvider` instance to be used for creating the client.
- * @param {Ed25519Account} [signer] - An optional signer account.
+ * // Using constructor directly
+ * const provider = new AptosProvider();
+ * const signer = provider.getPoolProfileAccount();
+ * const client = new UiPoolDataProviderClient(provider, signer);
  *
- * @method static buildWithDefaultSigner
- * @param {AptosProvider} provider - The `AptosProvider` instance to be used for creating the client.
- * @returns {UiPoolDataProviderClient} A new instance of `UiPoolDataProviderClient` initialized with the provided `AptosProvider`.
+ * // Get reserves data including base currency information
+ * const { reservesData, baseCurrencyData } = await client.getReservesData();
  *
- * @method async uiPoolDataProviderV32DataAddress
- * @returns {Promise<AccountAddress>} A promise that resolves to an `AccountAddress` instance representing the V3.2 data address.
- * @throws {Error} If the call to the view method fails or the response cannot be parsed into an `AccountAddress`.
+ * // Get user-specific reserve data
+ * const { userReserves, userEmodeCategoryId } = await client.getUserReserveData(userAddress);
+ * ```
  *
- * @method async uiPoolDataProviderV3DataObject
- * @returns {Promise<AccountAddress>} A promise that resolves to an `AccountAddress` object.
- * @throws {Error} If the call to the view method fails or the response is invalid.
- *
- * @method async getReservesList
- * @returns {Promise<Array<AccountAddress>>} A promise that resolves to an array of `AccountAddress` objects.
- *
- * @method async getReservesData
- * @returns {Promise<ReservesData>} A promise that resolves to an object containing reserves data and base currency data.
- *
- * @method async getUserReserveData
- * @param {string} user - The address of the user whose reserve data is being retrieved.
- * @returns {Promise<UserReservesData>} A promise that resolves to an object containing the user's reserves data and eMode category ID.
+ * @param provider - The AptosProvider instance used to interact with the Aptos blockchain.
+ * @param signer - Optional Ed25519Account signer for transaction signing.
  */
 export class UiPoolDataProviderClient extends AptosContractWrapperBaseClass {
   uiPoolDataProviderContract: UiPoolDataProviderContract;

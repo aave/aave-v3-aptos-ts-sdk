@@ -15,16 +15,28 @@ import { mapToBigInt } from "../helpers/common";
  * manage feed IDs, and obtain oracle-related addresses.
  *
  * @remarks
- * This class is designed to work with the Aptos blockchain and requires an instance of `AptosProvider` and optionally `Ed25519Account` for signing transactions.
+ * This client is designed to work with the oracle contracts and provides a high-level API for price feed
+ * operations. The client can be instantiated in two ways:
+ * 1. Using the constructor directly with a provider and optional signer
+ * 2. Using the static buildWithDefaultSigner method which automatically configures the client with the provider's oracle profile account
  *
  * @example
  * ```typescript
+ * // Using buildWithDefaultSigner
  * const provider = new AptosProvider();
- * const oracleClient = new OracleClient(provider);
- * const price = await oracleClient.getAssetPrice(assetAddress);
+ * const client = OracleClient.buildWithDefaultSigner(provider);
+ *
+ * // Using constructor directly
+ * const provider = new AptosProvider();
+ * const signer = provider.getOracleProfileAccount();
+ * const client = new OracleClient(provider, signer);
+ *
+ * // Get asset price
+ * const price = await client.getAssetPrice(assetAddress);
  * ```
  *
- * @public
+ * @param provider - The AptosProvider instance used to interact with the Aptos blockchain.
+ * @param signer - Optional Ed25519Account signer for transaction signing.
  */
 export class OracleClient extends AptosContractWrapperBaseClass {
   oracleContract: OracleContract;

@@ -2,321 +2,157 @@ import { MoveFunctionId } from "@aptos-labs/ts-sdk";
 import { AAVE_PROFILES, AptosProvider } from "../clients/aptosProvider";
 
 /**
- * Represents the PoolContract class which interacts with the AAVE protocol on the Aptos blockchain.
+ * Represents the PoolContract interface which defines the function addresses for pool operations
+ * within the AAVE protocol on the Aptos blockchain.
  *
- * This class initializes various function addresses for interacting with the AAVE protocol.
+ * @remarks
+ * This interface is used by the corresponding client classes to make actual calls to the blockchain.
+ * The constructor initializes all function addresses by combining:
+ * - The pool manager's account address from the provider
+ * - The module name (pool, pool_configurator, emode_logic, etc.)
+ * - The specific function name
  *
- * The function addresses are categorized into several sections:
- *
- * - **Pool**: Functions related to pool operations such as minting to treasury, resetting isolation mode total debt, rescuing tokens, setting bridge protocol fees, and setting flashloan premiums.
- * - **Pool View**: Functions for retrieving pool data such as revision, reserve configuration, reserve data, reserves count, reserves list, reserve address by ID, reserve normalized variable debt, reserve normalized income, user configuration, bridge protocol fee, flashloan premium total, flashloan premium to protocol, max number of reserves, scaled AToken total supply, scaled AToken balance, scaled variable token total supply, and scaled variable token balance.
- * - **Pool Configurator**: Functions for configuring the pool such as initializing reserves, dropping reserves, setting asset emode category, setting borrow cap, setting borrowable in isolation, setting debt ceiling, setting emode category, setting liquidation protocol fee, setting pool pause, setting reserve active, setting reserve borrowing, configuring reserve as collateral, setting reserve factor, setting reserve flash loaning, setting reserve freeze, setting reserve pause, setting siloed borrowing, setting supply cap, setting unbacked mint cap, updating bridge protocol fee, updating flashloan premium to protocol, and updating flashloan premium total.
- * - **E Mode Logic**: Functions for emode logic such as setting user emode, configuring emode category, getting emode category data, and getting user emode.
- * - **Default Reserve Interest Rate Strategy**: Functions for default reserve interest rate strategy such as setting reserve interest rate strategy, getting optimal usage ratio, getting max excess usage ratio, getting variable rate slope1, getting variable rate slope2, getting base variable borrow rate, getting max variable borrow rate, and calculating interest rates.
- * - **Pool Data Provider**: Functions for pool data provider such as getting all reserves tokens, getting all ATokens, getting all variable tokens, getting reserve configuration data, getting reserve emode category, getting reserve caps, getting paused status, getting siloed borrowing, getting liquidation protocol fee tokens, getting unbacked mint cap, getting debt ceiling, getting debt ceiling decimals, getting reserve data, getting AToken total supply, getting total debt, getting user reserve data, getting reserve tokens addresses, and getting flash loan enabled status.
- * - **Pool Addresses Provider**: Functions for pool addresses provider such as checking if ID mapped account exists, getting market ID, getting address, getting pool, getting pool configurator, getting price oracle, getting ACL manager, getting ACL admin, getting price oracle sentinel, getting pool data provider, setting market ID, setting address, setting pool implementation, setting pool configurator, setting price oracle, setting ACL manager, setting ACL admin, setting price oracle sentinel, and setting pool data provider.
+ * @example
+ * ```typescript
+ * const provider = new AptosProvider();
+ * const pool = new PoolContract(provider);
+ * ```
  *
  * @param provider - The AptosProvider instance used to interact with the Aptos blockchain.
  */
 export class PoolContract {
-  // Resource Func Addr
-
-  /**
-   * -------------------------------------------------------------------------
-   * Pool Collector
-   * -------------------------------------------------------------------------
-   */
+  // Pool Collector Functions
   collectorGetCollectedFeesFuncAddr: MoveFunctionId;
-
   collectorAddressFeeFuncAddr: MoveFunctionId;
-
   collectorIsFundsAdminFuncAddr: MoveFunctionId;
-
   collectorWithdrawFuncAddr: MoveFunctionId;
 
-  /**
-   * -------------------------------------------------------------------------
-   * Pool Fee Manager
-   * -------------------------------------------------------------------------
-   */
+  // Pool Fee Manager Functions
   feeManagerSetAptFeeFuncAddr: MoveFunctionId;
-
   feeManagerTransferAptFeeFuncAddr: MoveFunctionId;
-
   feeManagerGetAptFeeFuncAddr: MoveFunctionId;
-
   feeManagerGetFeeCollectorAddressFuncAddr: MoveFunctionId;
-
   feeManagerGetFeeCollectorAptBalanceFuncAddr: MoveFunctionId;
-
   feeManagerGetTotalFeesFuncAddr: MoveFunctionId;
-
   feeManagerGetFeeConfigObjectAddressFuncAddr: MoveFunctionId;
 
-  /**
-   * -------------------------------------------------------------------------
-   * Pool Token Logic
-   * -------------------------------------------------------------------------=
-   */
-  // Entry
+  // Pool Token Logic Functions
   poolTokenLogicMintToTreasuryFuncAddr: MoveFunctionId;
-
   poolTokenLogicTransferFuncAddr: MoveFunctionId;
-
   poolTokenLogicSetIncentivesControllerFuncAddr: MoveFunctionId;
 
-  /**
-   * -------------------------------------------------------------------------
-   * Pool
-   * -------------------------------------------------------------------------=
-   */
-  // Entry
+  // Pool Functions
   poolResetIsolationModeTotalDebtFuncAddr: MoveFunctionId;
-
   poolRescueTokensFuncAddr: MoveFunctionId;
-
   poolSetBridgeProtocolFeeFuncAddr: MoveFunctionId;
-
   poolSetFlashloanPremiumsFuncAddr: MoveFunctionId;
 
-  // Pool View
+  // Pool View Functions
   poolGetReserveConfigurationFuncAddr: MoveFunctionId;
-
   poolGetReserveDataFuncAddr: MoveFunctionId;
-
   getReserveDataAndReservesCountFuncAddr: MoveFunctionId;
-
   poolGetReservesCountFuncAddr: MoveFunctionId;
-
   poolGetNormalizedDebtByReserveData: MoveFunctionId;
-
   poolGetReservesListFuncAddr: MoveFunctionId;
-
   poolGetReserveAddressByIdFuncAddr: MoveFunctionId;
-
   poolGetReserveNormalizedVariableDebtFuncAddr: MoveFunctionId;
-
   poolGetReserveNormalizedIncomeFuncAddr: MoveFunctionId;
-
   poolGetUserConfigurationFuncAddr: MoveFunctionId;
-
   poolGetNumberOfActiveReservesFuncAddr: MoveFunctionId;
-
   poolGetNumberOfActiveAndDroppedReservesFuncAddr: MoveFunctionId;
-
   poolGetBridgeProtocolFeeFuncAddr: MoveFunctionId;
-
   poolGetFlashloanPremiumTotalFuncAddr: MoveFunctionId;
-
   poolGetFlashloanPremiumToProtocolFuncAddr: MoveFunctionId;
-
   poolMaxNumberReservesFuncAddr: MoveFunctionId;
-
   poolScaledATokenTotalSupplyFuncAddr: MoveFunctionId;
-
   poolScaledATokenBalanceOfFuncAddr: MoveFunctionId;
-
   poolScaledVariableTokenTotalSupplyFuncAddr: MoveFunctionId;
-
   poolScaledVariableTokenBalanceOfFuncAddr: MoveFunctionId;
-
   poolGetReserveLiquidityIndex: MoveFunctionId;
-
   poolGetReserveConfigurationByReserveData: MoveFunctionId;
-
   poolGetReserveCurrentLiquidityRate: MoveFunctionId;
-
   poolGetReserveVariableBorrowIndex: MoveFunctionId;
-
   poolGetReserveCurrentVariableBorrowRate: MoveFunctionId;
-
   poolGetReserveLastUpdateTimestamp: MoveFunctionId;
-
   poolGetReserveLiquidationGracePeriodUntil: MoveFunctionId;
-
   poolGetReserveVirtualUnderlyingBalance: MoveFunctionId;
-
   poolGetReserveId: MoveFunctionId;
-
   poolGetReserveATokenAddress: MoveFunctionId;
-
   poolGetReserveVariableDebtTokenAddress: MoveFunctionId;
-
   poolGetReserveAccruedToTreasury: MoveFunctionId;
-
   poolGetReserveUnbacked: MoveFunctionId;
-
   poolGetReserveIsolationModeTotalDebt: MoveFunctionId;
-
   poolGetReserveDeficitFuncAddr: MoveFunctionId;
 
-  /**
-   * -------------------------------------------------------------------------
-   * Pool Configurator
-   * -------------------------------------------------------------------------=
-   */
-  // Entry
+  // Pool Configurator Functions
   poolConfiguratorInitReservesFuncAddr: MoveFunctionId;
-
   poolConfiguratorDropReserveFuncAddr: MoveFunctionId;
-
   poolConfiguratorSetAssetEmodeCategoryFuncAddr: MoveFunctionId;
-
   poolConfiguratorSetBorrowCapFuncAddr: MoveFunctionId;
-
   poolConfiguratorSetBorrowableInIsolationFuncAddr: MoveFunctionId;
-
   poolConfiguratorSetDebtCeilingFuncAddr: MoveFunctionId;
-
   poolConfiguratorSetEmodeCategoryFuncAddr: MoveFunctionId;
-
   poolConfiguratorSetLiquidationProtocolFeeFuncAddr: MoveFunctionId;
-
   poolConfiguratorSetPoolPauseFuncAddr: MoveFunctionId;
-
   poolConfiguratorSetPoolPauseNoGracePeriodFuncAddr: MoveFunctionId;
-
   poolConfiguratorSetReserveActiveFuncAddr: MoveFunctionId;
-
   poolConfiguratorSetReserveBorrowingFuncAddr: MoveFunctionId;
-
   poolConfiguratorConfigureReserveAsCollateralFuncAddr: MoveFunctionId;
-
   poolConfiguratorSetReserveFactorFuncAddr: MoveFunctionId;
-
   poolConfiguratorSetReserveFlashLoaningFuncAddr: MoveFunctionId;
-
   poolConfiguratorSetReserveFreezeFuncAddr: MoveFunctionId;
-
   poolConfiguratorGetPendingLtvFuncAddr: MoveFunctionId;
-
   poolConfiguratorSetReservePauseFuncAddr: MoveFunctionId;
-
   poolConfiguratorSetReservePauseNoGracePeriodFuncAddr: MoveFunctionId;
-
   poolConfiguratorDisableLiquidationGracePeriodFuncAddr: MoveFunctionId;
-
   poolConfiguratorSetSiloedBorrowingFuncAddr: MoveFunctionId;
-
   poolConfiguratorSetSupplyCapFuncAddr: MoveFunctionId;
-
   poolConfiguratorUpdateFlashloanPremiumToProtocolFuncAddr: MoveFunctionId;
-
   poolConfiguratorUpdateInterestRateStrategyFuncAddr: MoveFunctionId;
-
   poolConfiguratorUpdateFlashloanPremiumTotalFuncAddr: MoveFunctionId;
 
-  /**
-   * -------------------------------------------------------------------------
-   * Isolation E Mode
-   * @notice Internal methods are tested in other modules
-   * -------------------------------------------------------------------------=
-   */
-
-  /**
-   * -------------------------------------------------------------------------
-   * E Mode Logic
-   * -------------------------------------------------------------------------=
-   */
-  // Entry
+  // E Mode Logic Functions
   poolSetUserEmodeFuncAddr: MoveFunctionId;
-
-  // View
   poolGetEmodeCategoryDataFuncAddr: MoveFunctionId;
-
   poolGetUserEmodeFuncAddr: MoveFunctionId;
-
   poolGetEmodeEmodeLabelFuncAddr: MoveFunctionId;
-
   poolGetEmodeEmodeLiquidationBonusFuncAddr: MoveFunctionId;
-
   poolIsInEmodeCategoryFuncAddr: MoveFunctionId;
-
   poolGetEmodeConfigurationFuncAddr: MoveFunctionId;
 
-  // Generic Logic
-  // Internal methods are tested in other modules
-
-  /**
-   * -------------------------------------------------------------------------
-   * pool data provider
-   * -------------------------------------------------------------------------=
-   */
-  // View
+  // Pool Data Provider Functions
   getAllReservesTokensFuncAddr: MoveFunctionId;
-
   getAllATokensFuncAddr: MoveFunctionId;
-
   getAllVariableTokensFuncAddr: MoveFunctionId;
-
   getReserveConfigurationDataFuncAddr: MoveFunctionId;
-
   getReserveEModeCategoryFuncAddr: MoveFunctionId;
-
   getReserveCapsFuncAddr: MoveFunctionId;
-
   getPausedFuncAddr: MoveFunctionId;
-
   getSiloedBorrowingFuncAddr: MoveFunctionId;
-
   getLiquidationProtocolFeeTokensFuncAddr: MoveFunctionId;
-
   getDebtCeilingFuncAddr: MoveFunctionId;
-
   getDebtCeilingDecimalsFuncAddr: MoveFunctionId;
-
   getReserveDataFuncAddr: MoveFunctionId;
-
   getATokenTotalSupplyFuncAddr: MoveFunctionId;
-
   getTotalDebtFuncAddr: MoveFunctionId;
-
   getUserReserveDataFuncAddr: MoveFunctionId;
-
   getReserveTokensAddressesFuncAddr: MoveFunctionId;
-
   getFlashLoanEnabledFuncAddr: MoveFunctionId;
-
   getReserveDeficitFuncAddr: MoveFunctionId;
 
-  /**
-   * Constructs a new instance of the Pool class.
-   *
-   * @param provider - The AptosProvider instance used to interact with the Aptos blockchain.
-   *
-   * This constructor initializes various function addresses for interacting with the AAVE protocol on the Aptos blockchain.
-   *
-   * The function addresses are categorized into several sections:
-   *
-   * - **Pool**: Functions related to pool operations such as minting to treasury, resetting isolation mode total debt, rescuing tokens, setting bridge protocol fees, and setting flashloan premiums.
-   * - **pool**: Functions for retrieving pool data such as revision, reserve configuration, reserve data, reserves count, reserves list, reserve address by ID, reserve normalized variable debt, reserve normalized income, user configuration, bridge protocol fee, flashloan premium total, flashloan premium to protocol, max number of reserves, scaled AToken total supply, scaled AToken balance, scaled variable token total supply, and scaled variable token balance.
-   * - **Pool Configurator**: Functions for configuring the pool such as initializing reserves, dropping reserves, setting asset emode category, setting borrow cap, setting borrowable in isolation, setting debt ceiling, setting emode category, setting liquidation protocol fee, setting pool pause, setting reserve active, setting reserve borrowing, configuring reserve as collateral, setting reserve factor, setting reserve flash loaning, setting reserve freeze, setting reserve pause, setting siloed borrowing, setting supply cap, setting unbacked mint cap, updating bridge protocol fee, updating flashloan premium to protocol, and updating flashloan premium total.
-   * - **E Mode Logic**: Functions for emode logic such as getting revision, setting user emode, configuring emode category, getting emode category data, and getting user emode.
-   * - **default_reserve_interest_rate_strategy**: Functions for default reserve interest rate strategy such as setting reserve interest rate strategy, getting optimal usage ratio, getting max excess usage ratio, getting variable rate slope1, getting variable rate slope2, getting base variable borrow rate, getting max variable borrow rate, and calculating interest rates.
-   * - **pool data provider**: Functions for pool data provider such as getting all reserves tokens, getting all ATokens, getting all variable tokens, getting reserve configuration data, getting reserve emode category, getting reserve caps, getting paused status, getting siloed borrowing, getting liquidation protocol fee tokens, getting unbacked mint cap, getting debt ceiling, getting debt ceiling decimals, getting reserve data, getting AToken total supply, getting total debt, getting user reserve data, getting reserve tokens addresses, and getting flash loan enabled status.
-   * - **pool addresses provider**: Functions for pool addresses provider such as checking if ID mapped account exists, getting market ID, getting address, getting pool, getting pool configurator, getting price oracle, getting ACL manager, getting ACL admin, getting price oracle sentinel, getting pool data provider, setting market ID, setting address, setting pool implementation, setting pool configurator, setting price oracle, setting ACL manager, setting ACL admin, setting price oracle sentinel, and setting pool data provider.
-   */
   constructor(provider: AptosProvider) {
     const PoolManager = provider.getProfileAddressByName(
       AAVE_PROFILES.AAVE_POOL,
     );
     const PoolManagerAccountAddress = PoolManager.toString();
 
-    /**
-     * -------------------------------------------------------------------------
-     * Pool Collector
-     * -------------------------------------------------------------------------
-     */
+    // Pool Collector
     this.collectorGetCollectedFeesFuncAddr = `${PoolManagerAccountAddress}::collector::get_collected_fees`;
     this.collectorAddressFeeFuncAddr = `${PoolManagerAccountAddress}::collector::collector_address`;
     this.collectorIsFundsAdminFuncAddr = `${PoolManagerAccountAddress}::collector::is_funds_admin`;
     this.collectorWithdrawFuncAddr = `${PoolManagerAccountAddress}::collector::withdraw`;
 
-    /**
-     * -------------------------------------------------------------------------
-     * Pool Fee Manager
-     * -------------------------------------------------------------------------
-     */
+    // Pool Fee Manager
     this.feeManagerSetAptFeeFuncAddr = `${PoolManagerAccountAddress}::fee_manager::set_apt_fee`;
     this.feeManagerTransferAptFeeFuncAddr = `${PoolManagerAccountAddress}::fee_manager::transfer_apt_fee`;
     this.feeManagerGetAptFeeFuncAddr = `${PoolManagerAccountAddress}::fee_manager::get_apt_fee`;
@@ -325,30 +161,18 @@ export class PoolContract {
     this.feeManagerGetTotalFeesFuncAddr = `${PoolManagerAccountAddress}::fee_manager::get_total_fees`;
     this.feeManagerGetFeeConfigObjectAddressFuncAddr = `${PoolManagerAccountAddress}::fee_manager::get_fee_config_object_address`;
 
-    /**
-     * -------------------------------------------------------------------------
-     * Pool Token Logic
-     * -------------------------------------------------------------------------
-     */
+    // Pool Token Logic
     this.poolTokenLogicMintToTreasuryFuncAddr = `${PoolManagerAccountAddress}::pool_token_logic::mint_to_treasury`;
     this.poolTokenLogicTransferFuncAddr = `${PoolManagerAccountAddress}::pool_token_logic::transfer`;
     this.poolTokenLogicSetIncentivesControllerFuncAddr = `${PoolManagerAccountAddress}::pool_token_logic::set_incentives_controller`;
 
-    /**
-     * -------------------------------------------------------------------------
-     * Pool
-     * -------------------------------------------------------------------------
-     */
+    // Pool
     this.poolResetIsolationModeTotalDebtFuncAddr = `${PoolManagerAccountAddress}::pool::reset_isolation_mode_total_debt`;
     this.poolRescueTokensFuncAddr = `${PoolManagerAccountAddress}::pool::rescue_tokens`;
     this.poolSetBridgeProtocolFeeFuncAddr = `${PoolManagerAccountAddress}::pool::set_bridge_protocol_fee`;
     this.poolSetFlashloanPremiumsFuncAddr = `${PoolManagerAccountAddress}::pool::set_flashloan_premiums`;
 
-    /**
-     * -------------------------------------------------------------------------
-     * pool
-     * -------------------------------------------------------------------------
-     */
+    // Pool View
     this.poolGetReserveConfigurationFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_configuration`;
     this.poolGetReserveDataFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_data`;
     this.getReserveDataAndReservesCountFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_data_and_reserves_count`;
@@ -385,11 +209,7 @@ export class PoolContract {
     this.poolGetReserveIsolationModeTotalDebt = `${PoolManagerAccountAddress}::pool::get_reserve_isolation_mode_total_debt`;
     this.poolGetReserveDeficitFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_deficit`;
 
-    /**
-     * -------------------------------------------------------------------------
-     * Pool Configurator
-     * -------------------------------------------------------------------------
-     */
+    // Pool Configurator
     this.poolConfiguratorInitReservesFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::init_reserves`;
     this.poolConfiguratorDropReserveFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::drop_reserve`;
     this.poolConfiguratorSetAssetEmodeCategoryFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::set_asset_emode_category`;
@@ -416,11 +236,7 @@ export class PoolContract {
     this.poolConfiguratorUpdateInterestRateStrategyFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::update_interest_rate_strategy`;
     this.poolConfiguratorUpdateFlashloanPremiumTotalFuncAddr = `${PoolManagerAccountAddress}::pool_configurator::update_flashloan_premium_total`;
 
-    /**
-     * -------------------------------------------------------------------------
-     * E Mode Logic
-     * -------------------------------------------------------------------------
-     */
+    // E Mode Logic
     this.poolSetUserEmodeFuncAddr = `${PoolManagerAccountAddress}::emode_logic::set_user_emode`;
     this.poolGetEmodeCategoryDataFuncAddr = `${PoolManagerAccountAddress}::emode_logic::get_emode_category_data`;
     this.poolGetUserEmodeFuncAddr = `${PoolManagerAccountAddress}::emode_logic::get_user_emode`;
@@ -429,11 +245,7 @@ export class PoolContract {
     this.poolIsInEmodeCategoryFuncAddr = `${PoolManagerAccountAddress}::emode_logic::is_in_emode_category`;
     this.poolGetEmodeConfigurationFuncAddr = `${PoolManagerAccountAddress}::emode_logic::get_emode_configuration`;
 
-    /**
-     * -------------------------------------------------------------------------
-     * pool data provider
-     * -------------------------------------------------------------------------
-     */
+    // Pool Data Provider
     this.getAllReservesTokensFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_all_reserves_tokens`;
     this.getAllATokensFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_all_a_tokens`;
     this.getAllVariableTokensFuncAddr = `${PoolManagerAccountAddress}::pool_data_provider::get_all_var_tokens`;

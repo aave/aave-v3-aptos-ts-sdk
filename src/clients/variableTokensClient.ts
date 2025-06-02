@@ -12,29 +12,39 @@ import { mapToBigInt } from "../helpers/common";
 
 /**
  * The `VariableTokensClient` class provides methods to interact with variable tokens on the Aptos blockchain.
- * It extends the `AptosContractWrapperBaseClass` and utilizes the `TokensContract` for various token operations.
+ * It extends the `AptosContractWrapperBaseClass` and includes functionalities for managing variable debt tokens,
+ * retrieving token metadata, balances, and other related information within the AAVE protocol.
  *
  * @remarks
- * This client allows for creating new variable tokens, retrieving token metadata, balances, and other related information.
+ * This client is designed to work with variable debt tokens and provides a high-level API for token operations.
+ * The client can be instantiated in two ways:
+ * 1. Using the constructor directly with a provider and optional signer
+ * 2. Using the static buildWithDefaultSigner method which automatically configures the client with the provider's pool profile account
  *
  * @example
  * ```typescript
+ * // Using buildWithDefaultSigner
  * const provider = new AptosProvider();
  * const client = VariableTokensClient.buildWithDefaultSigner(provider);
- * const tokenAddress = await client.createToken(
- *   1000000n,
- *   "MyToken",
- *   "MTK",
- *   18,
- *   "https://example.com/icon.png",
- *   "https://example.com",
- *   "0x1"
+ *
+ * // Using constructor directly
+ * const provider = new AptosProvider();
+ * const signer = provider.getPoolProfileAccount();
+ * const client = new VariableTokensClient(provider, signer);
+ *
+ * // Get token metadata and balance
+ * const metadataAddress = await client.getMetadataBySymbol("USDC");
+ * const balance = await client.balanceOf(userAddress, metadataAddress);
+ *
+ * // Get scaled balance and total supply
+ * const { scaledUserBalance, supply } = await client.getScaledUserBalanceAndSupply(
+ *   userAddress,
+ *   metadataAddress
  * );
- * const balance = await client.balanceOf("0x1", tokenAddress);
- * console.log(`Balance: ${balance}`);
  * ```
  *
- * @public
+ * @param provider - The AptosProvider instance used to interact with the Aptos blockchain.
+ * @param signer - Optional Ed25519Account signer for transaction signing.
  */
 export class VariableTokensClient extends AptosContractWrapperBaseClass {
   tokensContract: TokensContract;

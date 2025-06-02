@@ -8,8 +8,35 @@ import { AclManagerContract } from "../contracts/aclManage";
 import { AptosProvider } from "./aptosProvider";
 
 /**
- * AclClient class provides methods to interact with the ACL (Access Control List) manager contract.
- * It extends the AptosContractWrapperBaseClass and provides various methods to manage roles and permissions.
+ * Represents the AclClient class which provides methods to interact with the ACL (Access Control List) manager contract
+ * within the AAVE protocol on the Aptos blockchain.
+ *
+ * @remarks
+ * This client extends AptosContractWrapperBaseClass and provides a comprehensive set of methods for managing roles and permissions,
+ * including core role management, pool administration, emergency controls, risk management, and various specialized admin roles.
+ * Each method corresponds to a specific ACL operation in the AAVE protocol.
+ *
+ * The client can be instantiated in two ways:
+ * 1. Using the constructor directly with a provider and optional signer
+ * 2. Using the static buildWithDefaultSigner method which automatically configures the client with the provider's ACL profile account
+ *
+ * @example
+ * ```typescript
+ * // Using buildWithDefaultSigner
+ * const provider = new AptosProvider();
+ * const aclClient = AclClient.buildWithDefaultSigner(provider);
+ *
+ * // Using constructor directly
+ * const provider = new AptosProvider();
+ * const signer = provider.getAclProfileAccount();
+ * const aclClient = new AclClient(provider, signer);
+ *
+ * // Check if an address has a specific role
+ * const hasRole = await aclClient.hasRole("POOL_ADMIN", userAddress);
+ * ```
+ *
+ * @param provider - The AptosProvider instance used to interact with the Aptos blockchain.
+ * @param signer - Optional Ed25519Account signer for transaction signing.
  */
 export class AclClient extends AptosContractWrapperBaseClass {
   AclManagerContract: AclManagerContract;
