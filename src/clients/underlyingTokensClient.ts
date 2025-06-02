@@ -10,82 +10,44 @@ import { TokensContract } from "../contracts/tokens";
 import { mapToBigInt } from "../helpers/common";
 
 /**
- * The `UnderlyingTokensClient` class provides methods to interact with underlying tokens
- * on the Aptos blockchain. It extends the `AptosContractWrapperBaseClass` and utilizes
- * the `TokensContract` to perform various operations such as creating tokens, minting tokens,
- * retrieving metadata, and more.
+ * The `UnderlyingTokensClient` class provides methods to interact with underlying tokens on the Aptos blockchain.
+ * It extends the `AptosContractWrapperBaseClass` and includes functionalities for creating, minting, burning,
+ * and managing underlying tokens within the AAVE protocol.
  *
- * @class UnderlyingTokensClient
- * @extends {AptosContractWrapperBaseClass}
- * @property {TokensContract} tokensContract - The contract instance for interacting with tokens.
- * @constructor
- * @param {AptosProvider} provider - The provider instance for interacting with the Aptos blockchain.
- * @param {Ed25519Account} [signer] - Optional signer account for signing transactions.
+ * @remarks
+ * This client is designed to work with the underlying token contracts and provides a high-level API for token operations.
+ * The client can be instantiated in two ways:
+ * 1. Using the constructor directly with a provider and optional signer
+ * 2. Using the static buildWithDefaultSigner method which automatically configures the client with the provider's pool profile account
  *
- * @method static buildWithDefaultSigner
- * @param {AptosProvider} provider - The provider instance for creating the client.
- * @returns {UnderlyingTokensClient} A new instance of `UnderlyingTokensClient`.
+ * @example
+ * ```typescript
+ * // Using buildWithDefaultSigner
+ * const provider = new AptosProvider();
+ * const client = UnderlyingTokensClient.buildWithDefaultSigner(provider);
  *
- * @method createToken
- * @param {bigint} maximumSupply - The maximum supply of the token.
- * @param {string} name - The name of the token.
- * @param {string} symbol - The symbol of the token.
- * @param {number} decimals - The number of decimal places for the token.
- * @param {string} iconUri - The URI of the token's icon.
- * @param {string} projectUri - The URI of the project's website or information page.
- * @returns {Promise<CommittedTransactionResponse>} A promise that resolves to a transaction response.
+ * // Using constructor directly
+ * const provider = new AptosProvider();
+ * const signer = provider.getPoolProfileAccount();
+ * const client = new UnderlyingTokensClient(provider, signer);
  *
- * @method mint
- * @param {AccountAddress} to - The account address to which the tokens will be minted.
- * @param {bigint} amount - The amount of tokens to mint.
- * @param {AccountAddress} metadataAddress - The account address of the metadata.
- * @returns {Promise<CommittedTransactionResponse>} A promise that resolves to a transaction response.
+ * // Create a new token
+ * const tx = await client.createToken(
+ *   1000000n,  // maximumSupply
+ *   "My Token", // name
+ *   "MTK",     // symbol
+ *   8,         // decimals
+ *   "https://example.com/icon.png",  // iconUri
+ *   "https://example.com"            // projectUri
+ * );
  *
- * @method getMetadataBySymbol
- * @param {string} symbol - The symbol of the token for which metadata is being requested.
- * @returns {Promise<AccountAddress>} A promise that resolves to an `AccountAddress` object containing the metadata.
+ * // Mint tokens to an address
+ * const metadataAddress = await client.getMetadataBySymbol("MTK");
+ * const tx = await client.mint(userAddress, 1000n, metadataAddress);
+ * ```
  *
- * @method getTokenAccountAddress
- * @returns {Promise<AccountAddress>} A promise that resolves to an `AccountAddress` object containing the token account address.
- *
- * @method supply
- * @param {AccountAddress} metadataAddress - The address of the metadata to supply tokens for.
- * @returns {Promise<bigint>} A promise that resolves to the amount of tokens supplied as a bigint.
- *
- * @method maximum
- * @param {AccountAddress} metadataAddress - The address of the account metadata.
- * @returns {Promise<bigint | undefined>} A promise that resolves to a bigint representing the maximum value, or undefined if not available.
- *
- * @method name
- * @param {AccountAddress} metadataAddress - The address of the account metadata.
- * @returns {Promise<string>} A promise that resolves to the name of the underlying token as a string.
- *
- * @method symbol
- * @param {AccountAddress} metadataAddress - The address of the account metadata.
- * @returns {Promise<string>} A promise that resolves to the symbol of the underlying token as a string.
- *
- * @method decimals
- * @param {AccountAddress} metadataAddress - The address of the token's metadata.
- * @returns {Promise<bigint>} A promise that resolves to the number of decimals as a bigint.
- *
- * @method getMetadataAddress
- * @param {MoveFunctionId} funcAddr - The identifier of the Move function to call.
- * @param {string} coinName - The name of the coin for which to retrieve the metadata address.
- * @returns {Promise<AccountAddress>} A promise that resolves to the account address containing the metadata.
- *
- * @method getDecimals
- * @param {MoveFunctionId} funcAddr - The address of the Move function to call.
- * @param {AccountAddress} metadataAddr - The address of the account containing the token metadata.
- * @returns {Promise<bigint>} A promise that resolves to the decimal precision of the token as a bigint.
- *
- * @method balanceOf
- * @param {AccountAddress} owner - The account address of the token owner.
- * @param {AccountAddress} metadataAddress - The account address of the token metadata.
- * @returns {Promise<bigint>} A promise that resolves to the balance of underlying tokens as a bigint.
- *
- * @method getTokenAddress
- * @param {string} symbol - The symbol of the token whose address is to be retrieved.
- * @returns {Promise<AccountAddress>} A promise that resolves to the account address of the token.
+ * @param provider - The AptosProvider instance used to interact with the Aptos blockchain.
+ * @param signer - Optional Ed25519Account signer for transaction signing.
  */
 export class UnderlyingTokensClient extends AptosContractWrapperBaseClass {
   tokensContract: TokensContract;

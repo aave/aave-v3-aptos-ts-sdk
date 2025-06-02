@@ -1,58 +1,43 @@
 import { MoveFunctionId } from "@aptos-labs/ts-sdk";
 import { AAVE_PROFILES, AptosProvider } from "../clients/aptosProvider";
 
+/**
+ * Represents the OracleContract interface which defines the function addresses for price oracle operations
+ * within the AAVE protocol on the Aptos blockchain.
+ *
+ * @remarks
+ * This interface is used by the corresponding client classes to make actual calls to the blockchain.
+ * The constructor initializes all function addresses by combining:
+ * - The oracle manager's account address from the provider
+ * - The module name (oracle)
+ * - The specific function name
+ *
+ * @example
+ * ```typescript
+ * const provider = new AptosProvider();
+ * const oracle = new OracleContract(provider);
+ * ```
+ *
+ * @param provider - The AptosProvider instance used to interact with the Aptos blockchain.
+ */
 export class OracleContract {
   isAssetPriceCappedFuncAddr: MoveFunctionId;
-
   getAssetPriceFuncAddr: MoveFunctionId;
-
   getPriceCapFuncAddr: MoveFunctionId;
-
   getAssetsPricesFuncAddr: MoveFunctionId;
-
   setAssetFeedIdFuncAddr: MoveFunctionId;
-
   setPriceCapStableAdapter: MoveFunctionId;
-
   removePriceCapStableAdapter: MoveFunctionId;
-
   setAssetCustomPriceFuncAddr: MoveFunctionId;
-
   batchSetAssetFeedIdsFuncAddr: MoveFunctionId;
-
   batchSetAssetCustomPricesFuncAddr: MoveFunctionId;
-
   batchRemoveAssetCustomPricesFuncAddr: MoveFunctionId;
-
   removeAssetFeedIdFuncAddr: MoveFunctionId;
-
   removeAssetFeedIdsFuncAddr: MoveFunctionId;
-
   removeAssetCustomPriceFuncAddr: MoveFunctionId;
-
   getOracleAddressFuncAddr: MoveFunctionId;
-
   getAssetPriceDecimalsFuncAddr: MoveFunctionId;
 
-  /**
-   * Constructs an instance of the Oracle class.
-   *
-   * @param provider - An instance of `AptosProvider` used to interact with the Aptos blockchain.
-   *
-   * This constructor initializes various function addresses related to the Oracle contract by
-   * fetching the OracleManager's account address from the provider and constructing the full
-   * function addresses for different oracle operations.
-   *
-   * The following function addresses are initialized:
-   * - `getAssetPriceFuncAddr`: Address for the `get_asset_price` function.
-   * - `getAssetsPricesFuncAddr`: Address for the `get_assets_prices` function.
-   * - `setAssetFeedIdFuncAddr`: Address for the `set_asset_feed_id` function.
-   * - `batchSetAssetFeedIdsFuncAddr`: Address for the `batch_set_asset_feed_ids` function.
-   * - `removeAssetFeedIdFuncAddr`: Address for the `remove_asset_feed_id` function.
-   * - `removeAssetFeedIdsFuncAddr`: Address for the `batch_remove_asset_feed_ids` function.
-   * - `getOracleResourceAccountFuncAddr`: Address for the `get_oracle_resource_account` function.
-   * - `getOracleAddressFuncAddr`: Address for the `oracle_address` function.
-   */
   constructor(provider: AptosProvider) {
     const OracleManager = provider.getProfileAddressByName(
       AAVE_PROFILES.AAVE_ORACLE,

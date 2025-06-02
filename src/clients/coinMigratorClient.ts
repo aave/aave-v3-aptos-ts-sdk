@@ -14,17 +14,28 @@ import { mapToBigInt } from "../helpers/common";
  * as well as retrieve the FA address.
  *
  * @remarks
- * This client is designed to work with the Aptos blockchain and requires an `AptosProvider` for network interactions.
+ * This client is designed to work with the Coin Migrator contract and provides a high-level API for coin migration operations.
+ * The client can be instantiated in two ways:
+ * 1. Using the constructor directly with a provider and optional signer
+ * 2. Using the static buildWithDefaultSigner method which automatically configures the client with the provider's pool profile account
  *
  * @example
  * ```typescript
+ * // Using buildWithDefaultSigner
  * const provider = new AptosProvider();
- * const client = new CoinMigratorClient(provider);
- * const faAddress = await client.getFaAddress();
- * console.log(faAddress);
+ * const client = CoinMigratorClient.buildWithDefaultSigner(provider);
+ *
+ * // Using constructor directly
+ * const provider = new AptosProvider();
+ * const signer = provider.getPoolProfileAccount();
+ * const client = new CoinMigratorClient(provider, signer);
+ *
+ * // Convert coins to FA
+ * const tx = await client.coinToFa(1000n, "0x1::aptos_coin::AptosCoin");
  * ```
  *
- * @public
+ * @param provider - The AptosProvider instance used to interact with the Aptos blockchain.
+ * @param signer - Optional Ed25519Account signer for transaction signing.
  */
 export class CoinMigratorClient extends AptosContractWrapperBaseClass {
   coinMigratorContract: CoinMigratorContract;
@@ -41,10 +52,10 @@ export class CoinMigratorClient extends AptosContractWrapperBaseClass {
   }
 
   /**
-   * Creates an instance of `CoinMigratorClient` using the default signer.
+   * Creates an instance of CoinMigratorClient using the default signer from the provided AptosProvider.
    *
-   * @param provider - The `AptosProvider` instance to be used for creating the client.
-   * @returns A new instance of `CoinMigratorClient` initialized with the provided `AptosProvider`.
+   * @param provider - The AptosProvider instance to use for creating the CoinMigratorClient.
+   * @returns A new instance of CoinMigratorClient.
    */
   public static buildWithDefaultSigner(
     provider: AptosProvider,

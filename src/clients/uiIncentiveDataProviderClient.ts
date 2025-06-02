@@ -263,6 +263,36 @@ const getReservesIncentivesDataInternal = (
   return reservesIncentivesData as [AggregatedReserveIncentiveData];
 };
 
+/**
+ * The `UiIncentiveDataProviderClient` class provides methods to interact with the UI Incentive Data Provider contract on the Aptos blockchain.
+ * It extends the `AptosContractWrapperBaseClass` and includes functionalities for retrieving incentive data for reserves
+ * and users, including reward information, emission rates, and user-specific incentive data within the AAVE protocol.
+ *
+ * @remarks
+ * This client is designed to work with the UI Incentive Data Provider contract and provides a high-level API for accessing
+ * incentive-related data in a format suitable for UI applications. The client can be instantiated in two ways:
+ * 1. Using the constructor directly with a provider and optional signer
+ * 2. Using the static buildWithDefaultSigner method which automatically configures the client with the provider's pool profile account
+ *
+ * @example
+ * ```typescript
+ * // Using buildWithDefaultSigner
+ * const provider = new AptosProvider();
+ * const client = UiIncentiveDataProviderClient.buildWithDefaultSigner(provider);
+ *
+ * // Using constructor directly
+ * const provider = new AptosProvider();
+ * const signer = provider.getPoolProfileAccount();
+ * const client = new UiIncentiveDataProviderClient(provider, signer);
+ *
+ * // Get full reserves incentive data
+ * const { aggregatedReservesIncentivesData, userReserveIncentiveData } =
+ *   await client.getFullReservesIncentiveData();
+ * ```
+ *
+ * @param provider - The AptosProvider instance used to interact with the Aptos blockchain.
+ * @param signer - Optional Ed25519Account signer for transaction signing.
+ */
 export class UiIncentiveDataProviderClient extends AptosContractWrapperBaseClass {
   uiPoolDataProviderContract: UiIncentiveDataProviderContract;
 

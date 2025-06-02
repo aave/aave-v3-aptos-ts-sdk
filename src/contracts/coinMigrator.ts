@@ -2,11 +2,15 @@ import { MoveFunctionId } from "@aptos-labs/ts-sdk";
 import { AAVE_PROFILES, AptosProvider } from "../clients/aptosProvider";
 
 /**
- * The `CoinMigratorContract` class provides methods to interact with the coin migration functionalities
- * on the Aptos blockchain. It allows migrating coins to FA, migrating FA to coins, and retrieving the FA address.
+ * Represents the CoinMigratorContract interface which defines the function addresses for coin migration operations
+ * within the AAVE protocol on the Aptos blockchain.
  *
  * @remarks
- * This class requires an instance of `AptosProvider` to interact with the Aptos blockchain.
+ * This interface is used by the corresponding client classes to make actual calls to the blockchain.
+ * The constructor initializes all function addresses by combining:
+ * - The coin migrator's account address from the provider
+ * - The module name (coin_migrator)
+ * - The specific function name
  *
  * @example
  * ```typescript
@@ -14,24 +18,14 @@ import { AAVE_PROFILES, AptosProvider } from "../clients/aptosProvider";
  * const coinMigrator = new CoinMigratorContract(provider);
  * ```
  *
- * @public
+ * @param provider - The AptosProvider instance used to interact with the Aptos blockchain.
  */
 export class CoinMigratorContract {
-  // Resource Func Addr
+  // Resource Functions
   coinToFaFuncAddr: MoveFunctionId;
   getFaAddrFuncAddr: MoveFunctionId;
   getFaBalanceFuncAddr: MoveFunctionId;
 
-  /**
-   * Constructs a new instance of the CoinMigrator class.
-   *
-   * @param provider - An instance of AptosProvider used to interact with the Aptos blockchain.
-   *
-   * Initializes the following properties:
-   * - `coinToFaFuncAddr`: The address of the function to migrate coins to FA.
-   * - `getFaAddrFuncAddr`: The address of the function to get the FA address.
-   * - `getFaBalanceFuncAddr`: The address of the function to get the FA balance.
-   */
   constructor(provider: AptosProvider) {
     const CoinMigratorManager = provider.getProfileAddressByName(
       AAVE_PROFILES.AAVE_POOL,

@@ -190,6 +190,35 @@ export type ReserveConfigurationData = {
   isFrozen: boolean;
 };
 
+/**
+ * The `PoolClient` class provides methods to interact with the Aave protocol's pool contracts on the Aptos blockchain.
+ * It extends the `AptosContractWrapperBaseClass` and includes functionalities for managing reserves, configuring
+ * pool parameters, handling user positions, and managing protocol fees.
+ *
+ * @remarks
+ * This client is designed to work with the core pool contracts and provides a high-level API for pool operations.
+ * The client can be instantiated in two ways:
+ * 1. Using the constructor directly with a provider and optional signer
+ * 2. Using the static buildWithDefaultSigner method which automatically configures the client with the provider's pool profile account
+ *
+ * @example
+ * ```typescript
+ * // Using buildWithDefaultSigner
+ * const provider = new AptosProvider();
+ * const client = PoolClient.buildWithDefaultSigner(provider);
+ *
+ * // Using constructor directly
+ * const provider = new AptosProvider();
+ * const signer = provider.getPoolProfileAccount();
+ * const client = new PoolClient(provider, signer);
+ *
+ * // Get reserve data
+ * const reserveData = await client.getReserveData(assetAddress);
+ * ```
+ *
+ * @param provider - The AptosProvider instance used to interact with the Aptos blockchain.
+ * @param signer - Optional Ed25519Account signer for transaction signing.
+ */
 export class PoolClient extends AptosContractWrapperBaseClass {
   poolContract: PoolContract;
 

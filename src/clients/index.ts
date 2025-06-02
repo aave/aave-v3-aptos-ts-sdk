@@ -5,9 +5,17 @@ export {
   AptosAccountConfig,
   AAVE_PROFILES,
 } from "./aptosProvider";
-export { AptosContractWrapperBaseClass } from "./baseClass";
 export { ATokensClient } from "./aTokensClient";
+export { AptosContractWrapperBaseClass } from "./baseClass";
+export { CoinMigratorClient } from "./coinMigratorClient";
 export { CoreClient } from "./coreClient";
+export {
+  EmissionManagerClient,
+  PullRewardsTransferStrategy,
+  RewardsConfigInput,
+} from "./emissionManagerClient";
+export { InterestRateClient } from "./interestRateClient";
+export { OracleClient } from "./oracleClient";
 export {
   PoolClient,
   ReserveConfigurationData,
@@ -18,10 +26,8 @@ export {
   UserConfigurationMap,
   UserReserveData,
 } from "./poolClient";
-export { OracleClient } from "./oracleClient";
-export { UnderlyingTokensClient } from "./underlyingTokensClient";
-export { InterestRateClient } from "./interestRateClient";
-export { VariableTokensClient } from "./variableTokensClient";
+export { RewardsControllerClient } from "./rewardsControllerClient";
+export { TransferStrategyClient } from "./transferStrategyClient";
 export {
   AggregatedReserveIncentiveData,
   IncentiveData,
@@ -39,3 +45,5 @@ export {
   UserReserveData as UiDataProviderUserReserveData,
   UserReservesData,
 } from "./uiPoolDataProviderClient";
+export { UnderlyingTokensClient } from "./underlyingTokensClient";
+export { VariableTokensClient } from "./variableTokensClient";
