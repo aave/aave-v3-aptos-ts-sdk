@@ -96,6 +96,27 @@ export class OracleClient extends AptosContractWrapperBaseClass {
   }
 
   /**
+   * Retrieves the price plus timestamp of a specified asset.
+   *
+   * @param asset - The address of the asset for which the price is being requested.
+   * @returns A promise that resolves to the price of the asset incl. its timestamp as a bigint.
+   */
+  public async getAssetPriceAndTimestmap(
+    asset: AccountAddress,
+  ): Promise<{ price: bigint; timestamp: bigint }> {
+    const resp = await this.callViewMethod(
+      this.oracleContract.getAssetPriceAndTimestampFuncAddr,
+      [asset],
+    );
+    const price = resp.at(0) as any;
+    const timestamp = resp.at(1) as any;
+    return {
+      price: BigInt(price.toString()),
+      timestamp: BigInt(timestamp.toString()),
+    };
+  }
+
+  /**
    * Retrieves the price cap of a specified asset.
    *
    * @param asset - The address of the asset for which the price cap is being requested.
