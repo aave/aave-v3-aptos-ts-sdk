@@ -23,6 +23,7 @@ import { AAVE_PROFILES, AptosProvider } from "../clients/aptosProvider";
 export class OracleContract {
   isAssetPriceCappedFuncAddr: MoveFunctionId;
   getAssetPriceFuncAddr: MoveFunctionId;
+  getAssetPriceAndTimestampFuncAddr: MoveFunctionId;
   getPriceCapFuncAddr: MoveFunctionId;
   getAssetsPricesFuncAddr: MoveFunctionId;
   setAssetFeedIdFuncAddr: MoveFunctionId;
@@ -45,6 +46,7 @@ export class OracleContract {
     const OracleManagerAccountAddress = OracleManager.toString();
     this.isAssetPriceCappedFuncAddr = `${OracleManagerAccountAddress}::oracle::is_asset_price_capped`;
     this.getAssetPriceFuncAddr = `${OracleManagerAccountAddress}::oracle::get_asset_price`;
+    this.getAssetPriceAndTimestampFuncAddr = `${OracleManagerAccountAddress}::oracle::get_asset_price_and_timestamp`;
     this.getAssetPriceDecimalsFuncAddr = `${OracleManagerAccountAddress}::oracle::get_asset_price_decimals`;
     this.getPriceCapFuncAddr = `${OracleManagerAccountAddress}::oracle::get_price_cap`;
     this.getAssetsPricesFuncAddr = `${OracleManagerAccountAddress}::oracle::get_assets_prices`;

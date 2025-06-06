@@ -33,8 +33,11 @@
         "get-addresses": "tsx examples/quiries/getAddresses.ts",
         "get-user-data": "tsx examples/quiries/getUserData.ts",
         "get-asset-price": "tsx examples/quiries/getAssetPrice.ts",
+        "get-asset-price-timestamp": "tsx examples/quiries/getAssetPriceAndTimestamp.ts",
         "setup-testnet": "tsx examples/admin/setupTestnet.ts",
         "mint-underlyings": "tsx examples/admin/mintUnderlyings.ts",
+        "create-coin-store": "tsx examples/admin/createCoinStore.ts",
+        "transfer-coins": "tsx examples/admin/transferCoins.ts",
         "set-asset-prices": "tsx examples/admin/setAssetPrices.ts",
         "lint": "eslint . --no-cache --ignore-pattern 'dist'",
         "lint:fix": "eslint . --fix --no-cache --ignore-pattern 'dist'",
@@ -85,7 +88,7 @@
         "tsx": "^4.19.4",
         "util": "^0.12.5",
         "yaml": "^2.7.1",
-        "yargs": "^17.7.2"
+        "yargs": "^18.0.0"
     },
     "devDependencies": {
         "@types/bn.js": "^5.1.6",
@@ -118,7 +121,7 @@
         "ts-jest": "^29.3.2",
         "ts-loader": "^9.5.2",
         "ts-node": "^10.9.2",
-        "typedoc": "^0.27.9",
+        "typedoc": "^0.28.5",
         "typescript": "^5.8.3",
         "typescript-eslint": "^8.32.0",
         "webpack": "^5.99.8",
