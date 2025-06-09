@@ -11,9 +11,7 @@ export const EMPTY_LOCAL_CONFIG = (): AptosProviderConfig => {
   return {
     network: Network.LOCAL,
     addresses: {
-      A_TOKENS: ZERO_ADDRESS,
       AAVE_MOCK_UNDERLYINGS: ZERO_ADDRESS,
-      VARIABLE_TOKENS: ZERO_ADDRESS,
       AAVE_ACL: ZERO_ADDRESS,
       AAVE_CONFIG: ZERO_ADDRESS,
       AAVE_ORACLE: ZERO_ADDRESS,

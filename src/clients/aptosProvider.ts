@@ -19,9 +19,7 @@ import YAML from "yaml";
  * @property {Network} network - The network configuration for the AptosProvider.
  * @property {string} aptosApiKey - The aptos api key.
  * @property {Object} addresses - The contract addresses used by the AptosProvider.
- * @property {string} addresses.A_TOKENS - The address for A tokens.
  * @property {string} addresses.UNDERLYING_TOKENS - The address for underlying tokens.
- * @property {string} addresses.VARIABLE_TOKENS - The address for variable tokens.
  * @property {string} addresses.AAVE_ACL - The address for AAVE ACL.
  * @property {string} addresses.AAVE_CONFIG - The address for AAVE configuration.
  * @property {string} addresses.AAVE_ORACLE - The address for AAVE oracle.
@@ -33,9 +31,7 @@ export interface AptosProviderConfig {
   network: Network;
   aptosApiKey?: string;
   addresses: {
-    A_TOKENS: AccountAddress;
     AAVE_MOCK_UNDERLYINGS: AccountAddress;
-    VARIABLE_TOKENS: AccountAddress;
     AAVE_ACL: AccountAddress;
     AAVE_CONFIG: AccountAddress;
     AAVE_ORACLE: AccountAddress;
@@ -73,9 +69,7 @@ export interface AptosAccountConfig {
 }
 
 export enum AAVE_PROFILES {
-  A_TOKENS = "a_tokens",
   AAVE_MOCK_UNDERLYINGS = "aave_mock_underlyings",
-  VARIABLE_TOKENS = "variable_tokens",
   AAVE_ACL = "aave_acl",
   AAVE_CONFIG = "aave_config",
   AAVE_ORACLE = "aave_oracle",
@@ -159,9 +153,7 @@ export class AptosProvider {
    * const config: AptosProviderConfig = {
    *   network: 'mainnet',
    *   addresses: {
-   *     A_TOKENS: '0x...',
    *     AAVE_MOCK_UNDERLYINGS: '0x...',
-   *     VARIABLE_TOKENS: '0x...',
    *     AAVE_ACL: '0x...',
    *     AAVE_CONFIG: '0x...',
    *     AAVE_ORACLE: '0x...',
@@ -177,16 +169,8 @@ export class AptosProvider {
     aptosProvider.setNetwork(config.network);
 
     aptosProvider.addProfileAddress(
-      AAVE_PROFILES.A_TOKENS,
-      config.addresses.A_TOKENS,
-    );
-    aptosProvider.addProfileAddress(
       AAVE_PROFILES.AAVE_MOCK_UNDERLYINGS,
       config.addresses.AAVE_MOCK_UNDERLYINGS,
-    );
-    aptosProvider.addProfileAddress(
-      AAVE_PROFILES.VARIABLE_TOKENS,
-      config.addresses.VARIABLE_TOKENS,
     );
     aptosProvider.addProfileAddress(
       AAVE_PROFILES.AAVE_ACL,
@@ -233,9 +217,7 @@ export class AptosProvider {
    *
    * Environment Variables:
    * - `APTOS_NETWORK`: The network to connect to (testnet, devnet, mainnet, local).
-   * - `A_TOKENS_PRIVATE_KEY`: Private key for A_TOKENS profile.
    * - `AAVE_MOCK_UNDERLYING_TOKENS_PRIVATE_KEY`: Private key for UNDERLYING_TOKENS profile.
-   * - `VARIABLE_TOKENS_PRIVATE_KEY`: Private key for VARIABLE_TOKENS profile.
    * - `AAVE_ACL_PRIVATE_KEY`: Private key for AAVE_ACL profile.
    * - `AAVE_CONFIG_PRIVATE_KEY`: Private key for AAVE_CONFIG profile.
    * - `AAVE_ORACLE_PRIVATE_KEY`: Private key for AAVE_ORACLE profile.
@@ -280,16 +262,6 @@ export class AptosProvider {
         );
     }
 
-    // read envs
-    if (!process.env.A_TOKENS_PRIVATE_KEY) {
-      throw new Error("Env variable A_TOKENS_PRIVATE_KEY does not exist");
-    }
-    addProfilePkey(
-      aptosProvider,
-      AAVE_PROFILES.A_TOKENS,
-      process.env.A_TOKENS_PRIVATE_KEY,
-    );
-
     if (!process.env.AAVE_MOCK_UNDERLYING_TOKENS_PRIVATE_KEY) {
       throw new Error(
         "Env variable AAVE_MOCK_UNDERLYING_TOKENS_PRIVATE_KEY does not exist",
@@ -299,17 +271,6 @@ export class AptosProvider {
       aptosProvider,
       AAVE_PROFILES.AAVE_MOCK_UNDERLYINGS,
       process.env.AAVE_MOCK_UNDERLYING_TOKENS_PRIVATE_KEY,
-    );
-
-    if (!process.env.VARIABLE_TOKENS_PRIVATE_KEY) {
-      throw new Error(
-        "Env variable VARIABLE_TOKENS_PRIVATE_KEY does not exist",
-      );
-    }
-    addProfilePkey(
-      aptosProvider,
-      AAVE_PROFILES.VARIABLE_TOKENS,
-      process.env.VARIABLE_TOKENS_PRIVATE_KEY,
     );
 
     if (!process.env.AAVE_ACL_PRIVATE_KEY) {
@@ -594,30 +555,12 @@ export class AptosProvider {
   }
 
   /**
-   * Retrieves the profile account associated with AAVE A_TOKENS.
-   *
-   * @returns {Ed25519Account} The Ed25519 account corresponding to the A_TOKENS profile.
-   */
-  public getATokensProfileAccount(): Ed25519Account {
-    return this.getProfileAccountByName(AAVE_PROFILES.A_TOKENS);
-  }
-
-  /**
    * Retrieves the profile account associated with underlying tokens.
    *
    * @returns {Ed25519Account} The profile account for underlying tokens.
    */
   public getUnderlyingTokensProfileAccount(): Ed25519Account {
     return this.getProfileAccountByName(AAVE_PROFILES.AAVE_MOCK_UNDERLYINGS);
-  }
-
-  /**
-   * Retrieves the profile account associated with variable tokens.
-   *
-   * @returns {Ed25519Account} The Ed25519 account corresponding to the variable tokens profile.
-   */
-  public getVariableTokensProfileAccount(): Ed25519Account {
-    return this.getProfileAccountByName(AAVE_PROFILES.VARIABLE_TOKENS);
   }
 
   /**
