@@ -62,7 +62,7 @@ export class ATokensClient extends AptosContractWrapperBaseClass {
   public static buildWithDefaultSigner(provider: AptosProvider): ATokensClient {
     const client = new ATokensClient(
       provider,
-      provider.getATokensProfileAccount(),
+      provider.getPoolProfileAccount(),
     );
     return client;
   }

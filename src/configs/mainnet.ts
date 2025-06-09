@@ -8,9 +8,7 @@ import { AptosProviderConfig } from "../clients/aptosProvider";
  * @type {AptosProviderConfig}
  * @property {Network} network - The network type, set to TESTNET.
  * @property {Object} addresses - The addresses for various Aave components.
- * @property {AccountAddress} addresses.A_TOKENS - Address for Aave A Tokens.
  * @property {AccountAddress} addresses.AAVE_MOCK_UNDERLYINGS - Address for mock underlying tokens.
- * @property {AccountAddress} addresses.VARIABLE_TOKENS - Address for variable tokens.
  * @property {AccountAddress} addresses.AAVE_ACL - Address for Aave ACL.
  * @property {AccountAddress} addresses.AAVE_CONFIG - Address for Aave configuration.
  * @property {AccountAddress} addresses.AAVE_ORACLE - Address for Aave oracle.
@@ -24,9 +22,7 @@ import { AptosProviderConfig } from "../clients/aptosProvider";
 export const DEFAULT_MAINNET_CONFIG: AptosProviderConfig = {
   network: Network.MAINNET,
   addresses: {
-    A_TOKENS: AccountAddress.fromString("0x0"),
     AAVE_MOCK_UNDERLYINGS: AccountAddress.fromString("0x0"),
-    VARIABLE_TOKENS: AccountAddress.fromString("0x0"),
     AAVE_ACL: AccountAddress.fromString("0x0"),
     AAVE_CONFIG: AccountAddress.fromString("0x0"),
     AAVE_ORACLE: AccountAddress.fromString("0x0"),
