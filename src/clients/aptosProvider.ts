@@ -202,6 +202,9 @@ export class AptosProvider {
         ...(process.env.APTOS_API_KEY && {
           API_KEY: process.env.APTOS_API_KEY,
         }),
+        ...(config.aptosApiKey && {
+          API_KEY: config.aptosApiKey,
+        }),
       },
     });
     aptosProvider.setAptos(aptosConfig);
