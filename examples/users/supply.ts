@@ -10,6 +10,10 @@ import { AptosProvider, CoreClient } from "../../src/clients";
 import { DEFAULT_TESTNET_CONFIG } from "../../src/configs";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
+import dotenv from "dotenv";
+
+// Load environment variables
+dotenv.config();
 
 const REFERRAL_CODE = 0;
 
@@ -34,7 +38,7 @@ const main = async () => {
       demandOption: true,
     })
     .example(
-      "pnpm run supply -k 0xabc123 -s DAI -a 100",
+      "pnpm run supply -k 0xabc123 -s USDC -a 100",
       "Supply 100 units of DAI using the provided private key",
     )
     .help()

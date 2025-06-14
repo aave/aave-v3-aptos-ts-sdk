@@ -580,21 +580,6 @@ export class PoolClient extends AptosContractWrapperBaseClass {
   }
 
   /**
-   * Retrieves the count of reserves from the pool contract.
-   *
-   * @returns {Promise<bigint>} A promise that resolves to the count of reserves as a bigint.
-   */
-  public async getReservesCount(): Promise<bigint> {
-    const [resp] = (
-      await this.callViewMethod(
-        this.poolContract.poolGetReservesCountFuncAddr,
-        [],
-      )
-    ).map(mapToBigInt);
-    return resp;
-  }
-
-  /**
    * Retrieves the list of reserve accounts from the pool contract.
    *
    * @returns {Promise<Array<AccountAddress>>} A promise that resolves to an array of AccountAddress objects representing the reserve accounts.

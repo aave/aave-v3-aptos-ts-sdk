@@ -3,6 +3,7 @@ import { DEFAULT_TESTNET_CONFIG } from "../../src/configs/testnet";
 import { AptosConfigurator, ReserveConfig } from "../../src/helpers";
 import dotenv from "dotenv";
 
+// Load environment variables
 dotenv.config();
 
 const eModes = [

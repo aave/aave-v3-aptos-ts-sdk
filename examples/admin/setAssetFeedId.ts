@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import {
   Account,
   Ed25519PrivateKey,
@@ -9,6 +8,7 @@ import { OracleClient, PoolClient } from "../../src/clients";
 import { priceFeeds } from "../../src/helpers/priceFeeds";
 import { AptosProvider } from "../../src/clients/aptosProvider";
 import { DEFAULT_TESTNET_CONFIG } from "../../src/configs/testnet";
+import dotenv from "dotenv";
 
 // Load environment variables
 dotenv.config();

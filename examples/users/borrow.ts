@@ -10,6 +10,10 @@ import { AptosProvider, CoreClient } from "../../src/clients";
 import { DEFAULT_TESTNET_CONFIG } from "../../src/configs";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
+import dotenv from "dotenv";
+
+// Load environment variables
+dotenv.config();
 
 const INTEREST_RATE_MODE = 2;
 const REFERRAL_CODE = 0;

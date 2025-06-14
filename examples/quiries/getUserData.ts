@@ -1,11 +1,14 @@
 import { AccountAddress } from "@aptos-labs/ts-sdk";
-import { UnderlyingTokensClient } from "../../src/clients/underlyingTokensClient";
 import { UiPoolDataProviderClient } from "../../src/clients/uiPoolDataProviderClient";
 import { PoolClient } from "../../src/clients/poolClient";
 import { AptosProvider } from "../../src/clients/aptosProvider";
 import { DEFAULT_TESTNET_CONFIG } from "../../src/configs/testnet";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
+import dotenv from "dotenv";
+
+// Load environment variables
+dotenv.config();
 
 const main = async () => {
   const argv = await yargs(hideBin(process.argv))
@@ -22,7 +25,6 @@ const main = async () => {
   const aptosProvider = AptosProvider.fromConfig(DEFAULT_TESTNET_CONFIG);
   const uiPoolDataProviderClient = new UiPoolDataProviderClient(aptosProvider);
   const poolClient = new PoolClient(aptosProvider);
-  const underlyingTokensClient = new UnderlyingTokensClient(aptosProvider);
   const userAccount = AccountAddress.fromString(argv.account);
 
   try {
@@ -43,21 +45,8 @@ const main = async () => {
         );
       }
 
-      const underlyingTokenMetadata =
-        await underlyingTokensClient.getMetadataBySymbol(
-          underlyingToken.symbol,
-        );
-
-      const underlyingTokenBalance = await underlyingTokensClient.balanceOf(
-        userAccount,
-        underlyingTokenMetadata,
-      );
-
       console.log(
         `\n=== 💠 ${underlyingToken.symbol} (${userReserve.underlyingAsset}) ===`,
-      );
-      console.log(
-        `Unscaled Underlying Balance : ${underlyingTokenBalance.toString()}`,
       );
       console.log(
         `Scaled aToken Balance       : ${userReserve.scaledATokenBalance.toString()}`,

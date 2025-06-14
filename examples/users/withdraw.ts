@@ -10,6 +10,10 @@ import { AptosProvider, CoreClient } from "../../src/clients";
 import { DEFAULT_TESTNET_CONFIG } from "../../src/configs";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
+import dotenv from "dotenv";
+
+// Load environment variables
+dotenv.config();
 
 const main = async () => {
   const argv = await yargs(hideBin(process.argv))
