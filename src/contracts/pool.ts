@@ -51,7 +51,6 @@ export class PoolContract {
   poolGetReserveConfigurationFuncAddr: MoveFunctionId;
   poolGetReserveDataFuncAddr: MoveFunctionId;
   getReserveDataAndReservesCountFuncAddr: MoveFunctionId;
-  poolGetReservesCountFuncAddr: MoveFunctionId;
   poolGetNormalizedDebtByReserveData: MoveFunctionId;
   poolGetReservesListFuncAddr: MoveFunctionId;
   poolGetReserveAddressByIdFuncAddr: MoveFunctionId;
@@ -176,7 +175,6 @@ export class PoolContract {
     this.poolGetReserveConfigurationFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_configuration`;
     this.poolGetReserveDataFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_data`;
     this.getReserveDataAndReservesCountFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_data_and_reserves_count`;
-    this.poolGetReservesCountFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserves_count`;
     this.poolGetNormalizedDebtByReserveData = `${PoolManagerAccountAddress}::pool::get_normalized_debt_by_reserve_data`;
     this.poolGetReservesListFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserves_list`;
     this.poolGetReserveAddressByIdFuncAddr = `${PoolManagerAccountAddress}::pool::get_reserve_address_by_id`;

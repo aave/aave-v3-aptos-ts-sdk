@@ -1,38 +1,24 @@
 import {
   ATokensClient,
   VariableTokensClient,
-  UnderlyingTokensClient,
   UiPoolDataProviderClient,
   PoolClient,
   AptosProvider,
 } from "../../src/clients";
 import { DEFAULT_TESTNET_CONFIG } from "../../src/configs/testnet";
+import dotenv from "dotenv";
+
+// Load environment variables
+dotenv.config();
 
 (async () => {
   const aptosProvider = AptosProvider.fromConfig(DEFAULT_TESTNET_CONFIG);
   const aTokensClient = new ATokensClient(aptosProvider);
-  const underlyingTokensClient = new UnderlyingTokensClient(aptosProvider);
   const varTokensClient = new VariableTokensClient(aptosProvider);
   const poolClient = new PoolClient(aptosProvider);
   const uiPoolDataProviderClient = new UiPoolDataProviderClient(aptosProvider);
 
   try {
-    // === UNDERLYING TOKENS ===
-    console.log("\n=== 🟡 UNDERLYING TOKENS ===\n");
-    const allReserveUnderlyingTokens = await poolClient.getAllReservesTokens();
-    for (const token of allReserveUnderlyingTokens) {
-      const tokenAddress = token.tokenAddress.toString();
-      const symbol = await underlyingTokensClient.symbol(token.tokenAddress);
-      const name = await underlyingTokensClient.name(token.tokenAddress);
-      const decimals = await underlyingTokensClient.decimals(
-        token.tokenAddress,
-      );
-      console.log(`- ${symbol} (${name})`);
-      console.log(`  Address : ${tokenAddress}`);
-      console.log(`  Decimals: ${Number(decimals)}`);
-      console.log("");
-    }
-
     // === A TOKENS ===
     console.log("\n=== 🔵 A TOKENS ===\n");
     const allATokens = await poolClient.getAllATokens();
@@ -71,17 +57,15 @@ import { DEFAULT_TESTNET_CONFIG } from "../../src/configs/testnet";
       console.log("");
     }
 
-    // === RESERVES COUNT ===
-    const reservesCount = await poolClient.getReservesCount();
-    console.log("\n=== 📦 RESERVES COUNT ===");
-    console.log(`Total reserves: ${Number(reservesCount)}`);
-
     // === RESERVES ADDRESSES ===
     const reserveAddresses = await poolClient.getReservesList();
     console.log("\n=== 🧾 RESERVE ADDRESSES ===");
     reserveAddresses.forEach((addr, i) =>
       console.log(`${i + 1}. ${addr.toString()}`),
     );
+
+    console.log("\n=== 📦 RESERVES COUNT ===");
+    console.log(`Total reserves: ${Number(reserveAddresses.length)}`);
 
     // === UI POOL DATA PROVIDER ===
     console.log("\n=== 📊 UI POOL DATA PROVIDER ===");

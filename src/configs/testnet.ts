@@ -23,30 +23,30 @@ export const DEFAULT_TESTNET_CONFIG: AptosProviderConfig = {
   network: Network.TESTNET,
   addresses: {
     AAVE_MOCK_UNDERLYINGS: AccountAddress.fromString(
-      "b00d6bcf3a364911272a68a88cdac1f65f8edac70d130aa9ac3f5102dbbbc191",
+      "b7c5d1957622a6d965a4a53a5b69aea542dea6286297ee68d83f48a375e91194",
     ),
     AAVE_ACL: AccountAddress.fromString(
-      "568f29f6f6b7c98a3dd01f6a8aedb78d8762bab680cc86eb71dfd9ae36da9be2",
+      "efd9ce5a75d51fea8974b3fedf08b13c346454f4921e7ce3dd40550341f02694",
     ),
     AAVE_CONFIG: AccountAddress.fromString(
-      "25caba811383306e7ea3e71e5509e5f7eaebecb1eaa9e3d92886a6d4b257e807",
+      "94b0863c0f1f150dc79853d5b421360861cbbf97ecdb1302c5dc5787647b0d53",
     ),
     AAVE_ORACLE: AccountAddress.fromString(
-      "2fde62d8da9c2d84d57f05c6001234978b576aa08dad812f174678ed038f7b42",
+      "32086123c0fb7df1e0766e627d15cd0b75c1dafa1948ac85a102d7d7e62bd3dd",
     ),
     AAVE_POOL: AccountAddress.fromString(
-      "1620b721b1bc9e78f0a625b96eedb7180f9002d239e8c1495a892abb59364b0a",
+      "fbe127a6d4967d90aaddc551765d4078c198e0642c01904a3383d91b69d0cb0f",
     ),
     AAVE_DATA: AccountAddress.fromString(
-      "8947b37ff5127ae48182a8edab19d888f6a6c7b4cd76424461505ece250c37b2",
+      "83cb9d6e494e23ad278d4cbb7a769818a6f8452395ce204d77c8eb503a74e6ec",
     ),
     AAVE_MATH: AccountAddress.fromString(
-      "843039cec95dcc3e9da8cd6dc1abbfb636a011290b43152daf7223e49c312d50",
+      "e32e2ce629706062417da3b2fc29d8d1c4d67a00a344cabdb7492d1b9a3f7618",
     ),
   },
   assets: {
     APT: AccountAddress.fromString(
-      "0x000000000000000000000000000000000000000000000000000000000000001a",
+      "0x000000000000000000000000000000000000000000000000000000000000000a",
     ),
     USDC: AccountAddress.fromString(
       "0x69091fbab5f7d635ee7ac5098cf0c1efbe31d68fec0f2cd565e8d168daf52832",
@@ -58,4 +58,5 @@ export const DEFAULT_TESTNET_CONFIG: AptosProviderConfig = {
       "0x8e67e42c4ff61e16dca908b737d1260b312143c1f7ba1577309f075a27cb4d90",
     ),
   },
+  aptosApiKey: process.env.NODE_API_KEY,
 };

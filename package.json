@@ -1,6 +1,6 @@
 {
     "name": "@aave/aave-v3-aptos-ts-sdk",
-    "version": "0.0.49",
+    "version": "0.0.50",
     "description": "Aave's typescript sdk for Aptos",
     "main": "dist/cmd/index.js",
     "module": "dist/esm/index.js",
@@ -33,6 +33,7 @@
         "get-addresses": "tsx examples/quiries/getAddresses.ts",
         "get-user-data": "tsx examples/quiries/getUserData.ts",
         "get-asset-price": "tsx examples/quiries/getAssetPrice.ts",
+        "get-protocol-data": "tsx examples/quiries/getProtocolData.ts",
         "get-asset-price-timestamp": "tsx examples/quiries/getAssetPriceAndTimestamp.ts",
         "setup-testnet": "tsx examples/admin/setupTestnet.ts",
         "mint-underlyings": "tsx examples/admin/mintUnderlyings.ts",

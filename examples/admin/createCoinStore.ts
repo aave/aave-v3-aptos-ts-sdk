@@ -10,6 +10,9 @@ import { DEFAULT_TESTNET_CONFIG } from "../../src/configs/testnet";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 
+import dotenv from "dotenv";
+dotenv.config();
+
 const main = async () => {
   const argv = await yargs(hideBin(process.argv))
     .option("privateKey", {
