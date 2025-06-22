@@ -1,5 +1,7 @@
 # aave-v3-aptos-ts-sdk
 
+[![Logo](./pics/logo.png)](https://aptos.aave.com/)
+
 ![Node CI](https://github.com/aave/aave-v3-aptos-ts-sdk/workflows/Node.js%20CI/badge.svg)
 ![check-code-coverage](https://img.shields.io/badge/coverage-96.33%25-green)
 
