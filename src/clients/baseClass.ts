@@ -335,47 +335,4 @@ export class AptosContractWrapperBaseClass {
       data: JSON.parse(event.data),
     }));
   }
-
-  /**
-   * Retrieves events associated with a specific account.
-   *
-   * @param account - The address of the account to retrieve events for.
-   * @param limit - The maximum number of events to retrieve.
-   * @returns A promise that resolves to an array of event objects, each containing:
-   *   - `account_address`: The address of the account.
-   *   - `creation_number`: The creation number of the event.
-   *   - `data`: The data associated with the event.
-   *   - `event_index`: The index of the event.
-   *   - `sequence_number`: The sequence number of the event.
-   *   - `transaction_block_height`: The block height of the transaction.
-   *   - `transaction_version`: The version of the transaction.
-   *   - `type`: The type of the event.
-   *   - `indexed_type`: The indexed type of the event.
-   */
-  public async getEventsFromAccount(
-    account: AccountAddress,
-    limit: number,
-  ): Promise<
-    Array<{
-      account_address: string;
-      creation_number: any;
-      data: any;
-      event_index: any;
-      sequence_number: any;
-      transaction_block_height: any;
-      transaction_version: any;
-      type: string;
-      indexed_type: string;
-    }>
-  > {
-    const whereCondition = {
-      account_address: { _eq: account.toString() },
-    };
-
-    const filteredEvents = await this.aptosProvider.getAptos().getEvents({
-      options: { where: whereCondition, limit },
-    });
-
-    return filteredEvents;
-  }
 }
