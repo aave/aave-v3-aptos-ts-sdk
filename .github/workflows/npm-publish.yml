@@ -15,22 +15,48 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
-      - uses: actions/setup-node@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 18
           registry-url: https://registry.npmjs.org/
 
+      - name: Install PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Get PNPM store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$HOME/.local/share/pnpm/store" >> $GITHUB_ENV
+
+      - name: Setup PNPM cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
       - name: Extract tag
         id: get_tag
-        run: echo ::set-output name=TAG::${GITHUB_REF#refs/tags/}
-        env:
-          GITHUB_REF: ${{ github.ref }}
+        run: echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
-      - run: ./scripts/publish.sh ${{ steps.get_tag.outputs.TAG }}
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Run publish script
+        run: ./scripts/publish.sh ${{ steps.get_tag.outputs.TAG }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
 
-      - uses: softprops/action-gh-release@v1
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v1
         with:
           files: |
             dist/bundle.js

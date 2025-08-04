@@ -29,7 +29,8 @@ jobs:
 
       - name: Get PNPM store directory
         shell: bash
-        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+        run: |
+          echo "STORE_PATH=$HOME/.local/share/pnpm/store" >> $GITHUB_ENV
 
       - name: Setup PNPM cache
         uses: actions/cache@v4
@@ -40,7 +41,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
 
       - name: Install gh-pages globally
         run: pnpm add -g gh-pages
