@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -26,6 +26,10 @@ jobs:
         with:
           version: 9
           run_install: false
+
+      - name: Update npm
+        shell: bash
+        run: npm install -g npm@11.6.0
 
       - name: Enable Corepack
         run: corepack enable
@@ -52,8 +56,6 @@ jobs:
 
       - name: Run publish script
         run: ./scripts/publish.sh ${{ steps.get_tag.outputs.TAG }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
 
       - name: Upload release assets
         uses: softprops/action-gh-release@v1
