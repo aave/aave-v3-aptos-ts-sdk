@@ -24,6 +24,7 @@ export const EMPTY_LOCAL_CONFIG = (): AptosProviderConfig => {
       USDC: ZERO_ADDRESS,
       USDT: ZERO_ADDRESS,
       sUSDe: ZERO_ADDRESS,
+      GHO: ZERO_ADDRESS,
     },
   } as AptosProviderConfig;
 };

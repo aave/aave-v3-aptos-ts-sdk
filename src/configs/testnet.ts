@@ -57,6 +57,9 @@ export const DEFAULT_TESTNET_CONFIG: AptosProviderConfig = {
     sUSDe: AccountAddress.fromString(
       "0x8e67e42c4ff61e16dca908b737d1260b312143c1f7ba1577309f075a27cb4d90",
     ),
+    GHO: AccountAddress.fromString(
+      "0x2afa0044d69edb73dca4103b79a293952b0a50feb96c328c56d87bf20de5b163",
+    ),
   },
   aptosApiKey: process.env.NODE_API_KEY,
 };
