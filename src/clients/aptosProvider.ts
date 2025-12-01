@@ -44,6 +44,7 @@ export interface AptosProviderConfig {
     USDC: AccountAddress;
     USDT: AccountAddress;
     sUSDe: AccountAddress;
+    GHO: AccountAddress;
   };
 }
 

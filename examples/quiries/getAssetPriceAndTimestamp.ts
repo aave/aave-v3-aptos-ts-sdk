@@ -15,7 +15,7 @@ const main = async () => {
       alias: "a",
       type: "string",
       description: "Asset address to fetch the oracle price for",
-      choices: ["APT", "USDT", "USDC", "sUSDe"],
+      choices: ["APT", "USDT", "USDC", "sUSDe", "GHO"],
       demandOption: true,
     })
     .example(
@@ -37,7 +37,10 @@ const main = async () => {
       `✅ Got price for asset ${ASSET_ADDRESS.toString()} = ${result.price.toString()} and timestamp = ${result.timestamp.toString()}`,
     );
   } catch (ex) {
-    console.error("❌ Exception = ", ex.toString());
+    console.error(
+      "❌ Exception = ",
+      ex instanceof Error ? ex.message : String(ex),
+    );
   }
 };
 

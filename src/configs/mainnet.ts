@@ -1,5 +1,6 @@
 import { AccountAddress, Network } from "@aptos-labs/ts-sdk";
 import { AptosProviderConfig } from "../clients/aptosProvider";
+import { ZERO_ADDRESS } from "../helpers";
 
 /**
  * Configuration object for the Aave V3 Mainnet on Aptos.
@@ -57,5 +58,6 @@ export const DEFAULT_MAINNET_CONFIG: AptosProviderConfig = {
     sUSDe: AccountAddress.fromString(
       "0xb30a694a344edee467d9f82330bbe7c3b89f440a1ecd2da1f3bca266560fce69",
     ),
+    GHO: ZERO_ADDRESS, // TODO: update when deployed
   },
 };
