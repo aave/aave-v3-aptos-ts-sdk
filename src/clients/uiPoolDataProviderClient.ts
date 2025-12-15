@@ -2,6 +2,9 @@ import { AccountAddress, Ed25519Account } from "@aptos-labs/ts-sdk";
 import { AptosContractWrapperBaseClass } from "./baseClass";
 import { AptosProvider } from "./aptosProvider";
 import { UiPoolDataProviderContract } from "../contracts/uiPoolDataProvider";
+import { SECONDS_PER_YEAR } from "../helpers";
+import { calculateCompoundedRate } from "../math/rates";
+import { FixedPointNumber } from "../math";
 
 /**
  * Represents the aggregated reserve data for a specific asset in the Aave protocol.
@@ -100,6 +103,9 @@ export type AggregatedReserveData = {
   deficit: bigint;
   virtualUnderlyingBalance: bigint;
   isVirtualAccActive: boolean;
+  // special computed values
+  variableBorrowAPY: number;
+  supplyAPY: number;
 };
 
 /**
@@ -360,6 +366,15 @@ export class UiPoolDataProviderClient extends AptosContractWrapperBaseClass {
       deficit: BigInt(item.deficit),
       virtualUnderlyingBalance: BigInt(item.virtual_underlying_balance),
       isVirtualAccActive: item.is_virtual_acc_active as boolean,
+      // special computed values
+      variableBorrowAPY: calculateCompoundedRate(
+        new FixedPointNumber(item.variable_borrow_rate, 27),
+        Number(SECONDS_PER_YEAR),
+      ).toNumber(),
+      supplyAPY: calculateCompoundedRate(
+        new FixedPointNumber(item.liquidity_rate, 27),
+        Number(SECONDS_PER_YEAR),
+      ).toNumber(),
     })) as AggregatedReserveData[];
 
     const basicCurrencyInfoRaw = resp.at(1) as any;

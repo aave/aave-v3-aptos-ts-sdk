@@ -1,6 +1,6 @@
 {
     "name": "@aave/aave-v3-aptos-ts-sdk",
-    "version": "0.0.55",
+    "version": "0.0.56",
     "description": "Aave's typescript sdk for Aptos",
     "main": "dist/cmd/index.js",
     "module": "dist/esm/index.js",
@@ -89,7 +89,8 @@
         "tsx": "^4.21.0",
         "util": "^0.12.5",
         "yaml": "^2.8.2",
-        "yargs": "^18.0.0"
+        "yargs": "^18.0.0",
+        "tiny-invariant": "^1.3.3"
     },
     "devDependencies": {
         "@types/bn.js": "^5.2.0",

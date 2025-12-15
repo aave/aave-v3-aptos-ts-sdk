@@ -19,7 +19,7 @@ export const MAX_UINT_AMOUNT =
 export const MAX_BORROW_CAP = "68719476735";
 export const MAX_SUPPLY_CAP = "68719476735";
 export const MAX_UNBACKED_MINT_CAP = "68719476735";
-export const ONE_YEAR = "31536000";
+export const SECONDS_PER_YEAR = 31536000n;
 export const ZERO_ADDRESS = AccountAddress.ZERO;
 export const ONE_ADDRESS = "0x1";
 // ----------------

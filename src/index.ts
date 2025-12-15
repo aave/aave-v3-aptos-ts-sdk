@@ -18,4 +18,5 @@ if (typeof window !== "undefined") {
 /** Exports */
 export * from "./clients";
 export * from "./configs";
+export * from "./math";
 export * as consts from "./helpers/index";
