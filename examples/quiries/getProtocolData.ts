@@ -6,13 +6,14 @@ import {
   AptosProvider,
 } from "../../src/clients";
 import { DEFAULT_TESTNET_CONFIG } from "../../src/configs/testnet";
+import { DEFAULT_MAINNET_CONFIG } from "../../src/configs/mainnet";
 import dotenv from "dotenv";
 
 // Load environment variables
 dotenv.config();
 
 (async () => {
-  const aptosProvider = AptosProvider.fromConfig(DEFAULT_TESTNET_CONFIG);
+  const aptosProvider = AptosProvider.fromConfig(DEFAULT_MAINNET_CONFIG);
   const aTokensClient = new ATokensClient(aptosProvider);
   const varTokensClient = new VariableTokensClient(aptosProvider);
   const poolClient = new PoolClient(aptosProvider);
