@@ -3,6 +3,11 @@ name: NPM Publish
 on:
   release:
     types: [created]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   test:
