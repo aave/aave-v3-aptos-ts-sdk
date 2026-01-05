@@ -1,8 +1,7 @@
 #!/bin/bash
 set -e
 
-npm ci
-npm run build
+pnpm run build
 
 PACKAGE_NAME=$(cat package.json | jq -r '.name')
 PUBLISH_VERSION=$(cat package.json | jq -r '.version')
@@ -16,4 +15,4 @@ elif [[ "$ref" == *"latest"* ]]; then
   TAG=""
 fi
 
-npm publish --access public $TAG
+pnpm publish --access public --no-git-checks $TAG
