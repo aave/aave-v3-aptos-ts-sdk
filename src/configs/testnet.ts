@@ -1,5 +1,8 @@
 import { AccountAddress, Network } from "@aptos-labs/ts-sdk";
-import { AptosProviderConfig } from "../clients/aptosProvider";
+import {
+  AptosProviderConfig,
+  AptosProviderType,
+} from "../clients/aptosProvider";
 
 /**
  * Configuration object for the Aave V3 Testnet on Aptos.
@@ -21,6 +24,10 @@ import { AptosProviderConfig } from "../clients/aptosProvider";
  */
 export const DEFAULT_TESTNET_CONFIG: AptosProviderConfig = {
   network: Network.TESTNET,
+  providerType:
+    (process.env.APTOS_PROVIDER_TYPE as AptosProviderType) ||
+    AptosProviderType.ALCHEMY,
+  aptosApiKey: process.env.NODE_API_KEY,
   addresses: {
     AAVE_MOCK_UNDERLYINGS: AccountAddress.fromString(
       "e2b42cab2f84bf57edaf87bcaffee409c2b3d5243e3def00d9d2f7dec568d867",
@@ -61,5 +68,4 @@ export const DEFAULT_TESTNET_CONFIG: AptosProviderConfig = {
       "0xdcf0a39e62369ed293d4b1579b76957be14c5ad97649f71deb4f4dfd0a293ca3",
     ),
   },
-  aptosApiKey: process.env.NODE_API_KEY,
 };
