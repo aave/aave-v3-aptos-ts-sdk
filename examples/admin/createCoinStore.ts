@@ -22,7 +22,7 @@ const main = async () => {
       demandOption: true,
     })
     .example(
-      "pnpm run create-coin-store -k 0xabc123",
+      "APTOS_PROVIDER_TYPE=APTOS/ALCHEMY APTOS_API_KEY=... pnpm run create-coin-store -k 0xabc123",
       "Create a coin store for AptosCoin using the provided private key",
     )
     .help()

@@ -50,7 +50,7 @@ const main = async () => {
       demandOption: true,
     })
     .example(
-      "pnpm run get-susde --privateKey 0xabc123 --symbol sUSDe --destination 0xaddr1 --amount 100000000 --module-address 0xc7a799e2b03f3ffa3ed4239ab9ecec797cc97d51fbee2cb7bf93eb201f356b36",
+      "APTOS_PROVIDER_TYPE=APTOS/ALCHEMY APTOS_API_KEY=... pnpm run get-susde --privateKey 0xabc123 --symbol sUSDe --destination 0xaddr1 --amount 100000000 --module-address 0xc7a799e2b03f3ffa3ed4239ab9ecec797cc97d51fbee2cb7bf93eb201f356b36",
       "Mint 100000 units of sUSDe/USDe to 0xaddr1 (account with private key 0xabc123)",
     )
     .help()

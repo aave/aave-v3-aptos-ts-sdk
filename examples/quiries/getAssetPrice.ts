@@ -1,4 +1,3 @@
-import { AccountAddress } from "@aptos-labs/ts-sdk";
 import { OracleClient } from "../../src/clients/oracleClient";
 import { AptosProvider } from "../../src/clients/aptosProvider";
 import { DEFAULT_TESTNET_CONFIG } from "../../src/configs/testnet";
@@ -19,18 +18,18 @@ const main = async () => {
       demandOption: true,
     })
     .example(
-      "pnpm run get-asset-price -a 0xa61304...",
+      "APTOS_PROVIDER_TYPE=APTOS/ALCHEMY APTOS_API_KEY=... pnpm run get-asset-price -a 0xa61304...",
       "Fetch price for specified asset address",
     )
     .help()
     .parse();
 
-  const assetAddressStr = argv.asset;
-  const ASSET_ADDRESS = AccountAddress.fromString(assetAddressStr);
-
   const aptosProvider = AptosProvider.fromConfig(DEFAULT_TESTNET_CONFIG);
   const oracleClient = new OracleClient(aptosProvider);
-
+  const ASSET_ADDRESS =
+    DEFAULT_TESTNET_CONFIG.assets[
+      argv.asset as keyof typeof DEFAULT_TESTNET_CONFIG.assets
+    ];
   try {
     const assetPrice = await oracleClient.getAssetPrice(ASSET_ADDRESS);
     console.log(

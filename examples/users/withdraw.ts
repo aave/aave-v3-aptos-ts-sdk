@@ -36,7 +36,7 @@ const main = async () => {
       demandOption: true,
     })
     .example(
-      "pnpm run withdraw -k 0xabc123 -s DAI -a 100",
+      "APTOS_PROVIDER_TYPE=APTOS/ALCHEMY APTOS_API_KEY=... pnpm run withdraw -k 0xabc123 -s DAI -a 100",
       "Withdraw 100 units of DAI using the provided private key",
     )
     .help()

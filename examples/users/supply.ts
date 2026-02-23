@@ -38,7 +38,7 @@ const main = async () => {
       demandOption: true,
     })
     .example(
-      "pnpm run supply -k 0xabc123 -s USDC -a 100",
+      "APTOS_PROVIDER_TYPE=APTOS/ALCHEMY APTOS_API_KEY=... pnpm run supply -k 0xabc123 -s USDC -a 100",
       "Supply 100 units of DAI using the provided private key",
     )
     .help()

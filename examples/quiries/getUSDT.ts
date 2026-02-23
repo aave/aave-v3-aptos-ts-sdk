@@ -36,7 +36,7 @@ const main = async () => {
       demandOption: true,
     })
     .example(
-      "pnpm run get-usdt --privateKey 0xabc123  --amount 100000000 --module-address 0x24246c14448a5994d9f23e3b978da2a354e64b6dfe54220debb8850586c448cc",
+      "APTOS_PROVIDER_TYPE=APTOS/ALCHEMY APTOS_API_KEY=... pnpm run get-usdt --privateKey 0xabc123  --amount 100000000 --module-address 0x24246c14448a5994d9f23e3b978da2a354e64b6dfe54220debb8850586c448cc",
       "Mint 100 USDT to 0xaddr1 (account with private key 0xabc123)",
     )
     .parse();

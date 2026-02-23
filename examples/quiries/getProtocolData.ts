@@ -6,14 +6,23 @@ import {
   AptosProvider,
 } from "../../src/clients";
 import { DEFAULT_TESTNET_CONFIG } from "../../src/configs/testnet";
-import { DEFAULT_MAINNET_CONFIG } from "../../src/configs/mainnet";
+import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
 import dotenv from "dotenv";
 
 // Load environment variables
 dotenv.config();
 
-(async () => {
-  const aptosProvider = AptosProvider.fromConfig(DEFAULT_MAINNET_CONFIG);
+const main = async () => {
+  await yargs(hideBin(process.argv))
+    .example(
+      "APTOS_PROVIDER_TYPE=APTOS/ALCHEMY APTOS_API_KEY=... pnpm run get-protocol-data",
+      "Fetch all protocol data",
+    )
+    .help()
+    .parse();
+
+  const aptosProvider = AptosProvider.fromConfig(DEFAULT_TESTNET_CONFIG);
   const aTokensClient = new ATokensClient(aptosProvider);
   const varTokensClient = new VariableTokensClient(aptosProvider);
   const poolClient = new PoolClient(aptosProvider);
@@ -83,4 +92,6 @@ dotenv.config();
   } catch (ex) {
     console.error("❌ Exception:", ex);
   }
-})();
+};
+
+main();

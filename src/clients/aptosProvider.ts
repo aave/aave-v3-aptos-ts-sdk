@@ -11,13 +11,32 @@ import {
 } from "@aptos-labs/ts-sdk";
 import YAML from "yaml";
 
+export enum AptosProviderType {
+  APTOS = "APTOS",
+  ALCHEMY = "ALCHEMY",
+}
+
+const ALCHEMY_FULL_NODE_URLS: Partial<Record<Network, string>> = {
+  [Network.MAINNET]: "https://aptos-mainnet.g.alchemy.com/v2",
+  [Network.TESTNET]: "https://aptos-testnet.g.alchemy.com/v2",
+};
+
+const alchemyFullNodeUrl = (network: Network, apiKey: string): string => {
+  const baseUrl = ALCHEMY_FULL_NODE_URLS[network];
+  if (!baseUrl) {
+    throw new Error(`Alchemy is not supported for network: ${network}`);
+  }
+  return `${baseUrl}/${apiKey}/v1`;
+};
+
 /**
  * Configuration interface for the AptosProvider.
  *
  * @interface AptosProviderConfig
  *
  * @property {Network} network - The network configuration for the AptosProvider.
- * @property {string} aptosApiKey - The aptos api key.
+ * @property {AptosProviderType} providerType - The provider type (e.g., APTOS, ALCHEMY).
+ * @property {string} apiKey - The API key for the provider.
  * @property {Object} addresses - The contract addresses used by the AptosProvider.
  * @property {string} addresses.UNDERLYING_TOKENS - The address for underlying tokens.
  * @property {string} addresses.AAVE_ACL - The address for AAVE ACL.
@@ -29,7 +48,8 @@ import YAML from "yaml";
  */
 export interface AptosProviderConfig {
   network: Network;
-  aptosApiKey?: string;
+  providerType: AptosProviderType;
+  apiKey?: string;
   addresses: {
     AAVE_MOCK_UNDERLYINGS: AccountAddress;
     AAVE_ACL: AccountAddress;
@@ -39,7 +59,7 @@ export interface AptosProviderConfig {
     AAVE_DATA: AccountAddress;
     AAVE_MATH: AccountAddress;
   };
-  assets?: {
+  assets: {
     APT: AccountAddress;
     USDC: AccountAddress;
     USDT: AccountAddress;
@@ -102,8 +122,34 @@ export class AptosProvider {
   private profileAccountMap = new Map<string, Ed25519PrivateKey>();
 
   private aptos: Aptos;
+  private aptosProviderType: AptosProviderType;
 
   private constructor() {}
+
+  private static buildAptosConfig(
+    network: Network,
+    providerType: AptosProviderType,
+    apiKey?: string,
+  ): AptosConfig {
+    switch (providerType) {
+      case AptosProviderType.APTOS:
+        return new AptosConfig({
+          network,
+          clientConfig: {
+            ...(apiKey && { API_KEY: apiKey }),
+          },
+        });
+      case AptosProviderType.ALCHEMY: {
+        if (!apiKey) {
+          throw new Error("API key is required for Alchemy provider");
+        }
+        return new AptosConfig({
+          network,
+          fullnode: alchemyFullNodeUrl(network, apiKey),
+        });
+      }
+    }
+  }
 
   /**
    * Sets the network for the Aptos provider.
@@ -116,6 +162,15 @@ export class AptosProvider {
 
   /**
    * Adds a profile address to the profile address map.
+   *
+   * @param aptosProviderType - The provider type to set.
+   */
+  public setProviderType(aptosProviderType: AptosProviderType) {
+    this.aptosProviderType = aptosProviderType;
+  }
+
+  /**
+   * Gets the provider type for the Aptos provider.
    *
    * @param profileName - The name of the profile to associate with the address.
    * @param address - The account address to be added.
@@ -197,18 +252,14 @@ export class AptosProvider {
       AAVE_PROFILES.AAVE_DATA,
       config.addresses.AAVE_DATA,
     );
-    const aptosConfig = new AptosConfig({
-      network: aptosProvider.getNetwork(),
-      clientConfig: {
-        ...(process.env.APTOS_API_KEY && {
-          API_KEY: process.env.APTOS_API_KEY,
-        }),
-        ...(config.aptosApiKey && {
-          API_KEY: config.aptosApiKey,
-        }),
-      },
-    });
+
+    const aptosConfig = AptosProvider.buildAptosConfig(
+      aptosProvider.getNetwork(),
+      config.providerType,
+      config.apiKey,
+    );
     aptosProvider.setAptos(aptosConfig);
+    aptosProvider.setProviderType(config.providerType);
     return aptosProvider;
   }
 
@@ -405,15 +456,16 @@ export class AptosProvider {
       process.env.TEST_ACCOUNT_5_PRIVATE_KEY,
     );
 
-    const aptosConfig = new AptosConfig({
-      network: aptosProvider.getNetwork(),
-      clientConfig: {
-        ...(process.env.APTOS_API_KEY && {
-          API_KEY: process.env.APTOS_API_KEY,
-        }),
-      },
-    });
+    const providerType =
+      (process.env.APTOS_PROVIDER_TYPE as AptosProviderType) ||
+      AptosProviderType.APTOS;
+    const aptosConfig = AptosProvider.buildAptosConfig(
+      aptosProvider.getNetwork(),
+      providerType,
+      process.env.APTOS_API_KEY,
+    );
     aptosProvider.setAptos(aptosConfig);
+    aptosProvider.setProviderType(providerType);
     return aptosProvider;
   }
 
@@ -428,7 +480,11 @@ export class AptosProvider {
    * @returns An instance of `AptosProvider` configured based on the provided YAML.
    * @throws Will throw an error if an unknown network is specified in the profile configuration.
    */
-  public static fromAptosYaml(aptosYaml: string): AptosProvider {
+  public static fromAptosYaml(
+    aptosYaml: string,
+    providerType: AptosProviderType = AptosProviderType.APTOS,
+    apiKey?: string,
+  ): AptosProvider {
     let aptosProvider = new AptosProvider();
     const parsedYaml = YAML.parse(aptosYaml);
     for (const profile of Object.keys(parsedYaml.profiles)) {
@@ -470,15 +526,18 @@ export class AptosProvider {
       });
       aptosProvider.addProfileAddress(profile, profileAccount.accountAddress);
     }
-    const aptosConfig = new AptosConfig({
-      network: aptosProvider.getNetwork(),
-    });
+    const aptosConfig = AptosProvider.buildAptosConfig(
+      aptosProvider.getNetwork(),
+      providerType,
+      apiKey,
+    );
     aptosProvider.setAptos(aptosConfig);
+    aptosProvider.setProviderType(providerType);
     return aptosProvider;
   }
 
   /**
-   * Retrieves the Aptos instance.
+   * Retrieves the Aptos instance used for transactions.
    *
    * @returns {Aptos} The Aptos instance.
    */

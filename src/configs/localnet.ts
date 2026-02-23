@@ -1,5 +1,8 @@
 import { Network } from "@aptos-labs/ts-sdk";
-import { AptosProviderConfig } from "../clients/aptosProvider";
+import {
+  AptosProviderConfig,
+  AptosProviderType,
+} from "../clients/aptosProvider";
 import { ZERO_ADDRESS } from "../helpers";
 
 /**
@@ -10,6 +13,8 @@ import { ZERO_ADDRESS } from "../helpers";
 export const EMPTY_LOCAL_CONFIG = (): AptosProviderConfig => {
   return {
     network: Network.LOCAL,
+    providerType: AptosProviderType.APTOS,
+    apiKey: process.env.APTOS_API_KEY,
     addresses: {
       AAVE_MOCK_UNDERLYINGS: ZERO_ADDRESS,
       AAVE_ACL: ZERO_ADDRESS,
