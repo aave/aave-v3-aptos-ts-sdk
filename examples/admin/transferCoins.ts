@@ -35,8 +35,8 @@ const main = async () => {
       demandOption: true,
     })
     .example(
-      "pnpm run transfer-coins -k 0xabc123",
-      "Create a coin store for AptosCoin using the provided private key",
+      "APTOS_PROVIDER_TYPE=APTOS/ALCHEMY APTOS_API_KEY=... pnpm run transfer-coins -k 0xabc123 -r 0xrecipient -a 1000",
+      "Transfer 1000 coins to the recipient using the provided private key",
     )
     .help()
     .parse();

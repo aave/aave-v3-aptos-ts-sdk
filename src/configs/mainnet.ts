@@ -27,8 +27,8 @@ export const DEFAULT_MAINNET_CONFIG: AptosProviderConfig = {
   network: Network.MAINNET,
   providerType:
     (process.env.APTOS_PROVIDER_TYPE as AptosProviderType) ||
-    AptosProviderType.ALCHEMY,
-  aptosApiKey: process.env.NODE_API_KEY,
+    AptosProviderType.APTOS,
+  apiKey: process.env.APTOS_API_KEY,
   addresses: {
     AAVE_MOCK_UNDERLYINGS: AccountAddress.fromString(
       "12b05c42ac3209a3c6ffadff4ebb6c3e983e5115f26031d56652815b49a14245",

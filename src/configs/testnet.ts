@@ -26,8 +26,8 @@ export const DEFAULT_TESTNET_CONFIG: AptosProviderConfig = {
   network: Network.TESTNET,
   providerType:
     (process.env.APTOS_PROVIDER_TYPE as AptosProviderType) ||
-    AptosProviderType.ALCHEMY,
-  aptosApiKey: process.env.NODE_API_KEY,
+    AptosProviderType.APTOS,
+  apiKey: process.env.APTOS_API_KEY,
   addresses: {
     AAVE_MOCK_UNDERLYINGS: AccountAddress.fromString(
       "e2b42cab2f84bf57edaf87bcaffee409c2b3d5243e3def00d9d2f7dec568d867",

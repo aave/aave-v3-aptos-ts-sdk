@@ -40,7 +40,7 @@ const main = async () => {
       default: true,
     })
     .example(
-      "pnpm run repay -k 0xabc123 -s DAI",
+      "APTOS_PROVIDER_TYPE=APTOS/ALCHEMY APTOS_API_KEY=... pnpm run repay -k 0xabc123 -s DAI",
       "Repay full DAI debt using aTokens with default variable rate",
     )
     .help()

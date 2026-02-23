@@ -37,7 +37,7 @@ const main = async () => {
       demandOption: true,
     })
     .example(
-      "pnpm run get-aptos --privateKey 0xabc123 --amount 0.5 --recipients 0xaddr1 0xaddr2",
+      "APTOS_PROVIDER_TYPE=APTOS/ALCHEMY APTOS_API_KEY=... pnpm run get-aptos --privateKey 0xabc123 --amount 0.5 --recipients 0xaddr1 0xaddr2",
       "Fund 0xaddr1 and 0xaddr2 with 0.5 APT each",
     )
     .help()

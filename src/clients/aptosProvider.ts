@@ -16,14 +16,27 @@ export enum AptosProviderType {
   ALCHEMY = "ALCHEMY",
 }
 
+const ALCHEMY_FULL_NODE_URLS: Partial<Record<Network, string>> = {
+  [Network.MAINNET]: "https://aptos-mainnet.g.alchemy.com/v2",
+  [Network.TESTNET]: "https://aptos-testnet.g.alchemy.com/v2",
+};
+
+const alchemyFullNodeUrl = (network: Network, apiKey: string): string => {
+  const baseUrl = ALCHEMY_FULL_NODE_URLS[network];
+  if (!baseUrl) {
+    throw new Error(`Alchemy is not supported for network: ${network}`);
+  }
+  return `${baseUrl}/${apiKey}/v1`;
+};
+
 /**
  * Configuration interface for the AptosProvider.
  *
  * @interface AptosProviderConfig
  *
  * @property {Network} network - The network configuration for the AptosProvider.
- * @property {string} aptosApiKey - The aptos api key.
- * @property {string} providerType - The provider type (e.g., APTOS, ALCHEMY).
+ * @property {AptosProviderType} providerType - The provider type (e.g., APTOS, ALCHEMY).
+ * @property {string} apiKey - The API key for the provider.
  * @property {Object} addresses - The contract addresses used by the AptosProvider.
  * @property {string} addresses.UNDERLYING_TOKENS - The address for underlying tokens.
  * @property {string} addresses.AAVE_ACL - The address for AAVE ACL.
@@ -35,8 +48,8 @@ export enum AptosProviderType {
  */
 export interface AptosProviderConfig {
   network: Network;
-  aptosApiKey?: string;
   providerType: AptosProviderType;
+  apiKey?: string;
   addresses: {
     AAVE_MOCK_UNDERLYINGS: AccountAddress;
     AAVE_ACL: AccountAddress;
@@ -46,7 +59,7 @@ export interface AptosProviderConfig {
     AAVE_DATA: AccountAddress;
     AAVE_MATH: AccountAddress;
   };
-  assets?: {
+  assets: {
     APT: AccountAddress;
     USDC: AccountAddress;
     USDT: AccountAddress;
@@ -116,26 +129,25 @@ export class AptosProvider {
   private static buildAptosConfig(
     network: Network,
     providerType: AptosProviderType,
-    aptosApiKey?: string,
+    apiKey?: string,
   ): AptosConfig {
     switch (providerType) {
       case AptosProviderType.APTOS:
         return new AptosConfig({
           network,
           clientConfig: {
-            ...(process.env.APTOS_API_KEY && {
-              API_KEY: process.env.APTOS_API_KEY,
-            }),
-            ...(aptosApiKey && {
-              API_KEY: aptosApiKey,
-            }),
+            ...(apiKey && { API_KEY: apiKey }),
           },
         });
-      case AptosProviderType.ALCHEMY:
+      case AptosProviderType.ALCHEMY: {
+        if (!apiKey) {
+          throw new Error("API key is required for Alchemy provider");
+        }
         return new AptosConfig({
           network,
-          fullnode: `https://aptos-mainnet.g.alchemy.com/v2/${aptosApiKey}`,
+          fullnode: alchemyFullNodeUrl(network, apiKey),
         });
+      }
     }
   }
 
@@ -244,7 +256,7 @@ export class AptosProvider {
     const aptosConfig = AptosProvider.buildAptosConfig(
       aptosProvider.getNetwork(),
       config.providerType,
-      config.aptosApiKey,
+      config.apiKey,
     );
     aptosProvider.setAptos(aptosConfig);
     aptosProvider.setProviderType(config.providerType);
@@ -471,7 +483,7 @@ export class AptosProvider {
   public static fromAptosYaml(
     aptosYaml: string,
     providerType: AptosProviderType = AptosProviderType.APTOS,
-    aptosApiKey?: string,
+    apiKey?: string,
   ): AptosProvider {
     let aptosProvider = new AptosProvider();
     const parsedYaml = YAML.parse(aptosYaml);
@@ -517,7 +529,7 @@ export class AptosProvider {
     const aptosConfig = AptosProvider.buildAptosConfig(
       aptosProvider.getNetwork(),
       providerType,
-      aptosApiKey,
+      apiKey,
     );
     aptosProvider.setAptos(aptosConfig);
     aptosProvider.setProviderType(providerType);
@@ -525,7 +537,7 @@ export class AptosProvider {
   }
 
   /**
-   * Retrieves the Aptos instance.
+   * Retrieves the Aptos instance used for transactions.
    *
    * @returns {Aptos} The Aptos instance.
    */

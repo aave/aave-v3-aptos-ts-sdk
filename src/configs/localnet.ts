@@ -14,7 +14,7 @@ export const EMPTY_LOCAL_CONFIG = (): AptosProviderConfig => {
   return {
     network: Network.LOCAL,
     providerType: AptosProviderType.APTOS,
-    aptosApiKey: process.env.NODE_API_KEY,
+    apiKey: process.env.APTOS_API_KEY,
     addresses: {
       AAVE_MOCK_UNDERLYINGS: ZERO_ADDRESS,
       AAVE_ACL: ZERO_ADDRESS,

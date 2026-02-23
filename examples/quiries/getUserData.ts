@@ -18,7 +18,10 @@ const main = async () => {
       description: "User Aptos account address",
       demandOption: true,
     })
-    .example("pnpm run get-user-data -a 0x123...", "Fetch user's reserve data")
+    .example(
+      "APTOS_PROVIDER_TYPE=APTOS/ALCHEMY APTOS_API_KEY=... pnpm run get-user-data -a 0x123...",
+      "Fetch user's reserve data",
+    )
     .help()
     .parse();
 
