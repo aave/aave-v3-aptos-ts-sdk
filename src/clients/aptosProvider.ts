@@ -14,6 +14,7 @@ import YAML from "yaml";
 export enum AptosProviderType {
   APTOS = "APTOS",
   ALCHEMY = "ALCHEMY",
+  PROXY = "PROXY",
 }
 
 const ALCHEMY_FULL_NODE_URLS: Partial<Record<Network, string>> = {
@@ -50,6 +51,7 @@ export interface AptosProviderConfig {
   network: Network;
   providerType: AptosProviderType;
   apiKey?: string;
+  fullnodeUrl?: string;
   addresses: {
     AAVE_MOCK_UNDERLYINGS: AccountAddress;
     AAVE_ACL: AccountAddress;
@@ -130,6 +132,7 @@ export class AptosProvider {
     network: Network,
     providerType: AptosProviderType,
     apiKey?: string,
+    fullnodeUrl?: string,
   ): AptosConfig {
     switch (providerType) {
       case AptosProviderType.APTOS:
@@ -146,6 +149,15 @@ export class AptosProvider {
         return new AptosConfig({
           network,
           fullnode: alchemyFullNodeUrl(network, apiKey),
+        });
+      }
+      case AptosProviderType.PROXY: {
+        if (!fullnodeUrl) {
+          throw new Error("fullnodeUrl is required for Proxy provider");
+        }
+        return new AptosConfig({
+          network,
+          fullnode: fullnodeUrl,
         });
       }
     }
@@ -257,6 +269,7 @@ export class AptosProvider {
       aptosProvider.getNetwork(),
       config.providerType,
       config.apiKey,
+      config.fullnodeUrl,
     );
     aptosProvider.setAptos(aptosConfig);
     aptosProvider.setProviderType(config.providerType);
