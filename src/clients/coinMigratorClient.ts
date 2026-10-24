@@ -126,7 +126,7 @@ export class CoinMigratorClient extends AptosContractWrapperBaseClass {
    * @param coinType - The coin type generic over CoinType e.g. "0x1::aptos_coin::AptosCoin".
    * This method calls the `getFaBalanceFuncAddr` view method on the coin migrator contract
    * and maps the response to bigint.
-   * @returns {Promise<AccountAddress>} A promise that resolves to the FA balance as a bigint.
+   * @returns {Promise<bigint>} A promise that resolves to the FA balance as a bigint.
    */
   public async getFaBalance(
     coinType: string,
